@@ -2,18 +2,25 @@
   "name": "game-playground",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "bin/server.js",
   "private": true,
   "scripts": {
     "test": "jasmine JASMINE_CONFIG_PATH=spec/support/jasmine.json",
     "build:server": "node_modules/.bin/webpack --config webpack.server.build.js --progress --color --display-modules",
-    "build:client": "node_modules/.bin/webpack --config webpack.client.build.js --progress --color --display-modules"
+    "build:client": "node_modules/.bin/webpack --config webpack.client.build.js --progress --color --display-modules",
+    "server:start": "node bin/server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bufferutil": "^1.2.1",
+    "faye-websocket": "^0.10.0",
+    "json-loader": "^0.5.4",
+    "markdown-loader": "^0.1.7",
+    "utf-8-validate": "^1.2.1",
     "uuid": "^2.0.1",
-    "webpack": "^1.12.12"
+    "webpack": "^1.12.12",
+    "ws": "^1.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.4.5",
