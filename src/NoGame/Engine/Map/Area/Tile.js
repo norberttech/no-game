@@ -12,11 +12,14 @@ export default class Tile
      * @param {Item[]} stack
      * @param {integer} moveSpeedModifier
      */
-    constructor(position, ground, stack, moveSpeedModifier = 0)
+    constructor(position, ground, stack = [], moveSpeedModifier = 0)
     {
         Assert.instanceOf(position, Position);
         Assert.instanceOf(ground, Item);
-        Assert.containsOnly(stack, Item);
+        Assert.array(stack);
+        if (stack.length) {
+            Assert.containsOnly(stack, Item);
+        }
         Assert.integer(moveSpeedModifier);
 
         this._position = position;

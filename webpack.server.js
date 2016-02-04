@@ -1,9 +1,9 @@
 module.exports = {
     context: __dirname + "/src",
-    entry:   "./Engine/Bootstrap.js",
+    entry:   "./NoGame/Server/bootstrap.js",
     output: {
-        path: __dirname + "/game",
-        filename: "game.js"
+        path: __dirname + "/bin",
+        filename: "server.js"
     },
     module: {
         loaders: [
@@ -19,7 +19,7 @@ module.exports = {
     },
     resolve: {
         alias: {
-            UUID: dirname + 'node_modules/uuid/uuid.js',
+            UUID: __dirname + '/node_modules/uuid/uuid.js',
         }
     }
 };
