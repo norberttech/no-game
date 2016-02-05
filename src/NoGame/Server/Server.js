@@ -1,13 +1,14 @@
 'use strict';
 
-import WebSocketServer from 'WebSocketServer';
+import ws from 'ws';
 
 export default class Server
 {
     constructor(kernel)
     {
         this._kernel = kernel;
-        this._server = new WebSocketServer({ port: 8080, verifyClient: false});
+        this._server = ws.createServer({ port: 8080, verifyClient: false});
+        console.log('start listening on 8080');
     }
 
     listen()
