@@ -6,7 +6,7 @@ import Server from './Server';
 let kernel = new Kernel();
 kernel.boot();
 
-let server = new Server(kernel);
-server.listen();
+let server = new Server(kernel, true);
+server.listen(8080);
 
 

@@ -51,6 +51,27 @@ describe("Assert", () => {
         expect(() => {Assert.boolean(() => {})}).toThrow('Expected boolean value, got function');
     });
 
+    it ("asserts boolean", () => {
+        Assert.object({});
+        Assert.object(new String("test"));
+    });
+
+    it ("throws error when asserting non object as an object", () => {
+        expect(() => {Assert.object(123)}).toThrow('Expected object value, got 123');
+        expect(() => {Assert.object(1.23)}).toThrow('Expected object value, got 1.23');
+        expect(() => {Assert.object(() => {})}).toThrow('Expected object value, got function');
+    });
+
+    it ("asserts function", () => {
+        Assert.isFunction(() => {});
+    });
+
+    it ("throws error when asserting non function as an function", () => {
+        expect(() => {Assert.isFunction(123)}).toThrow('Expected function value, got 123');
+        expect(() => {Assert.isFunction(new Array([]))}).toThrow('Expected function value, got object');
+        expect(() => {Assert.isFunction(1.23)}).toThrow('Expected function value, got 1.23');
+    });
+
     it ("asserts values greater than", () => {
         Assert.greaterThan(10, 120);
     });

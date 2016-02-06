@@ -1,22 +1,32 @@
 'use strict';
 
-import WebSocket from 'WebSocket';
+import Assert from './../../JSAssert/Assert';
+import Engine from './Gfx/Engine';
 
 export default class Client
 {
-    constructor()
+    /**
+     * @param {string} serverAddress
+     * @param {Engine} gfxEngine
+     */
+    constructor(serverAddress, gfxEngine)
     {
-        let client = new WebSocket('ws://localhost:8080/', {
-            protocolVersion: 8,
-            origin: 'http://websocket.org'
-        });
+        Assert.string(serverAddress);
+        Assert.instanceOf(gfxEngine, Engine);
 
-        client.on('open', () => {
-            console.log('connected');
+        this._serverAddress = serverAddress;
+        this._gfxEngine = gfxEngine;
+    }
 
-            client.send(Date.now().toString(), {mask: true});
-        });
+    connect()
+    {
+        this._connection = new WebSocket(
+            this._serverAddress,
+            "ws"
+        );
+        this._connection.onopen = () => {
+            this._gfxEngine.draw();
+            this._connection.send({test: 'test'});
+        };
     }
 }
-
-new Client();

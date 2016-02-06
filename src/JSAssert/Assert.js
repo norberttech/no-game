@@ -69,6 +69,24 @@ export default class Assert
     }
 
     /**
+     * @param objectValue
+     */
+    static object(objectValue)
+    {
+        if (typeof objectValue !== 'object') {
+            if (typeof objectValue === 'function') {
+                throw `Expected object value, got function`;
+            }
+
+            if (typeof objectValue === 'array') {
+                throw `Expected object value, got array`;
+            }
+
+            throw `Expected object value, got ${objectValue}`;
+        }
+    }
+
+    /**
      * @param arrayValue
      */
     static array(arrayValue)
@@ -82,6 +100,20 @@ export default class Assert
             }
 
             throw `Expected array value, got ${arrayValue}`;
+        }
+    }
+
+    /**
+     * @param functionValue
+     */
+    static isFunction(functionValue)
+    {
+        if (typeof functionValue !== 'function') {
+            if (typeof functionValue === 'object') {
+                throw `Expected function value, got object`;
+            }
+
+            throw `Expected function value, got ${functionValue}`;
         }
     }
 

@@ -1,28 +1,40 @@
 'use strict';
 
 import ws from 'ws';
+import Assert from './../../JSAssert/Assert';
+import Kernel from './../Engine/Kernel';
 
 export default class Server
 {
-    constructor(kernel)
+    /**
+     * @param {Kernel} kernel
+     * @param {boolean} debug
+     */
+    constructor(kernel, debug = false)
     {
         this._kernel = kernel;
-        this._server = ws.createServer({ port: 8080, verifyClient: false});
-        console.log('start listening on 8080');
+        this._debug = debug;
     }
 
-    listen()
+    /**
+     * @param {integer} port
+     */
+    listen(port = 8080)
     {
-        this._server.on('connection', (ws) => {
+        Assert.integer(port);
+
+        let onConnection = (socket) => {
             console.log('connected client');
 
-            ws.on('message', (message) => {
+            socket.on('message', (message) => {
                 console.log('received: %s', message);
             });
 
-            ws.on('close', () => {
+            socket.on('close', () => {
                 console.log('connection closed');
-            })
-        });
+            });
+        };
+
+        this._server = ws.createServer({ port: port, verifyClient: !this._debug}, onConnection);
     }
 }
