@@ -2,27 +2,38 @@
 
 import Assert from './../../../JSAssert/Assert';
 import Canvas from './Canvas';
+import SpriteMap from './SpriteMap';
 
-class Engine
+export default class Engine
 {
     /**
      * @param {Canvas} canvas
      * @param {function} animationFunction
+     * @param {SpriteMap} spriteMap
      */
-    constructor(canvas, animationFunction)
+    constructor(canvas, animationFunction, spriteMap)
     {
         Assert.instanceOf(canvas, Canvas);
         Assert.isFunction(animationFunction);
+        Assert.instanceOf(spriteMap, SpriteMap);
 
         this._canvas = canvas;
         this._animationFunction = animationFunction;
+        this._spriteMap = spriteMap;
+    }
+
+    loadSprites()
+    {
+        this._spriteMap.load();
+    }
+
+    draw()
+    {
+        if (this._spriteMap.isLoaded()) {
+            this._canvas.clear();
+            this._canvas.drawTile();
+        }
+
+        this._animationFunction(this.draw.bind(this));
     }
 }
-
-Engine.prototype.draw = function()
-{
-    this._canvas.clear();
-    this._animationFunction(this.draw.bind(this));
-};
-
-export default Engine;

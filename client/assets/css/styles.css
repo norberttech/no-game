@@ -1,0 +1,31 @@
+#login-screen {
+    width: 800px;
+    border: 1px solid black;
+    display: none;
+    margin: 150px auto 0;
+}
+
+#login-screen form {
+    width: 400px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+#login-screen form input {
+    margin-bottom: 10px;
+}
+
+#messages {
+    width: 800px;
+    margin: 10px auto;
+}
+
+#messages .alert {
+    padding: 5px 10px;
+}
+
+#messages .alert-error {
+    border-color: #ebccd1;
+    background: #f2dede;
+    color: #a94442;
+}

@@ -36,6 +36,14 @@ export default class Area
     }
 
     /**
+     * @returns {Tile[]}
+     */
+    tiles()
+    {
+        return Array.from(this._tiles.values());
+    }
+
+    /**
      * @param {Position} newSpawnPosition
      */
     changeSpawnPosition(newSpawnPosition)

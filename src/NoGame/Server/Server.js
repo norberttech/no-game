@@ -3,6 +3,9 @@
 import ws from 'ws';
 import Assert from './../../JSAssert/Assert';
 import Kernel from './../Engine/Kernel';
+import Player from './../Engine/Player';
+import LoginMessage from './Network/LoginMessage';
+import AreaMessage from './Network/AreaMessage';
 
 export default class Server
 {
@@ -23,14 +26,23 @@ export default class Server
     {
         Assert.integer(port);
 
-        let onConnection = (socket) => {
-            console.log('connected client');
+        let onConnection = (connection) => {
+            // Add connection to Server connections list
+            connection.on('message', (message) => {
+                let packet = JSON.parse(message);
 
-            socket.on('message', (message) => {
-                console.log('received: %s', message);
+                switch (packet.name) {
+                    case 'login':
+                        let player = new Player(packet.data.username);
+                        this._kernel.login(player);
+                        connection.send(new LoginMessage(player).toString());
+                        connection.send(new AreaMessage(this._kernel.playerArea(player.id())).toString());
+                        break;
+                }
+
             });
 
-            socket.on('close', () => {
+            connection.on('close', () => {
                 console.log('connection closed');
             });
         };

@@ -47,6 +47,14 @@ export default class Tile
     }
 
     /**
+     * @returns {Item}
+     */
+    ground()
+    {
+        return this._ground;
+    }
+
+    /**
      * @returns {Position}
      */
     position()

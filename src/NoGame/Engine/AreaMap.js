@@ -3,13 +3,16 @@
 import Assert from './../../JSAssert/Assert'
 import Area from './Map/Area';
 
-export default class GameMap
+export default class AreaMap
 {
     constructor()
     {
         this._area = null;
     }
 
+    /**
+     * @param {Area} area
+     */
     addArea(area)
     {
         Assert.instanceOf(area, Area);
@@ -17,6 +20,9 @@ export default class GameMap
         this._area = area;
     }
 
+    /**
+     * @returns {Area}
+     */
     area()
     {
         return this._area;

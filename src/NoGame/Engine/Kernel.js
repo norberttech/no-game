@@ -4,6 +4,7 @@ import Assert from './../../JSAssert/Assert';
 import Loader from './Loader';
 import ContainerBuilder from './ContainerBuilder';
 import ServiceLocator from './../Common/ServiceLocator';
+import Player from './Player';
 
 export default class Kernel
 {
@@ -28,5 +29,24 @@ export default class Kernel
     isLoaded()
     {
         return this._loaded;
+    }
+
+    /**
+     * @param {Player} player
+     */
+    login(player)
+    {
+        Assert.instanceOf(player, Player);
+
+        this._locator.get('nogame.map').area().spawnPlayer(player);
+    }
+
+    /**
+     * @param {string} id
+     * @return {Area}
+     */
+    playerArea(id)
+    {
+        return this._locator.get('nogame.map').area();
     }
 }

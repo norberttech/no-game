@@ -6,6 +6,7 @@ import Area from './Map/Area';
 import Tile from './Map/Area/Tile';
 import Item from './Map/Area/Item';
 import Position from './Map/Area/Position';
+import fs from 'fs';
 
 export default class Loader
 {
@@ -18,13 +19,16 @@ export default class Loader
 
     loadAreas()
     {
-        let area = new Area('areia', 100, 100);
+        var areaData = JSON.parse(fs.readFileSync(__dirname + '/../Common/Resources/Map/testera.json', 'utf8'));
 
-        for (let x = 0; x < 100; x++) {
-            for (let y = 0; y < 100; y++) {
-                let tile = new Tile(new Position(x, y), new Item(1));
-                area.addTile(tile);
-            }
+        let area = new Area(areaData.name, areaData.x, areaData.y);
+
+        for (let tileConfig of areaData.tiles) {
+            let tile = new Tile(
+                new Position(tileConfig.x, tileConfig.y),
+                new Item(tileConfig.ground.id, tileConfig.ground.blocking)
+            );
+            area.addTile(tile);
         }
 
         this._locator.get('nogame.map').addArea(area);

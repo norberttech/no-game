@@ -4,11 +4,17 @@ import Assert from './../../../JSAssert/Assert';
 
 export default class Message
 {
-    /**
-     * @param {string} name
-     */
-    constructor(name)
+    constroctor()
     {
-        Assert.string(name);
+        this._name = null;
+        this._data = {}
+    }
+
+    /**
+     * @return {string}
+     */
+    toString()
+    {
+        return JSON.stringify({name: this._name, data: this._data});
     }
 }

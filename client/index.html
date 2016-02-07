@@ -6,9 +6,24 @@
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=9" >
     <title>Game Playground</title>
-    <script src="http://localhost:3003/client.js"></script>
+    <link rel="stylesheet" href="assets/css/normalize.css" media="screen" charset="utf-8">
+    <link rel="stylesheet" href="assets/css/styles.css" media="screen" charset="utf-8">
 </head>
 <body>
+    <div id="messages"></div>
+    <div id="login-screen">
+        <form class="login">
+            <div>
+                <input type="text" name="username" placeholder="username" />
+            </div>
+
+            <div>
+                <input type="submit" value="login" />
+            </div>
+        </form>
+    </div>
     <canvas id="game-canvas" width="800" height="600"></canvas>
+
+    <script src="http://localhost:3003/client.js"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 'use strict';
 
 import Assert from './../../../JSAssert/Assert';
+import SpriteMap from './SpriteMap';
 
 export default class Canvas
 {
@@ -20,7 +21,7 @@ export default class Canvas
         this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
     }
 
-    drawArea()
+    drawTile()
     {
 
     }
