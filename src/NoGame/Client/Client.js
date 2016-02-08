@@ -70,8 +70,13 @@ export default class Client
         }
     }
 
+    /**
+     * @param {string} username
+     */
     login(username)
     {
+        Assert.string(username);
+
         if (this._isConnected) {
             this._connection.send(new LoginMessage(username).toString());
         }
