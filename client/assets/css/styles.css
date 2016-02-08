@@ -29,3 +29,12 @@
     background: #f2dede;
     color: #a94442;
 }
+
+#canvas-wrapper {
+    margin: 0 auto;
+    width: 800px;
+}
+
+#game-canvas {
+    /*border: 1px solid black;*/
+}

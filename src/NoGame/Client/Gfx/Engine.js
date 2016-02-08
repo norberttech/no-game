@@ -31,7 +31,7 @@ export default class Engine
     {
         if (this._spriteMap.isLoaded()) {
             this._canvas.clear();
-            this._canvas.drawTile();
+            this._canvas.drawGrid();
         }
 
         this._animationFunction(this.draw.bind(this));
