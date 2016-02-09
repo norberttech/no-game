@@ -6,11 +6,11 @@ import UserInterface from './UserInterface';
 import Engine from './Gfx/Engine';
 import Canvas from './Gfx/Canvas';
 import SpriteMap from './Gfx/SpriteMap';
-import Sprite from './Gfx/Sprite';
+import SpriteFile from './Gfx/SpriteFile';
 
 window.document.addEventListener("DOMContentLoaded", (event) => {
     let spriteMap = new SpriteMap();
-    spriteMap.add(new Sprite("grounds", "assets/sprites/grounds.png", 0));
+    spriteMap.add(new SpriteFile("grounds", "assets/sprites/grounds.png", 1));
 
     let gfx = new Engine(
         new Canvas(window.document.getElementById('game-canvas')),
@@ -26,12 +26,14 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
 
     client.onDisconnect((client) => {
         ui.showLoginScreen();
+        ui.hideCanvas();
         ui.addErrorMessage("Disconnected from server.");
     });
 
 
     ui.onLoginSubmit((username) => {
         ui.hideLoginScreen();
+        ui.showCanvas();
         client.login(username);
     });
 });

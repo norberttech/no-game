@@ -32,9 +32,6 @@
 
 #canvas-wrapper {
     margin: 0 auto;
-    width: 800px;
-}
-
-#game-canvas {
-    /*border: 1px solid black;*/
+    width: 1024px;
+    display: none;
 }

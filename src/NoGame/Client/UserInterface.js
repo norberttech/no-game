@@ -16,6 +16,7 @@ export default class UserInterface
         this._loginScreen = this._doc.getElementById("login-screen");
         this._loginForm = this._loginScreen.querySelector("form");
         this._messages = this._doc.querySelector("#messages");
+        this._gameCanvas = this._doc.querySelector("#canvas-wrapper");
     }
 
     showLoginScreen()
@@ -23,9 +24,19 @@ export default class UserInterface
         this._loginScreen.style.display = 'block';
     }
 
+    showCanvas()
+    {
+        this._gameCanvas.style.display = 'block';
+    }
+
     hideLoginScreen()
     {
         this._loginScreen.style.display = 'none';
+    }
+
+    hideCanvas()
+    {
+        this._gameCanvas.style.display = 'none';
     }
 
     onLoginSubmit(callback)

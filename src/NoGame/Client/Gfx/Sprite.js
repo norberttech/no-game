@@ -1,92 +1,68 @@
 'use strict';
 
 import Assert from './../../../JSAssert/Assert';
-import Size from './Size';
-import Position from './Sprite/Position';
-
-const SINGLE_SPRITE_PX_SIZE = 120;
 
 export default class Sprite
 {
     /**
-     * @param {string} name
-     * @param {string} src
-     * @param {integer} startId
-     * @param {integer} rows
-     * @param {integer} columns
+     * @param {Image} img
+     * @param {integer} offsetX
+     * @param {integer} offsetY
+     * @param {integer} width
+     * @param {integer} height
      */
-    constructor(name, src, startId, rows = 10, columns = 10)
+    constructor(img, offsetX, offsetY, width, height)
     {
-        Assert.string(name);
-        Assert.string(src);
-        Assert.integer(startId);
-        Assert.integer(rows);
-        Assert.integer(columns);
+        Assert.instanceOf(img, Image);
+        Assert.integer(offsetX);
+        Assert.integer(offsetY);
+        Assert.integer(width);
+        Assert.integer(height);
 
-        this._name = name;
-        this._src = src;
-        this._startId = startId;
-        this._size = rows * columns;
-        this._rows = rows;
-        this._columns = columns;
-        this._img = null;
-        this._isLoaded = false;
+        this._img = img;
+        this._offsetX = offsetX;
+        this._offsetY = offsetY;
+        this._width = width;
+        this._height = height;
     }
 
     /**
-     * @returns {string}
+     * @returns {Image}
      */
-    name()
+    img()
     {
-        return this._name;
+        return this._img;
     }
 
     /**
-     * @param {function} callback
+     * @returns {integer}
      */
-    load(callback)
+    offsetX()
     {
-        Assert.isFunction(callback);
-
-        this._img = new Image();
-        this._img.onload = () => {
-            callback(this);
-            this._isLoaded = true;
-        };
-        this._img.src = this._src;
+        return this._offsetX;
     }
 
     /**
-     * @param {number} id
+     * @returns {integer}
      */
-    hasId(id)
+    offsetY()
     {
-        Assert.integer(id);
-
-        return this._startId >= id && id < (this._startId + this._size);
+        return this._offsetY;
     }
 
     /**
-     * @param {integer} id
-     * @returns {Position}
+     * @returns {integer}
      */
-    getIdPosition(id)
+    width()
     {
-        Assert.integer(id);
-
-        if (!this.hasId(id)) {
-            throw `Id "${id}" does not exists in sprite "${this._src}"`;
-        }
-
-        console.log('TODO, calculate sprite position');
-
-        return new Position(0, 0);
+        return this._width;
     }
+
     /**
-     * @returns {boolean}
+     * @returns {integer}
      */
-    isLoaded()
+    height()
     {
-        return this._isLoaded;
+        return this._height;
     }
 }

@@ -19,14 +19,16 @@ export default class AreaMessage extends Message
         this._name = Messages.AREA;
         this._data = {
             name: area.name(),
+            x: area.sizeX(),
+            y: area.sizeY(),
             tiles: area.tiles().map(function(tile) {
                 return {
                     x: tile.position().x(),
                     y: tile.position().y(),
-                    ground: {
-                        sprite: tile.ground().spriteId(),
-                        isBlocking: tile.ground().isBlocking()
-                    }
+                    canWalkOn: tile.canWalkOn(),
+                    stack: [
+                        tile.ground().spriteId()
+                    ]
                 }
             })
         };

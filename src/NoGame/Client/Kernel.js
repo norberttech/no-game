@@ -2,6 +2,7 @@
 
 import Assert from './../../JSAssert/Assert';
 import Engine from './Gfx/Engine';
+import Area from './Map/Area';
 
 export default class Kernel
 {
@@ -38,14 +39,13 @@ export default class Kernel
     }
 
     /**
-     * @param {string} name
-     * @param {[]} tiles
+     * @param {Area} area
      */
-    setArea(name, tiles)
+    setArea(area)
     {
-        Assert.string(name);
-        Assert.array(tiles);
+        Assert.instanceOf(area, Area);
 
-        this._gfxEngine
+        this._area = area;
+        this._gfxEngine.setTiles(this._area.tiles());
     }
 }

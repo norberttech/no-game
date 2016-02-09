@@ -28,6 +28,22 @@ export default class Area
     }
 
     /**
+     * @returns {int}
+     */
+    sizeX()
+    {
+        return this._sizeX;
+    }
+
+    /**
+     * @returns {int}
+     */
+    sizeY()
+    {
+        return this._sizeY;
+    }
+
+    /**
      * @returns {string}
      */
     name()
