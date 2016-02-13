@@ -6,6 +6,7 @@ import Messages from './../Server/Network/Messages';
 import LoginMessage from './Network/LoginMessage';
 import Area from './Map/Area';
 import Tile from './Map/Tile';
+import Player from './Player';
 
 export default class Client
 {
@@ -47,7 +48,14 @@ export default class Client
             switch (message.name) {
                 case Messages.LOGIN:
                     this._kernel.draw();
-                    this._kernel.setUserId(message.data.id);
+                    this._kernel.login(
+                        new Player(
+                            message.data.id,
+                            message.data.name,
+                            message.data.position.x,
+                            message.data.position.y
+                        )
+                    );
                     break;
                 case Messages.AREA:
                     let area = new Area(message.data.name, 100, 100);

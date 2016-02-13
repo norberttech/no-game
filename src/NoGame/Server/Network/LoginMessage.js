@@ -17,6 +17,13 @@ export default class LoginMessage extends Message
         Assert.instanceOf(player, Player);
 
         this._name = Messages.LOGIN;
-        this._data = {id: player.id()};
+        this._data = {
+            id: player.id(),
+            name: player.name(),
+            position: {
+                x: player.currentPosition().x(),
+                y: player.currentPosition().y()
+            }
+        };
     }
 }

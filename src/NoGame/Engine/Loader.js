@@ -23,6 +23,8 @@ export default class Loader
 
         let area = new Area(areaData.name, areaData.x, areaData.y);
 
+        area.changeSpawnPosition(new Position(areaData.spawnPosition.x, areaData.spawnPosition.y));
+
         for (let tileConfig of areaData.tiles) {
             let tile = new Tile(
                 new Position(tileConfig.x, tileConfig.y),
@@ -30,6 +32,7 @@ export default class Loader
             );
             area.addTile(tile);
         }
+
 
         this._locator.get('nogame.map').addArea(area);
     }

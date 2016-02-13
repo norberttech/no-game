@@ -88,6 +88,41 @@ export default class Canvas
     }
 
     /**
+     * @param {string} nick
+     * @param {int} x
+     * @param {int} y
+     * @param {int} totalX
+     * @param {int} totalY
+     */
+    drawPLayer(nick, x, y, totalX, totalY)
+    {
+        Assert.string(nick);
+        Assert.integer(x);
+        Assert.integer(y);
+        Assert.integer(totalX);
+        Assert.integer(totalY);
+
+        let tileSize = this.calculateTileSize(totalX, totalY);
+
+        this._context.fillStyle = '#FF0000';
+
+        this._context.fillRect(
+            tileSize.getWidth() * x,
+            tileSize.getHeight() * y,
+            tileSize.getWidth(),
+            tileSize.getWidth()
+        );
+
+        this._context.fillStyle = '#EDE624';
+        this._context.font = "25px Arial";
+        this._context.fillText(
+            nick,
+            tileSize.getWidth() * x - 10,
+            tileSize.getHeight() * y - 5
+        );
+    }
+
+    /**
      * @returns {Size}
      */
     calculateTileSize(x, y)

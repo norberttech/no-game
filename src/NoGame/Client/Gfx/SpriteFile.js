@@ -81,8 +81,6 @@ export default class SpriteFile
         let realId = id - 1; // to prevent using ID 0
         let posX = Math.floor(realId % this._columns);
         let posY = Math.floor(realId / this._rows);
-        console.log(posX);
-        console.log(posY);
 
         return new Sprite(this._img, posX * SINGLE_SPRITE_PX_SIZE, posY * SINGLE_SPRITE_PX_SIZE, SINGLE_SPRITE_PX_SIZE, SINGLE_SPRITE_PX_SIZE);
     }

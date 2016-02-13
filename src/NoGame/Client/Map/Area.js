@@ -28,6 +28,6 @@ export default class Area
      */
     tiles()
     {
-        return Array.from(this._tiles.values());
+        return this._tiles;
     }
 }

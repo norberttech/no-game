@@ -30,6 +30,15 @@ export default class Player
         this._currentPosition = null;
         this._health = health;
         this._moveEnds = 0;
+        this._name = name;
+    }
+
+    /**
+     * @returns {string}
+     */
+    name()
+    {
+        return this._name;
     }
 
     id()

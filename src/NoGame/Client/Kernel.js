@@ -3,6 +3,7 @@
 import Assert from './../../JSAssert/Assert';
 import Engine from './Gfx/Engine';
 import Area from './Map/Area';
+import Player from './Player';
 
 export default class Kernel
 {
@@ -16,6 +17,7 @@ export default class Kernel
         this._gfxEngine = gfxEngine;
         this._version = '1.0.0-DEV';
         this._loaded = false;
+        this._player = null;
     }
 
     boot()
@@ -29,13 +31,14 @@ export default class Kernel
     }
 
     /**
-     * @param {string} id
+     * @param {Player} player
      */
-    setUserId(id)
+    login(player)
     {
-        Assert.string(id);
+        Assert.instanceOf(player, Player);
 
-        this._userId = id;
+        this._player = player;
+        this._gfxEngine.setPlayer(player);
     }
 
     /**
