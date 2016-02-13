@@ -4,8 +4,10 @@ import ws from 'ws';
 import Assert from './../../JSAssert/Assert';
 import Kernel from './../Engine/Kernel';
 import Player from './../Engine/Player';
+import Position from './../Engine/Map/Area/Position';
 import LoginMessage from './Network/LoginMessage';
 import AreaMessage from './Network/AreaMessage';
+import MoveMessage from './Network/MoveMessage';
 import Connection from './Connection';
 
 export default class Server
@@ -56,6 +58,11 @@ export default class Server
                 connection.setPlayerId(player.id());
                 connection.send(new LoginMessage(player));
                 connection.send(new AreaMessage(this._kernel.playerArea(player.id())));
+                break;
+            case 'move':
+                let area = this._kernel.playerArea(connection.playerId());
+                area.movePlayerTo(connection.playerId(), new Position(packet.data.x, packet.data.y));
+                connection.send(new MoveMessage(area.player(connection.playerId()).currentPosition()));
                 break;
         }
     }

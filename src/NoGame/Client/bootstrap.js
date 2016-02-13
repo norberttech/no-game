@@ -7,6 +7,7 @@ import Engine from './Gfx/Engine';
 import Canvas from './Gfx/Canvas';
 import SpriteMap from './Gfx/SpriteMap';
 import SpriteFile from './Gfx/SpriteFile';
+import Keys from './UserInterface/Keys';
 
 window.document.addEventListener("DOMContentLoaded", (event) => {
     let spriteMap = new SpriteMap();
@@ -19,6 +20,23 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
     );
     let client = new Client('ws://localhost:8080/', new Kernel(gfx));
     let ui = new UserInterface(window.document);
+
+    ui.bindArrows((key) => {
+        switch (key) {
+            case Keys.LEFT:
+                client.moveLeft();
+                break;
+            case Keys.DOWN:
+                client.moveDown();
+                break;
+            case Keys.RIGHT:
+                client.moveRight();
+                break;
+            case Keys.UP:
+                client.moveUp();
+                break;
+        }
+    });
 
     client.connect((client) => {
         ui.showLoginScreen();

@@ -2,7 +2,8 @@
 
 const Messages = {
     LOGIN: 'login',
-    AREA: 'area'
+    AREA: 'area',
+    MOVE: 'move'
 };
 
 export default Messages;

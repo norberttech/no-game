@@ -31,6 +31,18 @@ export default class Kernel
     }
 
     /**
+     * @returns {Player}
+     */
+    player()
+    {
+        if (null === this._player) {
+            throw `Player needs to login first.`;
+        }
+
+        return this._player;
+    }
+
+    /**
      * @param {Player} player
      */
     login(player)

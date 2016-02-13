@@ -118,6 +118,17 @@ export default class Area
     }
 
     /**
+     * @param {string} playerId
+     * @returns {Player}
+     */
+    player(playerId)
+    {
+        this._playerExists(playerId);
+
+        return this._players.get(playerId);
+    }
+
+    /**
      * @param {Position} newPosition
      * @private
      */

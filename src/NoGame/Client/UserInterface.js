@@ -2,6 +2,7 @@
 
 import Assert from './../../JSAssert/Assert';
 import Engine from './Gfx/Engine';
+import Keys from './UserInterface/Keys';
 
 export default class UserInterface
 {
@@ -59,5 +60,32 @@ export default class UserInterface
         message.innerHTML = text;
 
         this._messages.appendChild(message);
+    }
+
+    /**
+     * @param callback
+     */
+    bindArrows(callback)
+    {
+        this._doc.addEventListener("keydown", (event) => {
+            switch(event.keyCode) {
+                case 37: //left
+                    callback(Keys.LEFT);
+                    event.preventDefault();
+                    break;
+                case 38: //up
+                    callback(Keys.UP);
+                    event.preventDefault();
+                    break;
+                case 39: //right
+                    callback(Keys.RIGHT);
+                    event.preventDefault();
+                    break;
+                case 40: //down
+                    callback(Keys.DOWN);
+                    event.preventDefault();
+                    break;
+            }
+        });
     }
 }

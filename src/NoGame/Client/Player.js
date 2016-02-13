@@ -46,4 +46,17 @@ export default class Player
     {
         return {x: this._x, y: this._y};
     }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     */
+    move(x, y)
+    {
+        Assert.integer(x);
+        Assert.integer(y);
+
+        this._x = x;
+        this._y = y;
+    }
 }

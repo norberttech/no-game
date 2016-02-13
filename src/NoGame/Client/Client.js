@@ -4,6 +4,7 @@ import Assert from './../../JSAssert/Assert';
 import Kernel from './Kernel';
 import Messages from './../Server/Network/Messages';
 import LoginMessage from './Network/LoginMessage';
+import MoveMessage from './Network/MoveMessage';
 import Area from './Map/Area';
 import Tile from './Map/Tile';
 import Player from './Player';
@@ -22,6 +23,7 @@ export default class Client
         this._kernel = kernel;
         this._serverAddress = serverAddress;
         this._isConnected = false;
+        this._isLoggedIn = false;
     }
 
     /**
@@ -56,6 +58,7 @@ export default class Client
                             message.data.position.y
                         )
                     );
+                    this._isLoggedIn = true;
                     break;
                 case Messages.AREA:
                     let area = new Area(message.data.name, 100, 100);
@@ -63,6 +66,9 @@ export default class Client
                         area.addTile(new Tile(tileData.x, tileData.y, tileData.canWalkOn, tileData.stack));
                     }
                     this._kernel.setArea(area);
+                    break;
+                case Messages.MOVE:
+                    this._kernel.player().move(message.data.x, message.data.y);
                     break;
             }
 
@@ -80,7 +86,9 @@ export default class Client
         this._connection.onclose = () => {
             callback(this);
             this._isConnected = false;
-        }
+        };
+
+        this._isLoggedIn = false;
     }
 
     /**
@@ -93,5 +101,61 @@ export default class Client
         if (this._isConnected) {
             this._connection.send(new LoginMessage(username).toString());
         }
+    }
+
+    moveLeft()
+    {
+        if (!this._isLoggedIn) {
+            return ;
+        }
+
+        this._connection.send(
+            new MoveMessage(
+                this._kernel.player().position().x - 1,
+                this._kernel.player().position().y
+            )
+        );
+    }
+
+    moveDown()
+    {
+        if (!this._isLoggedIn) {
+            return ;
+        }
+
+        this._connection.send(
+            new MoveMessage(
+                this._kernel.player().position().x,
+                this._kernel.player().position().y + 1
+            )
+        );
+    }
+
+    moveRight()
+    {
+        if (!this._isLoggedIn) {
+            return ;
+        }
+
+        this._connection.send(
+            new MoveMessage(
+                this._kernel.player().position().x + 1,
+                this._kernel.player().position().y
+            )
+        );
+    }
+
+    moveUp()
+    {
+        if (!this._isLoggedIn) {
+            return ;
+        }
+
+        this._connection.send(
+            new MoveMessage(
+                this._kernel.player().position().x,
+                this._kernel.player().position().y - 1
+            )
+        );
     }
 }
