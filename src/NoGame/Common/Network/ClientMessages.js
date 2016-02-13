@@ -1,8 +1,8 @@
 'use strict';
 
-const Messages = {
+const ClientMessages = {
     LOGIN: 'login',
     MOVE: 'move'
 };
 
-export default Messages;
+export default ClientMessages;

@@ -19,13 +19,14 @@ function randomInt(min, max) {
 
 for (let x = 0; x < mapData.x; x++) {
     for (let y = 0; y < mapData.y; y++) {
+        let ground = (x !== 55 && x !== 56)
+            ? {id: randomInt(1, 3), blocking: false}
+            : {id: 11, blocking: true};
+
         let tile = {
             x: x,
             y: y,
-            ground: {
-                id: randomInt(1, 3),
-                blocking: false
-            }
+            ground: ground
         };
 
         mapData.tiles.push(tile);

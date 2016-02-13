@@ -58,4 +58,19 @@ describe("Area", () => {
         expect(() => {area.movePlayerTo(player.id(), new Position(1,1))})
             .toThrow(`Can't walk on tile on x: 1, y: 1`);
     });
+
+    it ("returns players except player with specific ID", () => {
+        let grass = new Item(100);
+        let stack = [new Item(2, true)];
+        let grassTile = new Tile(new Position(1, 1), grass, stack);
+        let area = new Area("test area", 1, 1);
+        let player1 = new Player("yaboo1", 100);
+        let player2 = new Player("yaboo2", 100);
+
+        area.addTile(grassTile);
+        area.spawnPlayer(player1);
+        area.spawnPlayer(player2);
+
+        expect(area.getVisiblePlayersFor(player1.id())).toEqual([player2]);
+    });
 });

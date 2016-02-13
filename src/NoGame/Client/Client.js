@@ -2,12 +2,13 @@
 
 import Assert from './../../JSAssert/Assert';
 import Kernel from './Kernel';
-import Messages from './../Server/Network/Messages';
+import Tile from './Map/Tile';
+import Area from './Map/Area';
+import Player from './Player';
+import Character from './Character';
 import LoginMessage from './Network/LoginMessage';
 import MoveMessage from './Network/MoveMessage';
-import Area from './Map/Area';
-import Tile from './Map/Tile';
-import Player from './Player';
+import ServerMessages from './../Common/Network/ServerMessages';
 
 export default class Client
 {
@@ -48,7 +49,7 @@ export default class Client
             let message = JSON.parse(event.data);
 
             switch (message.name) {
-                case Messages.LOGIN:
+                case ServerMessages.LOGIN:
                     this._kernel.draw();
                     this._kernel.login(
                         new Player(
@@ -60,15 +61,32 @@ export default class Client
                     );
                     this._isLoggedIn = true;
                     break;
-                case Messages.AREA:
+                case ServerMessages.AREA:
                     let area = new Area(message.data.name, 100, 100);
                     for (let tileData of message.data.tiles) {
                         area.addTile(new Tile(tileData.x, tileData.y, tileData.canWalkOn, tileData.stack));
                     }
                     this._kernel.setArea(area);
                     break;
-                case Messages.MOVE:
+                case ServerMessages.MOVE:
                     this._kernel.player().move(message.data.x, message.data.y);
+                    break;
+                case ServerMessages.CHARACTERS:
+                    let characters = [];
+                    for (let characterData of message.data.characters) {
+                        characters.push(
+                            new Character(
+                                characterData.id,
+                                characterData.name,
+                                characterData.position.x,
+                                characterData.position.y
+                            )
+                        );
+                    }
+                    this._kernel.setCharacters(characters);
+                    break;
+                case ServerMessages.CHARACTER_MOVE:
+                    this._kernel.characterMove(message.data.id, message.data.x, message.data.y);
                     break;
             }
 
@@ -105,57 +123,45 @@ export default class Client
 
     moveLeft()
     {
-        if (!this._isLoggedIn) {
-            return ;
-        }
+        let x = this._kernel.player().position().x - 1;
+        let y = this._kernel.player().position().y;
 
-        this._connection.send(
-            new MoveMessage(
-                this._kernel.player().position().x - 1,
-                this._kernel.player().position().y
-            )
-        );
+        this._move(x, y);
     }
 
     moveDown()
     {
-        if (!this._isLoggedIn) {
-            return ;
-        }
+        let x = this._kernel.player().position().x;
+        let y = this._kernel.player().position().y + 1;
 
-        this._connection.send(
-            new MoveMessage(
-                this._kernel.player().position().x,
-                this._kernel.player().position().y + 1
-            )
-        );
+        this._move(x, y);
     }
 
     moveRight()
     {
-        if (!this._isLoggedIn) {
-            return ;
-        }
+        let x = this._kernel.player().position().x + 1;
+        let y = this._kernel.player().position().y;
 
-        this._connection.send(
-            new MoveMessage(
-                this._kernel.player().position().x + 1,
-                this._kernel.player().position().y
-            )
-        );
+        this._move(x, y);
     }
 
     moveUp()
     {
-        if (!this._isLoggedIn) {
-            return ;
-        }
+        let x = this._kernel.player().position().x;
+        let y = this._kernel.player().position().y - 1;
 
-        this._connection.send(
-            new MoveMessage(
-                this._kernel.player().position().x,
-                this._kernel.player().position().y - 1
-            )
-        );
+        this._move(x, y);
+    }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     * @private
+     */
+    _move(x, y)
+    {
+        if (this._isLoggedIn && this._kernel.canMoveTo(x, y)) {
+            this._connection.send(new MoveMessage(x, y));
+        }
     }
 }

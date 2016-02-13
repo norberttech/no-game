@@ -4,6 +4,12 @@ import Assert from './../../JSAssert/Assert';
 import Engine from './Gfx/Engine';
 import Area from './Map/Area';
 import Player from './Player';
+import Character from './Character';
+
+const VISIBLE_SQUARES = {
+    x: 15,
+    y: 11
+};
 
 export default class Kernel
 {
@@ -16,13 +22,14 @@ export default class Kernel
 
         this._gfxEngine = gfxEngine;
         this._version = '1.0.0-DEV';
-        this._loaded = false;
         this._player = null;
+        this._characters = [];
     }
 
     boot()
     {
         this._gfxEngine.loadSprites();
+        this._gfxEngine.setVisibleTiles(VISIBLE_SQUARES.x, VISIBLE_SQUARES.y);
     }
 
     draw()
@@ -43,6 +50,35 @@ export default class Kernel
     }
 
     /**
+     * @param {Character[]} characters
+     */
+    setCharacters(characters)
+    {
+        Assert.containsOnly(characters, Character);
+
+        this._characters = characters;
+        this._gfxEngine.setCharacters(characters);
+    }
+
+    /**
+     * @param {string} characterId
+     * @param {int} x
+     * @param {int} y
+     */
+    characterMove(characterId, x, y)
+    {
+        Assert.string(characterId);
+        Assert.integer(x);
+        Assert.integer(y);
+
+        for (let character of this._characters) {
+            if (character.id() === characterId) {
+                character.move(x, y);
+            }
+        }
+    }
+
+    /**
      * @param {Player} player
      */
     login(player)
@@ -51,6 +87,16 @@ export default class Kernel
 
         this._player = player;
         this._gfxEngine.setPlayer(player);
+    }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     * @return {boolean}
+     */
+    canMoveTo(x, y)
+    {
+        return this._area.canWalkOn(x, y);
     }
 
     /**

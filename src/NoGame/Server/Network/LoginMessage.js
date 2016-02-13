@@ -3,7 +3,7 @@
 import Assert from './../../../JSAssert/Assert';
 import Message from './../../Common/Network/Message';
 import Player from './../../Engine/Player';
-import Messages from './Messages';
+import ServerMessages from './../../Common/Network/ServerMessages';
 
 export default class LoginMessage extends Message
 {
@@ -16,7 +16,7 @@ export default class LoginMessage extends Message
 
         Assert.instanceOf(player, Player);
 
-        this._name = Messages.LOGIN;
+        this._name = ServerMessages.LOGIN;
         this._data = {
             id: player.id(),
             name: player.name(),

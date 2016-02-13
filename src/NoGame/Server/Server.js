@@ -1,14 +1,17 @@
 'use strict';
 
 import ws from 'ws';
+import Connection from './Connection';
+import LoginMessage from './Network/LoginMessage';
+import AreaMessage from './Network/AreaMessage';
+import MoveMessage from './Network/MoveMessage';
+import CharactersMessage from './Network/CharactersMessage';
+import CharacterMoveMessage from './Network/CharacterMoveMessage';
 import Assert from './../../JSAssert/Assert';
 import Kernel from './../Engine/Kernel';
 import Player from './../Engine/Player';
 import Position from './../Engine/Map/Area/Position';
-import LoginMessage from './Network/LoginMessage';
-import AreaMessage from './Network/AreaMessage';
-import MoveMessage from './Network/MoveMessage';
-import Connection from './Connection';
+import ClientMessages from './../Common/Network/ClientMessages'
 
 export default class Server
 {
@@ -44,36 +47,85 @@ export default class Server
     }
 
     /**
-     * @param {string} message
-     * @param {Connection} connection
+     * @param {string} rawMessage
+     * @param {Connection} currentConnection
      */
-    onMessage(message, connection)
+    onMessage(rawMessage, currentConnection)
     {
-        let packet = JSON.parse(message);
+        let message = JSON.parse(rawMessage);
 
-        switch (packet.name) {
-            case 'login':
-                let player = new Player(packet.data.username);
+        switch (message.name) {
+            case ClientMessages.LOGIN:
+                let player = new Player(message.data.username);
                 this._kernel.login(player);
-                connection.setPlayerId(player.id());
-                connection.send(new LoginMessage(player));
-                connection.send(new AreaMessage(this._kernel.playerArea(player.id())));
+                currentConnection.setPlayerId(player.id());
+                currentConnection.send(new LoginMessage(player));
+                currentConnection.send(new AreaMessage(this._kernel.playerArea(player.id())));
+
+                for (let connection of this._connections.values()) {
+                    if (!connection.hasPlayerId()) {
+                        continue;
+                    }
+
+                    connection.send(new CharactersMessage(
+                        this._kernel.playerArea(connection.playerId()).getVisiblePlayersFor(connection.playerId())
+                    ));
+                }
+
                 break;
-            case 'move':
-                let area = this._kernel.playerArea(connection.playerId());
-                area.movePlayerTo(connection.playerId(), new Position(packet.data.x, packet.data.y));
-                connection.send(new MoveMessage(area.player(connection.playerId()).currentPosition()));
+            case ClientMessages.MOVE:
+                let area = this._kernel.playerArea(currentConnection.playerId());
+                let requestedPosition = new Position(message.data.x, message.data.y);
+
+                area.movePlayerTo(currentConnection.playerId(), requestedPosition);
+
+                let currentPosition = area.player(currentConnection.playerId()).currentPosition();
+
+                currentConnection.send(new MoveMessage(currentPosition));
+
+                for (let connection of this._connections.values()) {
+                    if (connection.id() === currentConnection.id()) {
+                        continue;
+                    }
+
+                    if (!connection.hasPlayerId()) {
+                        continue;
+                    }
+
+                    connection.send(new CharacterMoveMessage(currentConnection.playerId(), currentPosition));
+                }
+
                 break;
         }
     }
 
     /**
-     * @param {Connection} connection
+     * @param {Connection} closedConnection
      */
-    onClose(connection)
+    onClose(closedConnection)
     {
-        console.log(`Connection ${connection.id()} closed.`);
+        console.log(`Connection ${closedConnection.id()} closed.`);
 
-        this._connections.delete(connection.id());
+        if (closedConnection.hasPlayerId()) {
+            // logout player
+            this._kernel.logout(closedConnection.playerId());
+
+            // update other players characters list
+            for (let connection of this._connections.values()) {
+                if (connection.id() === closedConnection.id()) {
+                    continue;
+                }
+
+                if (!connection.hasPlayerId()) {
+                    continue;
+                }
+
+                connection.send(new CharactersMessage(
+                    this._kernel.playerArea(connection.playerId()).getVisiblePlayersFor(connection.playerId())
+                ));
+            }
+        }
+
+        this._connections.delete(closedConnection.id());
     }
 }

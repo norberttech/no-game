@@ -42,6 +42,16 @@ export default class Kernel
     }
 
     /**
+     * @param {string} playerId
+     */
+    logout(playerId)
+    {
+        Assert.string(playerId);
+
+        this._locator.get('nogame.map').area().logoutPlayer(playerId);
+    }
+
+    /**
      * @param {string} id
      * @return {Area}
      */

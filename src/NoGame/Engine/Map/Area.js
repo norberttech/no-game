@@ -23,7 +23,7 @@ export default class Area
         this._sizeX = sizeX;
         this._sizeY = sizeY;
         this._tiles = new Map();
-        this._players = new Map();
+        this._characters = new Map();
         this._spawnPosition = new Position(0, 0);
     }
 
@@ -92,13 +92,23 @@ export default class Area
     {
         Assert.instanceOf(newPlayer, Player);
 
-        if (this._players.has(newPlayer.id()) === true) {
+        if (this._characters.has(newPlayer.id()) === true) {
             throw `Player with id "${newPlayer.id()}" is already present in area "${this._name}"`;
         }
 
         newPlayer.setStartingPosition(this._spawnPosition);
 
-        this._players.set(newPlayer.id(), newPlayer);
+        this._characters.set(newPlayer.id(), newPlayer);
+    }
+
+    /**
+     * @param {string} playerId
+     */
+    logoutPlayer(playerId)
+    {
+        this._playerExists(playerId);
+
+        this._characters.delete(playerId);
     }
 
     /**
@@ -111,7 +121,7 @@ export default class Area
         this._tileExists(newPosition);
         this._isTileWalkable(newPosition);
 
-        let player = this._players.get(playerId);
+        let player = this._characters.get(playerId);
         let tile = this._tiles.get(newPosition.toString());
 
         player.move(newPosition, tile.moveSpeedModifier());
@@ -125,7 +135,25 @@ export default class Area
     {
         this._playerExists(playerId);
 
-        return this._players.get(playerId);
+        return this._characters.get(playerId);
+    }
+
+    /**
+     * @param playerId
+     * @returns {Player[]}
+     */
+    getVisiblePlayersFor(playerId)
+    {
+        let players = [];
+        this._playerExists(playerId);
+
+        for (let player of this._characters.values()) {
+            if (player.id() !== playerId) {
+                players.push(player);
+            }
+        }
+
+        return players;
     }
 
     /**
@@ -156,7 +184,9 @@ export default class Area
      */
     _playerExists(playerId)
     {
-        if (!this._players.has(playerId)) {
+        Assert.string(playerId);
+
+        if (!this._characters.has(playerId)) {
             throw `There is no player with id "${playerId}" in area "${this._name}"`;
         }
     }

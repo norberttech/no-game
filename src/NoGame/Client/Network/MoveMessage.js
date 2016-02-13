@@ -2,7 +2,7 @@
 
 import Assert from './../../../JSAssert/Assert';
 import Message from './../../Common/Network/Message';
-import Messages from './Messages';
+import ClientMessages from './../../Common/Network/ClientMessages'
 
 export default class MoveMessage extends Message
 {
@@ -17,7 +17,7 @@ export default class MoveMessage extends Message
         Assert.integer(x);
         Assert.integer(y);
 
-        this._name = Messages.MOVE;
+        this._name = ClientMessages.MOVE;
         this._data = {
             x: x,
             y: y

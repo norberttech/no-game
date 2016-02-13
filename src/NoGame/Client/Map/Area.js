@@ -30,4 +30,20 @@ export default class Area
     {
         return this._tiles;
     }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     * @returns {boolean}
+     */
+    canWalkOn(x, y)
+    {
+        let tile = this._tiles.get(`${x}:${y}`);
+
+        if (tile === undefined) {
+            return false;
+        }
+
+        return tile.canWalkOn();
+    }
 }

@@ -41,6 +41,9 @@ export default class Player
         return this._name;
     }
 
+    /**
+     * @returns {string}
+     */
     id()
     {
         return this._id;

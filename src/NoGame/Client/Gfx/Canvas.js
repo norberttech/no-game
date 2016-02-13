@@ -17,6 +17,19 @@ export default class Canvas
 
         this._canvas = canvas;
         this._context = canvas.getContext('2d');
+        this._visibleTiles = {x: 15, y: 11};
+    }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     */
+    setVisibleTiles(x, y)
+    {
+        Assert.integer(x);
+        Assert.integer(y);
+
+        this._visibleTiles = {x: x, y: y};
     }
 
     clear()
@@ -24,9 +37,9 @@ export default class Canvas
         this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
     }
 
-    drawGrid(sizeX, sizeY)
+    drawGrid()
     {
-        let tileSize = this.calculateTileSize(sizeX, sizeY);
+        let tileSize = this.calculateTileSize();
         let lineSize = 1;
 
         this._context.beginPath();
@@ -34,21 +47,21 @@ export default class Canvas
         this._context.fillStyle = "rgba(0,0,0,0.5)";
         this._context.lineWidth = lineSize;
 
-        for (let y = 0; y <= sizeY; y++) {
+        for (let y = 0; y <= this._visibleTiles.y; y++) {
             let xStartPos = 0;
             let yStartPos = (y === 0) ? tileSize.getHeight() * y + lineSize : tileSize.getHeight() * y;
-            let xEndPos = tileSize.getWidth() * sizeX;
+            let xEndPos = tileSize.getWidth() * this._visibleTiles.x;
             let yEndPos = (y === 0) ? tileSize.getHeight() * y + lineSize : tileSize.getHeight() * y;
 
             this._context.moveTo(xStartPos, yStartPos);
             this._context.lineTo(xEndPos, yEndPos);
         }
 
-        for (let x = 0; x <= sizeX; x++) {
+        for (let x = 0; x <= this._visibleTiles.x; x++) {
             let xStartPos = (x === 0) ? tileSize.getWidth() * x + lineSize : tileSize.getWidth() * x;
             let yStartPos = 0;
             let xEndPos = (x === 0) ? tileSize.getWidth() * x + lineSize : tileSize.getWidth() * x;
-            let yEndPos = tileSize.getHeight() * sizeY;
+            let yEndPos = tileSize.getHeight() * this._visibleTiles.y;
 
             this._context.moveTo(xStartPos, yStartPos);
             this._context.lineTo(xEndPos, yEndPos);
@@ -61,18 +74,14 @@ export default class Canvas
      * @param {integer} x
      * @param {integer} y
      * @param {Sprite} sprite
-     * @param {integer} totalX
-     * @param {integer} totalY
      */
-    drawTile(x, y, sprite, totalX, totalY)
+    drawTile(x, y, sprite)
     {
         Assert.integer(x);
         Assert.integer(y);
         Assert.instanceOf(sprite, Sprite);
-        Assert.integer(totalX);
-        Assert.integer(totalY);
 
-        let tileSize = this.calculateTileSize(totalX, totalY);
+        let tileSize = this.calculateTileSize();
 
         this._context.drawImage(
             sprite.img(),
@@ -88,21 +97,38 @@ export default class Canvas
     }
 
     /**
+     * @param {int} x
+     * @param {int} y
+     */
+    drawBlankTile(x, y)
+    {
+        Assert.integer(x);
+        Assert.integer(y);
+
+        let tileSize = this.calculateTileSize();
+
+        this._context.fillStyle = '#000000';
+
+        this._context.fillRect(
+            tileSize.getWidth() * x,
+            tileSize.getHeight() * y,
+            tileSize.getWidth(),
+            tileSize.getWidth()
+        );
+    }
+
+    /**
      * @param {string} nick
      * @param {int} x
      * @param {int} y
-     * @param {int} totalX
-     * @param {int} totalY
      */
-    drawPLayer(nick, x, y, totalX, totalY)
+    drawPLayer(nick, x, y)
     {
         Assert.string(nick);
         Assert.integer(x);
         Assert.integer(y);
-        Assert.integer(totalX);
-        Assert.integer(totalY);
 
-        let tileSize = this.calculateTileSize(totalX, totalY);
+        let tileSize = this.calculateTileSize();
 
         this._context.fillStyle = '#FF0000';
 
@@ -123,13 +149,44 @@ export default class Canvas
     }
 
     /**
+     * @param {string} nick
+     * @param {int} x
+     * @param {int} y
+     */
+    drawCharacter(nick, x, y)
+    {
+        Assert.string(nick);
+        Assert.integer(x);
+        Assert.integer(y);
+
+        let tileSize = this.calculateTileSize();
+
+        this._context.fillStyle = '#44BBE3';
+
+        this._context.fillRect(
+            tileSize.getWidth() * x,
+            tileSize.getHeight() * y,
+            tileSize.getWidth(),
+            tileSize.getWidth()
+        );
+
+        this._context.fillStyle = '#EDE624';
+        this._context.font = "25px Arial";
+        this._context.fillText(
+            nick,
+            tileSize.getWidth() * x - 10,
+            tileSize.getHeight() * y - 5
+        );
+    }
+
+    /**
      * @returns {Size}
      */
-    calculateTileSize(x, y)
+    calculateTileSize()
     {
         return new Size(
-            Math.floor(this._canvas.width / x),
-            Math.floor(this._canvas.height / y)
+            Math.floor(this._canvas.width / this._visibleTiles.x),
+            Math.floor(this._canvas.height / this._visibleTiles.y)
         );
     }
 }

@@ -3,7 +3,7 @@
 import Assert from './../../../JSAssert/Assert';
 import Message from './../../Common/Network/Message';
 import Player from './../../Engine/Player';
-import Messages from './Messages';
+import ClientMessages from './../../Common/Network/ClientMessages';
 
 export default class LoginMessage extends Message
 {
@@ -16,7 +16,7 @@ export default class LoginMessage extends Message
 
         Assert.string(playername);
 
-        this._name = Messages.LOGIN;
+        this._name = ClientMessages.LOGIN;
         this._data = {username: playername};
     }
 }

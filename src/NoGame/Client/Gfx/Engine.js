@@ -4,7 +4,8 @@ import Assert from './../../../JSAssert/Assert';
 import Canvas from './Canvas';
 import SpriteMap from './SpriteMap';
 import Tile from './../Map/Tile';
-import Player from './../Player'
+import Player from './../Player';
+import Character from './../Character';
 
 export default class Engine
 {
@@ -24,7 +25,21 @@ export default class Engine
         this._spriteMap = spriteMap;
         this._tiles = null;
         this._player = null;
+        this._characters = [];
         this._visibleTiles = {x: 15, y: 11};
+    }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     */
+    setVisibleTiles(x, y)
+    {
+        Assert.integer(x);
+        Assert.integer(y);
+
+        this._canvas.setVisibleTiles(x, y);
+        this._visibleTiles = {x: x, y: y};
     }
 
     loadSprites()
@@ -43,6 +58,16 @@ export default class Engine
     }
 
     /**
+     * @param {Character[]} characters
+     */
+    setCharacters(characters)
+    {
+        Assert.containsOnly(characters, Character);
+
+        this._characters = characters;
+    }
+
+    /**
      * @param {Tile[]} tiles
      */
     setTiles(tiles)
@@ -58,6 +83,7 @@ export default class Engine
         if (this._spriteMap.isLoaded()) {
             if (null !== this._player && null !== this._tiles) {
                 this._drawVisibleArea();
+                this._drawVisibleCharacters();
                 this._drawPlayer();
             }
         }
@@ -81,14 +107,50 @@ export default class Engine
                 let tileY = areaTiles.y + y;
                 let tile = this._tiles.get(`${tileX}:${tileY}`);
 
-                for (let spriteId of tile.stack()) {
-                    let sprite = this._spriteMap.getSprite(spriteId);
-                    this._canvas.drawTile(x, y, sprite, this._visibleTiles.x, this._visibleTiles.y);
+                if (tile === undefined) {
+                    this._canvas.drawBlankTile(x, y);
+                } else {
+                    for (let spriteId of tile.stack()) {
+                        let sprite = this._spriteMap.getSprite(spriteId);
+                        this._canvas.drawTile(x, y, sprite);
+                    }
                 }
             }
         }
 
-        this._canvas.drawGrid(this._visibleTiles.x, this._visibleTiles.y);
+        this._canvas.drawGrid();
+    }
+
+    _drawVisibleCharacters()
+    {
+        let xStart = this._player.position().x - ((this._visibleTiles.x - 1) / 2);
+        let yStart = this._player.position().y - ((this._visibleTiles.y - 1) / 2);
+        let range = {
+            x: {
+                start: xStart,
+                end: xStart + this._visibleTiles.x
+            },
+            y: {
+                start: yStart,
+                end: yStart + this._visibleTiles.y
+            }
+        };
+
+        let centerSquarePosition = {
+            x: (this._visibleTiles.x - 1) / 2,
+            y: (this._visibleTiles.y - 1) / 2
+        };
+
+        for (let character of this._characters) {
+            if (character.position().x > range.x.start && character.position().x < range.x.end
+                && character.position().y > range.y.start && character.position().y < range.y.end) {
+
+                let absoluteX = centerSquarePosition.x - (this._player.position().x - character.position().x);
+                let absoluteY = centerSquarePosition.y - (this._player.position().y - character.position().y);
+
+                this._canvas.drawCharacter(character.name(), absoluteX, absoluteY);
+            }
+        }
     }
 
     /**
@@ -96,11 +158,11 @@ export default class Engine
      */
     _drawPlayer()
     {
-        let areaPosition = {
+        let centerSquarePosition = {
             x: (this._visibleTiles.x - 1) / 2,
             y: (this._visibleTiles.y - 1) / 2
         };
 
-        this._canvas.drawPLayer(this._player.name(), areaPosition.x, areaPosition.y, this._visibleTiles.x, this._visibleTiles.y);
+        this._canvas.drawPLayer(this._player.name(), centerSquarePosition.x, centerSquarePosition.y);
     }
 }

@@ -3,7 +3,7 @@
 import Assert from './../../../JSAssert/Assert';
 import Message from './../../Common/Network/Message';
 import Area from './../../Engine/Map/Area';
-import Messages from './Messages';
+import ServerMessages from './../../Common/Network/ServerMessages';
 
 export default class AreaMessage extends Message
 {
@@ -16,7 +16,7 @@ export default class AreaMessage extends Message
 
         Assert.instanceOf(area, Area);
 
-        this._name = Messages.AREA;
+        this._name = ServerMessages.AREA;
         this._data = {
             name: area.name(),
             x: area.sizeX(),
