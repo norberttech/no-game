@@ -17,7 +17,8 @@ export default class UserInterface
         this._loginScreen = this._doc.getElementById("login-screen");
         this._loginForm = this._loginScreen.querySelector("form");
         this._messages = this._doc.querySelector("#messages");
-        this._gameCanvas = this._doc.querySelector("#canvas-wrapper");
+        this._gameCanvasWrapper = this._doc.querySelector("#canvas-wrapper");
+        this._gameCanvas = this._doc.querySelector("#game-canvas");
     }
 
     showLoginScreen()
@@ -27,7 +28,7 @@ export default class UserInterface
 
     showCanvas()
     {
-        this._gameCanvas.style.display = 'block';
+        this._gameCanvasWrapper.style.display = 'block';
     }
 
     hideLoginScreen()
@@ -37,7 +38,7 @@ export default class UserInterface
 
     hideCanvas()
     {
-        this._gameCanvas.style.display = 'none';
+        this._gameCanvasWrapper.style.display = 'none';
     }
 
     onLoginSubmit(callback)
@@ -87,5 +88,21 @@ export default class UserInterface
                     break;
             }
         });
+    }
+
+    bindWindowResize()
+    {
+        window.addEventListener("resize", (e) => {
+            this.resizeUI();
+        });
+    }
+
+    resizeUI()
+    {
+        let width = this._doc.body.clientWidth;
+        let height = this._doc.body.clientHeight;
+
+        this._gameCanvas.setAttribute('width', (width * 0.8));
+        this._gameCanvas.setAttribute('height', height);
     }
 }

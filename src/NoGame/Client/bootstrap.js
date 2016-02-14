@@ -21,6 +21,7 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
     let client = new Client('ws://localhost:8080/', new Kernel(gfx));
     let ui = new UserInterface(window.document);
 
+    ui.bindWindowResize();
     ui.bindArrows((key) => {
         switch (key) {
             case Keys.LEFT:
@@ -53,5 +54,6 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
         ui.hideLoginScreen();
         ui.showCanvas();
         client.login(username);
+        ui.resizeUI();
     });
 });

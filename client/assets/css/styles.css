@@ -1,3 +1,9 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+}
+
 #login-screen {
     width: 800px;
     border: 1px solid black;
@@ -16,8 +22,11 @@
 }
 
 #messages {
+    position: absolute;
     width: 800px;
-    margin: 10px auto;
+    top: 20px;
+    left: 50%;
+    margin-left: -400px;
 }
 
 #messages .alert {
@@ -31,7 +40,6 @@
 }
 
 #canvas-wrapper {
-    margin: 0 auto;
     width: 1024px;
     display: none;
 }

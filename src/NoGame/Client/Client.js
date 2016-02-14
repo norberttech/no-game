@@ -88,9 +88,11 @@ export default class Client
                 case ServerMessages.CHARACTER_MOVE:
                     this._kernel.characterMove(message.data.id, message.data.x, message.data.y);
                     break;
+                default:
+                    console.log(message);
+                    break;
             }
 
-            console.log(message);
         };
     }
 

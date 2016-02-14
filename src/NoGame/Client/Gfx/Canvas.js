@@ -136,7 +136,7 @@ export default class Canvas
             tileSize.getWidth() * x,
             tileSize.getHeight() * y,
             tileSize.getWidth(),
-            tileSize.getWidth()
+            tileSize.getHeight()
         );
 
         this._context.fillStyle = '#EDE624';
@@ -167,7 +167,7 @@ export default class Canvas
             tileSize.getWidth() * x,
             tileSize.getHeight() * y,
             tileSize.getWidth(),
-            tileSize.getWidth()
+            tileSize.getHeight()
         );
 
         this._context.fillStyle = '#EDE624';
@@ -185,8 +185,8 @@ export default class Canvas
     calculateTileSize()
     {
         return new Size(
-            Math.floor(this._canvas.width / this._visibleTiles.x),
-            Math.floor(this._canvas.height / this._visibleTiles.y)
+            Math.floor(this._canvas.getAttribute('width') / this._visibleTiles.x),
+            Math.floor(this._canvas.getAttribute('height') / this._visibleTiles.y)
         );
     }
 }
