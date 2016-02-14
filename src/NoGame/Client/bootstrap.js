@@ -39,6 +39,14 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
         }
     });
 
+    ui.onSay((message) => {
+        client.say(message);
+    });
+
+    client.onMessage((characterName, message) => {
+        ui.chat().addMessage(new Date(), characterName, message);
+    });
+
     client.connect((client) => {
         ui.showLoginScreen();
     });
@@ -55,5 +63,6 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
         ui.showCanvas();
         client.login(username);
         ui.resizeUI();
+        ui.chat().setCurrentUsername(username);
     });
 });

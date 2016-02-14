@@ -7,6 +7,7 @@ import AreaMessage from './Network/AreaMessage';
 import MoveMessage from './Network/MoveMessage';
 import CharactersMessage from './Network/CharactersMessage';
 import CharacterMoveMessage from './Network/CharacterMoveMessage';
+import CharacterSayMessage from './Network/CharacterSayMessage';
 import Assert from './../../JSAssert/Assert';
 import Kernel from './../Engine/Kernel';
 import Player from './../Engine/Player';
@@ -47,16 +48,16 @@ export default class Server
     }
 
     /**
-     * @param {string} rawMessage
+     * @param {string} rawPacket
      * @param {Connection} currentConnection
      */
-    onMessage(rawMessage, currentConnection)
+    onMessage(rawPacket, currentConnection)
     {
-        let message = JSON.parse(rawMessage);
+        let packet = JSON.parse(rawPacket);
 
-        switch (message.name) {
+        switch (packet.name) {
             case ClientMessages.LOGIN:
-                let player = new Player(message.data.username);
+                let player = new Player(packet.data.username);
                 this._kernel.login(player);
                 currentConnection.setPlayerId(player.id());
                 currentConnection.send(new LoginMessage(player));
@@ -75,7 +76,7 @@ export default class Server
                 break;
             case ClientMessages.MOVE:
                 let area = this._kernel.playerArea(currentConnection.playerId());
-                let requestedPosition = new Position(message.data.x, message.data.y);
+                let requestedPosition = new Position(packet.data.x, packet.data.y);
 
                 area.movePlayerTo(currentConnection.playerId(), requestedPosition);
 
@@ -93,6 +94,20 @@ export default class Server
                     }
 
                     connection.send(new CharacterMoveMessage(currentConnection.playerId(), currentPosition));
+                }
+
+                break;
+            default:
+                for (let connection of this._connections.values()) {
+                    if (connection.id() === currentConnection.id()) {
+                        continue;
+                    }
+
+                    if (!connection.hasPlayerId()) {
+                        continue;
+                    }
+
+                    connection.send(new CharacterSayMessage(currentConnection.playerId(), packet.data.message));
                 }
 
                 break;

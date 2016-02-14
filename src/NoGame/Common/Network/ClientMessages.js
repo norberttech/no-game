@@ -2,7 +2,8 @@
 
 const ClientMessages = {
     LOGIN: 'login',
-    MOVE: 'move'
+    MOVE: 'move',
+    MESSAGE: 'message'
 };
 
 export default ClientMessages;

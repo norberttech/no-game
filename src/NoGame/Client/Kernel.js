@@ -79,6 +79,23 @@ export default class Kernel
     }
 
     /**
+     * @param {string} characterId
+     * @return {Character}
+     */
+    character(characterId)
+    {
+        Assert.string(characterId);
+
+        for (let character of this._characters) {
+            if (character.id() === characterId) {
+                return character;
+            }
+        }
+
+        throw `Unknown character with id "${characterId}"`;
+    }
+
+    /**
      * @param {Player} player
      */
     login(player)

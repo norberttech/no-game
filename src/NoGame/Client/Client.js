@@ -8,6 +8,7 @@ import Player from './Player';
 import Character from './Character';
 import LoginMessage from './Network/LoginMessage';
 import MoveMessage from './Network/MoveMessage';
+import SayMessage from './Network/SayMessage';
 import ServerMessages from './../Common/Network/ServerMessages';
 
 export default class Client
@@ -25,6 +26,7 @@ export default class Client
         this._serverAddress = serverAddress;
         this._isConnected = false;
         this._isLoggedIn = false;
+        this._onSay = null;
     }
 
     /**
@@ -89,7 +91,11 @@ export default class Client
                     this._kernel.characterMove(message.data.id, message.data.x, message.data.y);
                     break;
                 default:
-                    console.log(message);
+                    let character = this._kernel.character(message.data.id);
+                    if (null !== this._onSay) {
+                        this._onSay(character.name(), message.data.message);
+                    }
+
                     break;
             }
 
@@ -112,6 +118,16 @@ export default class Client
     }
 
     /**
+     * @param {function} callback
+     */
+    onMessage(callback)
+    {
+        Assert.isFunction(callback);
+
+        this._onSay = callback;
+    }
+
+    /**
      * @param {string} username
      */
     login(username)
@@ -120,6 +136,18 @@ export default class Client
 
         if (this._isConnected) {
             this._connection.send(new LoginMessage(username).toString());
+        }
+    }
+
+    /**
+     * @param {string} message
+     */
+    say(message)
+    {
+        Assert.string(message);
+
+        if (this._isLoggedIn) {
+            this._connection.send(new SayMessage(message).toString());
         }
     }
 
