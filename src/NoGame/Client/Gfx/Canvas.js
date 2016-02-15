@@ -39,7 +39,7 @@ export default class Canvas
 
     drawGrid()
     {
-        let tileSize = this.calculateTileSize();
+        let tileSize = this._calculateTileSize();
         let lineSize = 1;
 
         this._context.beginPath();
@@ -81,7 +81,7 @@ export default class Canvas
         Assert.integer(y);
         Assert.instanceOf(sprite, Sprite);
 
-        let tileSize = this.calculateTileSize();
+        let tileSize = this._calculateTileSize();
 
         this._context.drawImage(
             sprite.img(),
@@ -105,7 +105,7 @@ export default class Canvas
         Assert.integer(x);
         Assert.integer(y);
 
-        let tileSize = this.calculateTileSize();
+        let tileSize = this._calculateTileSize();
 
         this._context.fillStyle = '#000000';
 
@@ -128,7 +128,7 @@ export default class Canvas
         Assert.integer(x);
         Assert.integer(y);
 
-        let tileSize = this.calculateTileSize();
+        let tileSize = this._calculateTileSize();
 
         this._context.fillStyle = '#FF0000';
 
@@ -141,10 +141,11 @@ export default class Canvas
 
         this._context.fillStyle = '#EDE624';
         this._context.font = "25px Arial";
+
         this._context.fillText(
             nick,
-            tileSize.getWidth() * x - 10,
-            tileSize.getHeight() * y - 5
+            tileSize.getWidth() * x + this._calculateTextTileOffset(nick, tileSize),
+            tileSize.getHeight() * y - 8
         );
     }
 
@@ -159,7 +160,7 @@ export default class Canvas
         Assert.integer(x);
         Assert.integer(y);
 
-        let tileSize = this.calculateTileSize();
+        let tileSize = this._calculateTileSize();
 
         this._context.fillStyle = '#44BBE3';
 
@@ -174,19 +175,33 @@ export default class Canvas
         this._context.font = "25px Arial";
         this._context.fillText(
             nick,
-            tileSize.getWidth() * x - 10,
+            tileSize.getWidth() * x - this._calculateTextTileOffset(nick, tileSize),
             tileSize.getHeight() * y - 5
         );
     }
 
     /**
      * @returns {Size}
+     * @private
      */
-    calculateTileSize()
+    _calculateTileSize()
     {
         return new Size(
             Math.floor(this._canvas.getAttribute('width') / this._visibleTiles.x),
             Math.floor(this._canvas.getAttribute('height') / this._visibleTiles.y)
         );
+    }
+
+    /**
+     * @param {string} text
+     * @param {Size} tileSize
+     * @returns {number}
+     * @private
+     */
+    _calculateTextTileOffset(text, tileSize)
+    {
+        let textWidth = this._context.measureText(text);
+
+        return (Math.round(tileSize.getWidth() / 2) - Math.round(textWidth.width / 2));
     }
 }
