@@ -1,8 +1,8 @@
 'use strict';
 
-import Assert from './../../JSAssert/Assert';
+import Assert from './../../../JSAssert/Assert';
 import WebSocket from 'ws/lib/WebSocket';
-import Message from '../Common/Network/Message';
+import Message from '../../Common/Network/Message';
 import UUID from 'UUID';
 
 export default class Connection

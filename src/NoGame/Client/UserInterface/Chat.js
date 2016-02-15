@@ -22,7 +22,7 @@ export default class Chat
         this._messages = chatContainer.querySelector('.messages');
         this._input = inputContainer.querySelector('input[type="text"]');
         this._currentUsername = null;
-        this._onSay = null;
+        this._onCharacterSay = null;
         this._bindChatInputEvents(this);
     }
 
@@ -43,7 +43,7 @@ export default class Chat
     {
         Assert.isFunction(callback);
 
-        this._onSay = callback;
+        this._onCharacterSay = callback;
     }
 
     /**
@@ -56,8 +56,8 @@ export default class Chat
             throw `Only logged users can use chat`;
         }
 
-        if (null !== this._onSay) {
-            this._onSay(message);
+        if (null !== this._onCharacterSay) {
+            this._onCharacterSay(message);
         }
 
         this.addMessage(time, this._currentUsername, message);

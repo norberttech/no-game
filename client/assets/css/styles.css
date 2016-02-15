@@ -1,7 +1,9 @@
 html, body {
     height: 100%;
     width: 100%;
-    margin: 0px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 #login-screen {
@@ -56,14 +58,13 @@ html, body {
     position: absolute;
     z-index: 100;
     width: 20%;
-    border: 1px solid #000000;
     background: #808080;
     color: #ffce46;
     right: 0;
     bottom: 25px;
     padding: 10px 0;
     height: 20%;
-    overflow-x: scroll;;
+    overflow-y: scroll;;
 }
 
 #canvas-wrapper #chat .messages {

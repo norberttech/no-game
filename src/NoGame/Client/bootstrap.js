@@ -43,7 +43,7 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
         client.say(message);
     });
 
-    client.onMessage((characterName, message) => {
+    client.onCharacterSay((characterName, message) => {
         ui.chat().addMessage(new Date(), characterName, message);
     });
 
@@ -62,7 +62,7 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
         ui.hideLoginScreen();
         ui.showCanvas();
         client.login(username);
-        ui.resizeUI();
         ui.chat().setCurrentUsername(username);
+        ui.resizeUI();
     });
 });

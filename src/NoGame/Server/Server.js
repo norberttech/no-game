@@ -1,7 +1,7 @@
 'use strict';
 
 import ws from 'ws';
-import Connection from './Connection';
+import Connection from './Network/Connection';
 import LoginMessage from './Network/LoginMessage';
 import AreaMessage from './Network/AreaMessage';
 import MoveMessage from './Network/MoveMessage';
@@ -63,16 +63,11 @@ export default class Server
                 currentConnection.send(new LoginMessage(player));
                 currentConnection.send(new AreaMessage(this._kernel.playerArea(player.id())));
 
-                for (let connection of this._connections.values()) {
-                    if (!connection.hasPlayerId()) {
-                        continue;
-                    }
-
-                    connection.send(new CharactersMessage(
+                this._sendToAllConnectedClients((connection) => {
+                    return new CharactersMessage(
                         this._kernel.playerArea(connection.playerId()).getVisiblePlayersFor(connection.playerId())
-                    ));
-                }
-
+                    )
+                });
                 break;
             case ClientMessages.MOVE:
                 let area = this._kernel.playerArea(currentConnection.playerId());
@@ -84,34 +79,18 @@ export default class Server
 
                 currentConnection.send(new MoveMessage(currentPosition));
 
-                for (let connection of this._connections.values()) {
-                    if (connection.id() === currentConnection.id()) {
-                        continue;
-                    }
-
-                    if (!connection.hasPlayerId()) {
-                        continue;
-                    }
-
-                    connection.send(new CharacterMoveMessage(currentConnection.playerId(), currentPosition));
-                }
-
+                this._sendToOtherConnectedClients(currentConnection, (connection) => {
+                    return new CharacterMoveMessage(currentConnection.playerId(), currentPosition)
+                });
                 break;
             default:
-                for (let connection of this._connections.values()) {
-                    if (connection.id() === currentConnection.id()) {
-                        continue;
-                    }
-
-                    if (!connection.hasPlayerId()) {
-                        continue;
-                    }
-
-                    connection.send(new CharacterSayMessage(currentConnection.playerId(), packet.data.message));
-                }
-
+                this._sendToOtherConnectedClients(currentConnection, (connection) => {
+                    return new CharacterSayMessage(currentConnection.playerId(), packet.data.message)
+                });
                 break;
         }
+
+        console.log(packet);
     }
 
     /**
@@ -126,21 +105,48 @@ export default class Server
             this._kernel.logout(closedConnection.playerId());
 
             // update other players characters list
-            for (let connection of this._connections.values()) {
-                if (connection.id() === closedConnection.id()) {
-                    continue;
-                }
-
-                if (!connection.hasPlayerId()) {
-                    continue;
-                }
-
-                connection.send(new CharactersMessage(
+            this._sendToOtherConnectedClients(closedConnection, (connection) => {
+                return new CharactersMessage(
                     this._kernel.playerArea(connection.playerId()).getVisiblePlayersFor(connection.playerId())
-                ));
-            }
+                )
+            });
         }
 
         this._connections.delete(closedConnection.id());
+    }
+
+    /**
+     * @param {function} messageFactory
+     * @private
+     */
+    _sendToAllConnectedClients(messageFactory)
+    {
+        for (let connection of this._connections.values()) {
+            if (!connection.hasPlayerId()) {
+                continue;
+            }
+
+            connection.send(messageFactory(connection));
+        }
+    }
+
+    /**
+     * @param {Connection} currentConnection
+     * @param {function} messageFactory
+     * @private
+     */
+    _sendToOtherConnectedClients(currentConnection, messageFactory)
+    {
+        for (let connection of this._connections.values()) {
+            if (connection.id() === currentConnection.id()) {
+                continue;
+            }
+
+            if (!connection.hasPlayerId()) {
+                continue;
+            }
+
+            connection.send(messageFactory(connection));
+        }
     }
 }
