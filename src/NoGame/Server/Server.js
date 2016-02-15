@@ -4,6 +4,7 @@ import ws from 'ws';
 import Connection from './Network/Connection';
 import LoginMessage from './Network/LoginMessage';
 import AreaMessage from './Network/AreaMessage';
+import TilesMessage from './Network/TilesMessage';
 import MoveMessage from './Network/MoveMessage';
 import CharactersMessage from './Network/CharactersMessage';
 import CharacterMoveMessage from './Network/CharacterMoveMessage';
@@ -13,6 +14,8 @@ import Kernel from './../Engine/Kernel';
 import Player from './../Engine/Player';
 import Position from './../Engine/Map/Area/Position';
 import ClientMessages from './../Common/Network/ClientMessages'
+
+const VISIBLE_TILES = {x: 15, y: 11};
 
 export default class Server
 {
@@ -104,7 +107,14 @@ export default class Server
         this._kernel.login(player);
         currentConnection.setPlayerId(player.id());
         currentConnection.send(new LoginMessage(player));
-        currentConnection.send(new AreaMessage(this._kernel.playerArea(player.id())));
+        currentConnection.send(new AreaMessage(
+            this._kernel.playerArea(player.id()).name(),
+            VISIBLE_TILES.x,
+            VISIBLE_TILES.y
+        ));
+        currentConnection.send(new TilesMessage(
+            this._kernel.playerArea(player.id()).visibleTiles(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
+        );
 
         this._sendToAllConnectedClients((connection) => {
             return new CharactersMessage(
@@ -132,6 +142,9 @@ export default class Server
 
         let currentPosition = area.player(currentConnection.playerId()).currentPosition();
 
+        currentConnection.send(new TilesMessage(
+            this._kernel.playerArea(player.id()).visibleTiles(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
+        );
         currentConnection.send(new MoveMessage(currentPosition));
 
         this._sendToOtherConnectedClients(currentConnection, (connection) => {

@@ -22,7 +22,20 @@ export default class Position
      */
     toString()
     {
-        return `x: ${this._x}, y: ${this._y}`;
+        return `${this._x}:${this._y}`;
+    }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     * @returns {string}
+     */
+    static toStringFromNative(x, y)
+    {
+        Assert.integer(x);
+        Assert.integer(y);
+
+        return `${x}:${y}`;
     }
 
     /**

@@ -133,4 +133,17 @@ export default class Assert
             throw Message.expected("not empty value", value);
         }
     }
+
+
+    /**
+     * @param integerValue
+     */
+    static oddNumber(integerValue)
+    {
+        this.integer(integerValue);
+
+        if ((integerValue % 2) !== 1) {
+            throw Message.expected("odd number", integerValue);
+        }
+    }
 }

@@ -8,29 +8,25 @@ import ServerMessages from './../../Common/Network/ServerMessages';
 export default class AreaMessage extends Message
 {
     /**
-     * @param {Area} area
+     * @param {string} areaName
+     * @param {int} visibleTilesX
+     * @param {int} visibleTilesY
      */
-    constructor(area)
+    constructor(areaName, visibleTilesX, visibleTilesY)
     {
         super();
 
-        Assert.instanceOf(area, Area);
+        Assert.string(areaName);
+        Assert.integer(visibleTilesX);
+        Assert.integer(visibleTilesY);
 
         this._name = ServerMessages.AREA;
         this._data = {
-            name: area.name(),
-            x: area.sizeX(),
-            y: area.sizeY(),
-            tiles: area.tiles().map(function(tile) {
-                return {
-                    x: tile.position().x(),
-                    y: tile.position().y(),
-                    canWalkOn: tile.canWalkOn(),
-                    stack: [
-                        tile.ground().spriteId()
-                    ]
-                }
-            })
+            name: areaName,
+            visibleTiles: {
+                x: visibleTilesX,
+                y: visibleTilesY
+            }
         };
     }
 }

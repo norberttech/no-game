@@ -26,6 +26,15 @@ describe("Assert", () => {
         expect(() => {Assert.integer(() => {})}).toThrow('Expected integer but got "function[function () {}]".');
     });
 
+    it ("asserts odd number", () => {
+        Assert.oddNumber(3);
+    });
+
+    it ("asserts odd number", () => {
+        expect(() => {Assert.oddNumber(4)}).toThrow('Expected odd number but got "int[4]".');
+    });
+
+
     it ("asserts strings", () => {
         Assert.string("string");
         Assert.string("");

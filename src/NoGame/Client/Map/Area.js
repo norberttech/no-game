@@ -5,11 +5,9 @@ import Assert from './../../../JSAssert/Assert';
 
 export default class Area
 {
-    constructor(name, x, y)
+    constructor(name)
     {
-        this._name = x;
-        this._x = x;
-        this._y = y;
+        this._name = name;
         this._tiles = new Map();
     }
 
@@ -21,6 +19,20 @@ export default class Area
         Assert.instanceOf(tile, Tile);
 
         this._tiles.set(tile.toString(), tile);
+    }
+
+    /**
+     * @param {Tile[]} tiles
+     */
+    setTiles(tiles)
+    {
+        Assert.containsOnly(tiles, Tile);
+
+        this._tiles.clear();
+
+        for (let tile of tiles) {
+            this._tiles.set(tile.toString(), tile);
+        }
     }
 
     /**

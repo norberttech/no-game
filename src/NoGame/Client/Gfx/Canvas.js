@@ -17,7 +17,7 @@ export default class Canvas
 
         this._canvas = canvas;
         this._context = canvas.getContext('2d');
-        this._visibleTiles = {x: 15, y: 11};
+        this._visibleTiles = null;
     }
 
     /**
@@ -39,6 +39,10 @@ export default class Canvas
 
     drawGrid()
     {
+        if (!this._canDraw()) {
+            return ;
+        }
+
         let tileSize = this._calculateTileSize();
         let lineSize = 1;
 
@@ -77,6 +81,10 @@ export default class Canvas
      */
     drawTile(x, y, sprite)
     {
+        if (!this._canDraw()) {
+            return ;
+        }
+
         Assert.integer(x);
         Assert.integer(y);
         Assert.instanceOf(sprite, Sprite);
@@ -102,6 +110,10 @@ export default class Canvas
      */
     drawBlankTile(x, y)
     {
+        if (!this._canDraw()) {
+            return ;
+        }
+
         Assert.integer(x);
         Assert.integer(y);
 
@@ -124,6 +136,10 @@ export default class Canvas
      */
     drawPLayer(nick, x, y)
     {
+        if (!this._canDraw()) {
+            return ;
+        }
+
         Assert.string(nick);
         Assert.integer(x);
         Assert.integer(y);
@@ -156,6 +172,10 @@ export default class Canvas
      */
     drawCharacter(nick, x, y)
     {
+        if (!this._canDraw()) {
+            return ;
+        }
+
         Assert.string(nick);
         Assert.integer(x);
         Assert.integer(y);
@@ -228,5 +248,14 @@ export default class Canvas
 
         this._context.fillStyle = color;
         this._context.fillText(text, x, y);
+    }
+
+    /**
+     * @returns {boolean}
+     * @private
+     */
+    _canDraw()
+    {
+        return null !== this._visibleTiles;
     }
 }

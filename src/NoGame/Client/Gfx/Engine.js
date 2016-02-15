@@ -26,7 +26,7 @@ export default class Engine
         this._tiles = null;
         this._player = null;
         this._characters = [];
-        this._visibleTiles = {x: 15, y: 11};
+        this._visibleTiles = null;
     }
 
     /**
@@ -80,7 +80,7 @@ export default class Engine
     draw()
     {
         this._canvas.clear();
-        if (this._spriteMap.isLoaded()) {
+        if (this._spriteMap.isLoaded() && null !== this._visibleTiles) {
             if (null !== this._player && null !== this._tiles) {
                 this._drawVisibleArea();
                 this._drawVisibleCharacters();

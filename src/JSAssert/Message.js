@@ -84,6 +84,10 @@ export default class Message
             return `object[${JSON.stringify(value)}]`;
         }
 
+        if (typeof value === 'undefined') {
+            return 'undefined';
+        }
+
         throw `Unhandled type ${typeof value}`;
     }
 }

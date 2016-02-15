@@ -60,6 +60,41 @@ export default class Area
     }
 
     /**
+     * @param {string} playerId
+     * @param {int} tilesX
+     * @param {int} tilesY
+     * @returns {Tile[]}
+     */
+    visibleTiles(playerId, tilesX, tilesY)
+    {
+        Assert.oddNumber(tilesX);
+        Assert.oddNumber(tilesY);
+        this._playerExists(playerId);
+
+        let player = this._characters.get(playerId);
+        let tilesRange = {
+            x: {
+                start: player.currentPosition().x() - ((tilesX - 1) / 2),
+                end: player.currentPosition().x() - ((tilesX - 1) / 2) + tilesX
+            },
+            y: {
+                start: player.currentPosition().y() - ((tilesY - 1) / 2),
+                end: player.currentPosition().y() - ((tilesY - 1) / 2) + tilesY
+            }
+        };
+        let tiles = [];
+
+        for (let x = tilesRange.x.start; x < tilesRange.x.end; x++) {
+            for (let y = tilesRange.y.start; y < tilesRange.y.end; y++) {
+                let tile = this._tiles.get(Position.toStringFromNative(x, y));
+                tiles.push(tile);
+            }
+        }
+
+        return tiles;
+    }
+
+    /**
      * @param {Position} newSpawnPosition
      */
     changeSpawnPosition(newSpawnPosition)

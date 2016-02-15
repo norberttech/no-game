@@ -153,11 +153,8 @@ export default class Client
                 this._isLoggedIn = true;
                 break;
             case ServerMessages.AREA:
-                let area = new Area(message.data.name, 100, 100);
-                for (let tileData of message.data.tiles) {
-                    area.addTile(new Tile(tileData.x, tileData.y, tileData.canWalkOn, tileData.stack));
-                }
-                this._kernel.setArea(area);
+                this._kernel.setArea(new Area(message.data.name));
+                this._kernel.setVisibleTiles(message.data.visibleTiles.x, message.data.visibleTiles.y);
                 break;
             case ServerMessages.MOVE:
                 this._kernel.player().move(message.data.x, message.data.y);
@@ -179,12 +176,19 @@ export default class Client
             case ServerMessages.CHARACTER_MOVE:
                 this._kernel.characterMove(message.data.id, message.data.x, message.data.y);
                 break;
-            default:
+            case ServerMessages.CHARACTER_SAY:
                 let character = this._kernel.character(message.data.id);
                 if (null !== this._onCharacterSay) {
                     this._onCharacterSay(character.name(), message.data.message);
                 }
 
+                break;
+            default:
+                let tiles = message.data.tiles.map((tileData) => {
+                    return new Tile(tileData.x, tileData.y, tileData.canWalkOn, tileData.stack);
+                });
+
+                this._kernel.area().setTiles(tiles);
                 break;
         }
     }

@@ -55,7 +55,6 @@ export default class Connection
      */
     send(message)
     {
-        console.log(message);
         Assert.instanceOf(message, Message);
 
         this._socket.send(message.toString());

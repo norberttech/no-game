@@ -6,11 +6,6 @@ import Area from './Map/Area';
 import Player from './Player';
 import Character from './Character';
 
-const VISIBLE_SQUARES = {
-    x: 15,
-    y: 11
-};
-
 export default class Kernel
 {
     /**
@@ -24,12 +19,24 @@ export default class Kernel
         this._version = '1.0.0-DEV';
         this._player = null;
         this._characters = [];
+        this._area = null;
     }
 
     boot()
     {
         this._gfxEngine.loadSprites();
-        this._gfxEngine.setVisibleTiles(VISIBLE_SQUARES.x, VISIBLE_SQUARES.y);
+    }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     */
+    setVisibleTiles(x, y)
+    {
+        Assert.integer(x);
+        Assert.integer(y);
+
+        this._gfxEngine.setVisibleTiles(x, y);
     }
 
     draw()
@@ -125,5 +132,13 @@ export default class Kernel
 
         this._area = area;
         this._gfxEngine.setTiles(this._area.tiles());
+    }
+
+    /**
+     * @returns {null|Area}
+     */
+    area()
+    {
+        return this._area;
     }
 }
