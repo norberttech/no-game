@@ -1,5 +1,7 @@
 'use strict';
 
+import Message from './Message';
+
 export default class Assert
 {
     /**
@@ -9,11 +11,11 @@ export default class Assert
     static instanceOf(objectValue, instance)
     {
         if (typeof objectValue !== 'object') {
-            throw `Expected object but got ${objectValue}`;
+            throw Message.expected("object", objectValue);
         }
 
         if (!(objectValue instanceof instance)) {
-            throw `Expected instance of ${instance.name}, got ${objectValue.constructor.name}`;
+            throw Message.expectedInstanceOf(instance.name, objectValue);
         }
     }
 
@@ -23,14 +25,7 @@ export default class Assert
     static integer(integerValue)
     {
         if (!Number.isInteger(integerValue)) {
-            if (typeof integerValue === 'object') {
-                throw `Expected integer value, got object`;
-            }
-            if (typeof integerValue === 'function') {
-                throw `Expected integer value, got function`;
-            }
-
-            throw `Expected integer value, got ${integerValue}`;
+            throw Message.expected("integer", integerValue);
         }
     }
 
@@ -40,14 +35,7 @@ export default class Assert
     static string(stringValue)
     {
         if (typeof stringValue !== "string") {
-            if (typeof stringValue === 'object') {
-                throw `Expected string value, got object`;
-            }
-            if (typeof stringValue === 'function') {
-                throw `Expected string value, got function`;
-            }
-
-            throw `Expected string value, got ${stringValue}`;
+            throw Message.expected("string", stringValue);
         }
     }
 
@@ -57,14 +45,7 @@ export default class Assert
     static boolean(booleanValue)
     {
         if (typeof booleanValue !== 'boolean') {
-            if (typeof booleanValue === 'object') {
-                throw `Expected boolean value, got object`;
-            }
-            if (typeof booleanValue === 'function') {
-                throw `Expected boolean value, got function`;
-            }
-
-            throw `Expected boolean value, got ${booleanValue}`;
+            throw Message.expected("boolean", booleanValue);
         }
     }
 
@@ -74,15 +55,7 @@ export default class Assert
     static object(objectValue)
     {
         if (typeof objectValue !== 'object') {
-            if (typeof objectValue === 'function') {
-                throw `Expected object value, got function`;
-            }
-
-            if (typeof objectValue === 'array') {
-                throw `Expected object value, got array`;
-            }
-
-            throw `Expected object value, got ${objectValue}`;
+            throw Message.expected("object", objectValue);
         }
     }
 
@@ -92,14 +65,7 @@ export default class Assert
     static array(arrayValue)
     {
         if (!Array.isArray(arrayValue)) {
-            if (typeof arrayValue === 'object') {
-                throw `Expected array value, got object`;
-            }
-            if (typeof arrayValue === 'function') {
-                throw `Expected array value, got function`;
-            }
-
-            throw `Expected array value, got ${arrayValue}`;
+            throw Message.expected("array", arrayValue);
         }
     }
 
@@ -109,11 +75,7 @@ export default class Assert
     static isFunction(functionValue)
     {
         if (typeof functionValue !== 'function') {
-            if (typeof functionValue === 'object') {
-                throw `Expected function value, got object`;
-            }
-
-            throw `Expected function value, got ${functionValue}`;
+            throw Message.expected("function", functionValue);
         }
     }
 
@@ -143,11 +105,7 @@ export default class Assert
             try {
                 this.instanceOf(element, expectedInstance);
             } catch (error) {
-                if (typeof element !== 'object') {
-                    throw `Expected instance of ${expectedInstance.name}, got ${element}`;
-                }
-
-                throw `Expected instance of ${expectedInstance.name}, got ${element.constructor.name}`;
+                throw Message.expectedInstanceOf(expectedInstance.name, element);
             }
         }
     }
@@ -172,7 +130,7 @@ export default class Assert
     static notEmpty(value)
     {
         if (value.length === 0) {
-            throw `Expected not empty value`;
+            throw Message.expected("not empty value", value);
         }
     }
 }

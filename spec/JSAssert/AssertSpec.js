@@ -6,12 +6,12 @@ describe("Assert", () => {
     });
 
     it ("throws error when asserting instance of non object", () => {
-        expect(() => {Assert.instanceOf(1, String)}).toThrow('Expected object but got 1');
-        expect(() => {Assert.instanceOf(new Number(2), String)}).toThrow('Expected instance of String, got Number');
+        expect(() => {Assert.instanceOf(1, String)}).toThrow('Expected object but got "int[1]".');
+        expect(() => {Assert.instanceOf(new Number(2), String)}).toThrow('Expected instance of "String" but got "Number:int[2]".');
     });
 
     it ("throws error when compared different instances", () => {
-        expect(() => {Assert.instanceOf(new Number(2), String)}).toThrow('Expected instance of String, got Number');
+        expect(() => {Assert.instanceOf(new Number(2), String)}).toThrow('Expected instance of "String" but got "Number:int[2]".');
     });
 
     it ("asserts integers", () => {
@@ -19,11 +19,11 @@ describe("Assert", () => {
     });
 
     it ("throws error when asserting non integer as an interger", () => {
-        expect(() => {Assert.integer("string")}).toThrow('Expected integer value, got string');
-        expect(() => {Assert.integer(new Array([]))}).toThrow('Expected integer value, got object');
-        expect(() => {Assert.integer(1.23)}).toThrow('Expected integer value, got 1.23');
-        expect(() => {Assert.integer(true)}).toThrow('Expected integer value, got true');
-        expect(() => {Assert.integer(() => {})}).toThrow('Expected integer value, got function');
+        expect(() => {Assert.integer("string")}).toThrow('Expected integer but got "string["string"]".');
+        expect(() => {Assert.integer(new Array([]))}).toThrow('Expected integer but got "array[length: 1]".');
+        expect(() => {Assert.integer(1.23)}).toThrow('Expected integer but got "float[1.23]".');
+        expect(() => {Assert.integer(true)}).toThrow('Expected integer but got "boolean[true]".');
+        expect(() => {Assert.integer(() => {})}).toThrow('Expected integer but got "function[function () {}]".');
     });
 
     it ("asserts strings", () => {
@@ -32,11 +32,11 @@ describe("Assert", () => {
     });
 
     it ("throws error when asserting non string as an string", () => {
-        expect(() => {Assert.string(123)}).toThrow('Expected string value, got 123');
-        expect(() => {Assert.string(new Array([]))}).toThrow('Expected string value, got object');
-        expect(() => {Assert.string(1.23)}).toThrow('Expected string value, got 1.23');
-        expect(() => {Assert.string(true)}).toThrow('Expected string value, got true');
-        expect(() => {Assert.string(() => {})}).toThrow('Expected string value, got function');
+        expect(() => {Assert.string(123)}).toThrow('Expected string but got "int[123]".');
+        expect(() => {Assert.string(new Array([]))}).toThrow('Expected string but got "array[length: 1]".');
+        expect(() => {Assert.string(1.23)}).toThrow('Expected string but got "float[1.23]".');
+        expect(() => {Assert.string(true)}).toThrow('Expected string but got "boolean[true]".');
+        expect(() => {Assert.string(() => {})}).toThrow('Expected string but got "function[function () {}]".');
     });
 
     it ("asserts boolean", () => {
@@ -45,10 +45,10 @@ describe("Assert", () => {
     });
 
     it ("throws error when asserting non boolean as an boolean", () => {
-        expect(() => {Assert.boolean(123)}).toThrow('Expected boolean value, got 123');
-        expect(() => {Assert.boolean(new Array([]))}).toThrow('Expected boolean value, got object');
-        expect(() => {Assert.boolean(1.23)}).toThrow('Expected boolean value, got 1.23');
-        expect(() => {Assert.boolean(() => {})}).toThrow('Expected boolean value, got function');
+        expect(() => {Assert.boolean(123)}).toThrow('Expected boolean but got "int[123]".');
+        expect(() => {Assert.boolean(new Array([]))}).toThrow('Expected boolean but got "array[length: 1]".');
+        expect(() => {Assert.boolean(1.23)}).toThrow('Expected boolean but got "float[1.23]".');
+        expect(() => {Assert.boolean(() => {})}).toThrow('Expected boolean but got "function[function () {}]".');
     });
 
     it ("asserts boolean", () => {
@@ -57,9 +57,9 @@ describe("Assert", () => {
     });
 
     it ("throws error when asserting non object as an object", () => {
-        expect(() => {Assert.object(123)}).toThrow('Expected object value, got 123');
-        expect(() => {Assert.object(1.23)}).toThrow('Expected object value, got 1.23');
-        expect(() => {Assert.object(() => {})}).toThrow('Expected object value, got function');
+        expect(() => {Assert.object(123)}).toThrow('Expected object but got "int[123]".');
+        expect(() => {Assert.object(1.23)}).toThrow('Expected object but got "float[1.23]".');
+        expect(() => {Assert.object(() => {})}).toThrow('Expected object but got "function[function () {}]".');
     });
 
     it ("asserts function", () => {
@@ -67,9 +67,9 @@ describe("Assert", () => {
     });
 
     it ("throws error when asserting non function as an function", () => {
-        expect(() => {Assert.isFunction(123)}).toThrow('Expected function value, got 123');
-        expect(() => {Assert.isFunction(new Array([]))}).toThrow('Expected function value, got object');
-        expect(() => {Assert.isFunction(1.23)}).toThrow('Expected function value, got 1.23');
+        expect(() => {Assert.isFunction(123)}).toThrow('Expected function but got "int[123]".');
+        expect(() => {Assert.isFunction(new Array([]))}).toThrow('Expected function but got "array[length: 1]".');
+        expect(() => {Assert.isFunction(1.23)}).toThrow('Expected function but got "float[1.23]".');
     });
 
     it ("asserts values greater than", () => {
@@ -87,7 +87,7 @@ describe("Assert", () => {
     });
 
     it ("throws error when asserting non array value as array", () => {
-        expect(() => {Assert.array(123)}).toThrow('Expected array value, got 123');
+        expect(() => {Assert.array(123)}).toThrow('Expected array but got "int[123]".');
     });
 
     it ("asserts contains only specific instances in array", () => {
@@ -101,15 +101,15 @@ describe("Assert", () => {
     });
 
     it ("throws error when contains only does not assert on array", () => {
-        expect(() => {Assert.containsOnly(123)}).toThrow('Expected array value, got 123');
+        expect(() => {Assert.containsOnly(123)}).toThrow('Expected array but got "int[123]".');
     });
 
     it ("throws error when contains only has at least one non object element", () => {
-        expect(() => {Assert.containsOnly([new String("test"), 132], String)}).toThrow('Expected instance of String, got 132');
+        expect(() => {Assert.containsOnly([new String("test"), 132], String)}).toThrow('Expected instance of "String" but got "int[132]".');
     });
 
     it ("throws error when contains only has at least one non expected instance element", () => {
-        expect(() => {Assert.containsOnly([new String("test"), new Number(23)], String)}).toThrow('Expected instance of String, got Number');
+        expect(() => {Assert.containsOnly([new String("test"), new Number(23)], String)}).toThrow('Expected instance of "String" but got "Number:int[23]".');
     });
 
     it ("asserts array count", () => {
@@ -131,6 +131,6 @@ describe("Assert", () => {
     });
 
     it ("throws error when asserting empty string as non empty value", () => {
-        expect(() => {Assert.notEmpty("")}).toThrow('Expected not empty value');
+        expect(() => {Assert.notEmpty("")}).toThrow('Expected not empty value but got "string[""]".');
     });
 });
