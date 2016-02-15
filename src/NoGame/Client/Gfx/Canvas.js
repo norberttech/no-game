@@ -139,11 +139,11 @@ export default class Canvas
             tileSize.getHeight()
         );
 
-        this._context.fillStyle = '#EDE624';
-        this._context.font = "25px Arial";
-
-        this._context.fillText(
+        this._outlineText(
             nick,
+            "bold 20px Arial",
+            "#FFFFFF",
+            "#000000",
             tileSize.getWidth() * x + this._calculateTextTileOffset(nick, tileSize),
             tileSize.getHeight() * y - 8
         );
@@ -171,12 +171,13 @@ export default class Canvas
             tileSize.getHeight()
         );
 
-        this._context.fillStyle = '#EDE624';
-        this._context.font = "25px Arial";
-        this._context.fillText(
+        this._outlineText(
             nick,
-            tileSize.getWidth() * x - this._calculateTextTileOffset(nick, tileSize),
-            tileSize.getHeight() * y - 5
+            "25px Arial",
+            "#FFFFFF",
+            "#000000",
+            tileSize.getWidth() * x + this._calculateTextTileOffset(nick, tileSize),
+            tileSize.getHeight() * y - 8
         );
     }
 
@@ -203,5 +204,29 @@ export default class Canvas
         let textWidth = this._context.measureText(text);
 
         return (Math.round(tileSize.getWidth() / 2) - Math.round(textWidth.width / 2));
+    }
+
+    /**
+     * @param text
+     * @param font
+     * @param color
+     * @param outlineColor
+     * @param x
+     * @param y
+     * @private
+     */
+    _outlineText(text, font, color, outlineColor, x, y)
+    {
+        let outlineSize = 2;
+
+        this._context.font = font;
+        this._context.fillStyle = outlineColor;
+        this._context.fillText(text, x- outlineSize, y);
+        this._context.fillText(text, x,   y-outlineSize);
+        this._context.fillText(text, x+outlineSize, y);
+        this._context.fillText(text, x,   y+outlineSize);
+
+        this._context.fillStyle = color;
+        this._context.fillText(text, x, y);
     }
 }

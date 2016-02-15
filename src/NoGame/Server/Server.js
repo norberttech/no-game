@@ -57,40 +57,18 @@ export default class Server
 
         switch (packet.name) {
             case ClientMessages.LOGIN:
-                let player = new Player(packet.data.username);
-                this._kernel.login(player);
-                currentConnection.setPlayerId(player.id());
-                currentConnection.send(new LoginMessage(player));
-                currentConnection.send(new AreaMessage(this._kernel.playerArea(player.id())));
-
-                this._sendToAllConnectedClients((connection) => {
-                    return new CharactersMessage(
-                        this._kernel.playerArea(connection.playerId()).getVisiblePlayersFor(connection.playerId())
-                    )
-                });
+                    this._handleLogin(packet, currentConnection);
                 break;
             case ClientMessages.MOVE:
-                let area = this._kernel.playerArea(currentConnection.playerId());
-                let requestedPosition = new Position(packet.data.x, packet.data.y);
-
-                area.movePlayerTo(currentConnection.playerId(), requestedPosition);
-
-                let currentPosition = area.player(currentConnection.playerId()).currentPosition();
-
-                currentConnection.send(new MoveMessage(currentPosition));
-
-                this._sendToOtherConnectedClients(currentConnection, (connection) => {
-                    return new CharacterMoveMessage(currentConnection.playerId(), currentPosition)
-                });
+                    this._handleMove(packet, currentConnection);
+                break;
+            case ClientMessages.MESSAGE:
+                    this._handleMessage(packet, currentConnection);
                 break;
             default:
-                this._sendToOtherConnectedClients(currentConnection, (connection) => {
-                    return new CharacterSayMessage(currentConnection.playerId(), packet.data.message)
-                });
+                console.log(packet);
                 break;
         }
-
-        console.log(packet);
     }
 
     /**
@@ -113,6 +91,64 @@ export default class Server
         }
 
         this._connections.delete(closedConnection.id());
+    }
+
+    /**
+     * @param {object} packet
+     * @param {Connection} currentConnection
+     * @private
+     */
+    _handleLogin(packet, currentConnection)
+    {
+        let player = new Player(packet.data.username);
+        this._kernel.login(player);
+        currentConnection.setPlayerId(player.id());
+        currentConnection.send(new LoginMessage(player));
+        currentConnection.send(new AreaMessage(this._kernel.playerArea(player.id())));
+
+        this._sendToAllConnectedClients((connection) => {
+            return new CharactersMessage(
+                this._kernel.playerArea(connection.playerId()).getVisiblePlayersFor(connection.playerId())
+            )
+        });
+    }
+
+    /**
+     * @param {object} packet
+     * @param {Connection} currentConnection
+     * @private
+     */
+    _handleMove(packet, currentConnection)
+    {
+        let area = this._kernel.playerArea(currentConnection.playerId());
+        let requestedPosition = new Position(packet.data.x, packet.data.y);
+        let player = area.player(currentConnection.playerId());
+
+        if (player.isMoving()) {
+            return;
+        }
+
+        area.movePlayerTo(currentConnection.playerId(), requestedPosition);
+
+        let currentPosition = area.player(currentConnection.playerId()).currentPosition();
+
+        currentConnection.send(new MoveMessage(currentPosition));
+
+        this._sendToOtherConnectedClients(currentConnection, (connection) => {
+            return new CharacterMoveMessage(currentConnection.playerId(), currentPosition)
+        });
+    }
+
+    /**
+     * @param {object} packet
+     * @param {Connection} currentConnection
+     * @private
+     */
+    _handleMessage(packet, currentConnection)
+    {
+        this._sendToOtherConnectedClients(currentConnection, (connection) => {
+            return new CharacterSayMessage(currentConnection.playerId(), packet.data.message)
+        });
     }
 
     /**
