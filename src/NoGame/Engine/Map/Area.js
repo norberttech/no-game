@@ -82,7 +82,9 @@ export default class Area
         for (let x = tilesRange.x.start; x <= tilesRange.x.end; x++) {
             for (let y = tilesRange.y.start; y <= tilesRange.y.end; y++) {
                 let tile = this._tiles.get(Position.toStringFromNative(x, y));
-                tiles.push(tile);
+                if (tile !== undefined) {
+                    tiles.push(tile);
+                }
             }
         }
 
