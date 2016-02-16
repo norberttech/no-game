@@ -19,7 +19,7 @@ export default class CharacterSayMessage extends Message
         Assert.string(characterId);
         Assert.string(message);
 
-        this._name = ServerMessages.SAY;
+        this._name = ServerMessages.CHARACTER_SAY;
         this._data = {
             id: characterId,
             message: message
