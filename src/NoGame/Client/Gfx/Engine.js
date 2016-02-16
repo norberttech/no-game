@@ -1,11 +1,12 @@
 'use strict';
 
-import Assert from './../../../JSAssert/Assert';
 import Canvas from './Canvas';
 import SpriteMap from './SpriteMap';
 import Tile from './../Map/Tile';
 import Player from './../Player';
 import Character from './../Character';
+import Calculator from './../../Common/Area/Calculator';
+import Assert from './../../../JSAssert/Assert';
 
 export default class Engine
 {
@@ -123,23 +124,14 @@ export default class Engine
 
     _drawVisibleCharacters()
     {
-        let xStart = this._player.position().x - ((this._visibleTiles.x - 1) / 2);
-        let yStart = this._player.position().y - ((this._visibleTiles.y - 1) / 2);
-        let range = {
-            x: {
-                start: xStart,
-                end: xStart + this._visibleTiles.x
-            },
-            y: {
-                start: yStart,
-                end: yStart + this._visibleTiles.y
-            }
-        };
+        let range = Calculator.visibleTilesRange(
+            this._player.position().x,
+            this._player.position().y,
+            this._visibleTiles.x,
+            this._visibleTiles.y
+        );
 
-        let centerSquarePosition = {
-            x: (this._visibleTiles.x - 1) / 2,
-            y: (this._visibleTiles.y - 1) / 2
-        };
+        let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
 
         for (let character of this._characters) {
             if (character.position().x > range.x.start && character.position().x < range.x.end

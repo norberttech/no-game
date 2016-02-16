@@ -88,7 +88,7 @@ export default class Server
             // update other players characters list
             this._sendToOtherConnectedClients(closedConnection, (connection) => {
                 return new CharactersMessage(
-                    this._kernel.playerArea(connection.playerId()).getVisiblePlayersFor(connection.playerId())
+                    this._kernel.playerArea(connection.playerId()).visiblePlayersFor(connection.playerId())
                 )
             });
         }
@@ -113,12 +113,12 @@ export default class Server
             VISIBLE_TILES.y
         ));
         currentConnection.send(new TilesMessage(
-            this._kernel.playerArea(player.id()).visibleTiles(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
+            this._kernel.playerArea(player.id()).visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
         );
 
         this._sendToAllConnectedClients((connection) => {
             return new CharactersMessage(
-                this._kernel.playerArea(connection.playerId()).getVisiblePlayersFor(connection.playerId())
+                this._kernel.playerArea(connection.playerId()).visiblePlayersFor(connection.playerId())
             )
         });
     }
@@ -143,7 +143,7 @@ export default class Server
         let currentPosition = area.player(currentConnection.playerId()).currentPosition();
 
         currentConnection.send(new TilesMessage(
-            this._kernel.playerArea(player.id()).visibleTiles(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
+            this._kernel.playerArea(player.id()).visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
         );
         currentConnection.send(new MoveMessage(currentPosition));
 

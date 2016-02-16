@@ -14,7 +14,7 @@ describe("Area", () => {
         area.addTile(grassTile);
 
         expect(() => {area.addTile(grassTile);})
-            .toThrow("Area \"test area\" already have a tile on position x: 0, y: 0");
+            .toThrow("Area \"test area\" already have a tile on position 0:0");
     });
 
     it ("can't take tile that position is out of area boundaries", () => {
@@ -24,7 +24,7 @@ describe("Area", () => {
         let area = new Area("test area", 10, 10);
 
         expect(() => {area.addTile(grassTile);})
-            .toThrow("Area \"test area\" boundaries are x: 10, y: 10. Tile position is x: 25, y: 25");
+            .toThrow("Area \"test area\" boundaries are x: 10, y: 10. Tile position is 25:25");
     });
 
     it ("throws error on attempt to spawn same player twice", () => {
@@ -42,7 +42,7 @@ describe("Area", () => {
 
         area.spawnPlayer(player);
         expect(() => {area.movePlayerTo(player.id(), new Position(1,1))})
-            .toThrow(`There is no tile on position x: 1, y: 1`);
+            .toThrow(`There is no tile on position 1:1`);
     });
 
     it ("throws error on attempt to move player to position where tile is not walkable", () => {
@@ -56,7 +56,7 @@ describe("Area", () => {
         area.spawnPlayer(player);
 
         expect(() => {area.movePlayerTo(player.id(), new Position(1,1))})
-            .toThrow(`Can't walk on tile on x: 1, y: 1`);
+            .toThrow(`Can't walk on tile on 1:1`);
     });
 
     it ("returns players except player with specific ID", () => {
@@ -71,15 +71,38 @@ describe("Area", () => {
         area.spawnPlayer(player1);
         area.spawnPlayer(player2);
 
-        expect(area.getVisiblePlayersFor(player1.id())).toEqual([player2]);
+        expect(area.visiblePlayersFor(player1.id())).toEqual([player2]);
     });
 
     it ("throws error when visible tiles sizes are not odd", () => {
         let area = new Area("test area", 100, 100);
+        let player = new Player("yaboo1", 100);
+        area.spawnPlayer(player);
 
-        expect(() => {area.visibleTiles(6, 7);})
+        expect(() => {area.visibleTilesFor(player.id(), 6, 7);})
             .toThrow(`Expected odd number but got "int[6]".`);
-        expect(() => {area.visibleTiles(15, 4);})
+        expect(() => {area.visibleTilesFor(player.id(), 15, 4);})
             .toThrow(`Expected odd number but got "int[4]".`);
+    });
+
+    it ("returns tiles visible by player", () => {
+        let area = new Area("test area", 100, 100);
+        let player = new Player("yaboo1", 100);
+        for (let x = 0; x < 100; x++) {
+            for (let y = 0; y < 100; y++) {
+                area.addTile(new Tile(new Position(x, y), new Item(100)));
+            }
+        }
+        area.changeSpawnPosition(new Position(50, 50));
+        area.spawnPlayer(player);
+
+        let tiles = area.visibleTilesFor(player.id(), 15, 11);
+
+        expect(tiles.length).toBe(165);
+        expect(tiles[0].position().x()).toBe(43);
+        expect(tiles[0].position().y()).toBe(45);
+
+        expect(tiles[164].position().x()).toBe(57);
+        expect(tiles[164].position().y()).toBe(55);
     });
 });

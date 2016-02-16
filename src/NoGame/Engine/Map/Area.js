@@ -1,9 +1,10 @@
 'use strict';
 
-import Assert from './../../../JSAssert/Assert';
 import Tile from './Area/Tile';
 import Position from './Area/Position';
+import Calculator from './../../Common/Area/Calculator';
 import Player from './../Player';
+import Assert from './../../../JSAssert/Assert';
 
 export default class Area
 {
@@ -65,23 +66,19 @@ export default class Area
      * @param {int} tilesY
      * @returns {Tile[]}
      */
-    visibleTiles(playerId, tilesX, tilesY)
+    visibleTilesFor(playerId, tilesX, tilesY)
     {
         Assert.oddNumber(tilesX);
         Assert.oddNumber(tilesY);
         this._playerExists(playerId);
 
         let player = this._characters.get(playerId);
-        let tilesRange = {
-            x: {
-                start: player.currentPosition().x() - ((tilesX - 1) / 2),
-                end: player.currentPosition().x() - ((tilesX - 1) / 2) + tilesX
-            },
-            y: {
-                start: player.currentPosition().y() - ((tilesY - 1) / 2),
-                end: player.currentPosition().y() - ((tilesY - 1) / 2) + tilesY
-            }
-        };
+        var tilesRange = Calculator.visibleTilesRange(
+            player.currentPosition().x(),
+            player.currentPosition().y(),
+            tilesX,
+            tilesY
+        );
         let tiles = [];
 
         for (let x = tilesRange.x.start; x < tilesRange.x.end; x++) {
@@ -92,6 +89,24 @@ export default class Area
         }
 
         return tiles;
+    }
+
+    /**
+     * @param playerId
+     * @returns {Player[]}
+     */
+    visiblePlayersFor(playerId)
+    {
+        let players = [];
+        this._playerExists(playerId);
+
+        for (let player of this._characters.values()) {
+            if (player.id() !== playerId) {
+                players.push(player);
+            }
+        }
+
+        return players;
     }
 
     /**
@@ -171,24 +186,6 @@ export default class Area
         this._playerExists(playerId);
 
         return this._characters.get(playerId);
-    }
-
-    /**
-     * @param playerId
-     * @returns {Player[]}
-     */
-    getVisiblePlayersFor(playerId)
-    {
-        let players = [];
-        this._playerExists(playerId);
-
-        for (let player of this._characters.values()) {
-            if (player.id() !== playerId) {
-                players.push(player);
-            }
-        }
-
-        return players;
     }
 
     /**
