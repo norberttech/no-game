@@ -203,10 +203,9 @@ export default class Client
                 this._kernel.area().setTiles(tiles);
                 break;
             default:
+                console.log(message);
                 break;
         }
-
-        console.log(message);
     }
 
     /**
