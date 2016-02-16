@@ -3,7 +3,7 @@
 import Assert from './../../../JSAssert/Assert';
 import WebSocket from 'ws/lib/WebSocket';
 import Message from '../../Common/Network/Message';
-import UUID from 'UUID';
+import UUID from 'uuid';
 
 export default class Connection
 {

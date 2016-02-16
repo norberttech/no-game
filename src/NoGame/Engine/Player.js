@@ -2,7 +2,7 @@
 
 import Assert from './../../JSAssert/Assert'
 import Position from './Map/Area/Position';
-import UUID from 'UUID';
+import UUID from 'uuid';
 
 /**
  * @type {number}

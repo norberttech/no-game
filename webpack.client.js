@@ -3,8 +3,8 @@ var webpack = require('webpack')
 var ignore = new webpack.IgnorePlugin(new RegExp("\.md$"));
 
 module.exports = {
-    context: __dirname + "/src",
-    entry:   "./NoGame/Client/bootstrap.js",
+    context: __dirname + "/src/NoGame/Client",
+    entry:   "./bootstrap.js",
     output: {
         path: __dirname + "/bin",
         filename: "client.js"
