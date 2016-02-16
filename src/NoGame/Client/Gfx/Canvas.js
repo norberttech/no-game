@@ -157,7 +157,7 @@ export default class Canvas
 
         this._outlineText(
             nick,
-            "bold 20px Arial",
+            "20px Arial",
             "#FFFFFF",
             "#000000",
             tileSize.getWidth() * x + this._calculateTextTileOffset(nick, tileSize),
@@ -193,7 +193,7 @@ export default class Canvas
 
         this._outlineText(
             nick,
-            "25px Arial",
+            "20px Arial",
             "#FFFFFF",
             "#000000",
             tileSize.getWidth() * x + this._calculateTextTileOffset(nick, tileSize),

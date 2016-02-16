@@ -71,7 +71,7 @@ describe("Area", () => {
         area.spawnPlayer(player1);
         area.spawnPlayer(player2);
 
-        expect(area.visiblePlayersFor(player1.id())).toEqual([player2]);
+        expect(area.visiblePlayersFor(player1.id(), 15, 11)).toEqual([player2]);
     });
 
     it ("throws error when visible tiles sizes are not odd", () => {

@@ -68,21 +68,30 @@ export default class Kernel
     }
 
     /**
-     * @param {string} characterId
-     * @param {int} x
-     * @param {int} y
+     * @param {Character} character
      */
-    characterMove(characterId, x, y)
+    addCharacter(character)
+    {
+        Assert.instanceOf(character, Character);
+
+        this._characters.push(character);
+    }
+
+    /**
+     * @param {string} characterId
+     * @return {boolean}
+     */
+    hasCharacter(characterId)
     {
         Assert.string(characterId);
-        Assert.integer(x);
-        Assert.integer(y);
 
         for (let character of this._characters) {
             if (character.id() === characterId) {
-                character.move(x, y);
+                return true;
             }
         }
+
+        return false;
     }
 
     /**

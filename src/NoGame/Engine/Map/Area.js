@@ -62,27 +62,25 @@ export default class Area
 
     /**
      * @param {string} playerId
-     * @param {int} tilesX
-     * @param {int} tilesY
+     * @param {int} visibleTilesX
+     * @param {int} visibleTilesY
      * @returns {Tile[]}
      */
-    visibleTilesFor(playerId, tilesX, tilesY)
+    visibleTilesFor(playerId, visibleTilesX, visibleTilesY)
     {
-        Assert.oddNumber(tilesX);
-        Assert.oddNumber(tilesY);
         this._playerExists(playerId);
 
         let player = this._characters.get(playerId);
         var tilesRange = Calculator.visibleTilesRange(
             player.currentPosition().x(),
             player.currentPosition().y(),
-            tilesX,
-            tilesY
+            visibleTilesX,
+            visibleTilesY
         );
         let tiles = [];
 
-        for (let x = tilesRange.x.start; x < tilesRange.x.end; x++) {
-            for (let y = tilesRange.y.start; y < tilesRange.y.end; y++) {
+        for (let x = tilesRange.x.start; x <= tilesRange.x.end; x++) {
+            for (let y = tilesRange.y.start; y <= tilesRange.y.end; y++) {
                 let tile = this._tiles.get(Position.toStringFromNative(x, y));
                 tiles.push(tile);
             }
@@ -92,21 +90,36 @@ export default class Area
     }
 
     /**
-     * @param playerId
+     * @param {string} playerId
+     * @param {int} visibleTilesX
+     * @param {int} visibleTilesY
      * @returns {Player[]}
      */
-    visiblePlayersFor(playerId)
+    visiblePlayersFor(playerId, visibleTilesX, visibleTilesY)
     {
-        let players = [];
         this._playerExists(playerId);
 
-        for (let player of this._characters.values()) {
-            if (player.id() !== playerId) {
-                players.push(player);
+        let characters = [];
+        let player = this._characters.get(playerId);
+        var range = Calculator.visibleTilesRange(
+            player.currentPosition().x(),
+            player.currentPosition().y(),
+            visibleTilesX,
+            visibleTilesY
+        );
+
+        for (let character of this._characters.values()) {
+            if (character.id() === player.id()) {
+                continue;
+            }
+
+            if (character.currentPosition().x() >= range.x.start && character.currentPosition().x() <= range.x.end
+                && character.currentPosition().y() >= range.y.start && character.currentPosition().y() <= range.y.end) {
+                characters.push(character);
             }
         }
 
-        return players;
+        return characters;
     }
 
     /**

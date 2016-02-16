@@ -15,7 +15,12 @@ import Player from './../Engine/Player';
 import Position from './../Engine/Map/Area/Position';
 import ClientMessages from './../Common/Network/ClientMessages'
 
-const VISIBLE_TILES = {x: 15, y: 11};
+/**
+ * Client displays x: 15 and y: 11 but it keeps 2 tiles hidden.
+ *
+ * @type {{x: number, y: number}}
+ */
+const VISIBLE_TILES = {x: 17, y: 13};
 
 export default class Server
 {
@@ -88,7 +93,8 @@ export default class Server
             // update other players characters list
             this._sendToOtherConnectedClients(closedConnection, (connection) => {
                 return new CharactersMessage(
-                    this._kernel.playerArea(connection.playerId()).visiblePlayersFor(connection.playerId())
+                    this._kernel.playerArea(connection.playerId())
+                        .visiblePlayersFor(connection.playerId(), VISIBLE_TILES.x, VISIBLE_TILES.y)
                 )
             });
         }
@@ -105,20 +111,24 @@ export default class Server
     {
         let player = new Player(packet.data.username);
         this._kernel.login(player);
+        let area = this._kernel.playerArea(player.id());
+
         currentConnection.setPlayerId(player.id());
         currentConnection.send(new LoginMessage(player));
-        currentConnection.send(new AreaMessage(
-            this._kernel.playerArea(player.id()).name(),
-            VISIBLE_TILES.x,
-            VISIBLE_TILES.y
-        ));
+        currentConnection.send(new AreaMessage(area.name(), VISIBLE_TILES.x, VISIBLE_TILES.y));
         currentConnection.send(new TilesMessage(
-            this._kernel.playerArea(player.id()).visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
+            area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
         );
 
-        this._sendToAllConnectedClients((connection) => {
+        currentConnection.send(
+            new CharactersMessage(
+                area.visiblePlayersFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y)
+            )
+        );
+
+        this._sendToPlayersVisibleBy(player.id(), (connection) => {
             return new CharactersMessage(
-                this._kernel.playerArea(connection.playerId()).visiblePlayersFor(connection.playerId())
+                area.visiblePlayersFor(connection.playerId(), VISIBLE_TILES.x, VISIBLE_TILES.y)
             )
         });
     }
@@ -143,12 +153,17 @@ export default class Server
         let currentPosition = area.player(currentConnection.playerId()).currentPosition();
 
         currentConnection.send(new TilesMessage(
-            this._kernel.playerArea(player.id()).visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
+            area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
         );
         currentConnection.send(new MoveMessage(currentPosition));
+        currentConnection.send(
+            new CharactersMessage(
+                area.visiblePlayersFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y)
+            )
+        );
 
-        this._sendToOtherConnectedClients(currentConnection, (connection) => {
-            return new CharacterMoveMessage(currentConnection.playerId(), currentPosition)
+        this._sendToPlayersVisibleBy(player.id(), (connection) => {
+            return new CharacterMoveMessage(player);
         });
     }
 
@@ -165,6 +180,8 @@ export default class Server
     }
 
     /**
+     * Send message to all connected clients
+     *
      * @param {function} messageFactory
      * @private
      */
@@ -180,6 +197,8 @@ export default class Server
     }
 
     /**
+     * Send message to all connected clients except currentConnection
+     *
      * @param {Connection} currentConnection
      * @param {function} messageFactory
      * @private
@@ -196,6 +215,35 @@ export default class Server
             }
 
             connection.send(messageFactory(connection));
+        }
+    }
+
+    /**
+     * Send message only to players visible by player with id playerId
+     *
+     * @param {string} playerId
+     * @param {function} messageFactory
+     * @private
+     */
+    _sendToPlayersVisibleBy(playerId, messageFactory)
+    {
+        let area = this._kernel.playerArea(playerId);
+        let visiblePlayers = area.visiblePlayersFor(playerId, VISIBLE_TILES.x, VISIBLE_TILES.y);
+
+        for (let connection of this._connections.values()) {
+            if (!connection.hasPlayerId()) {
+                continue;
+            }
+
+            if (connection.playerId() === playerId) {
+                continue;
+            }
+
+            for (let player of visiblePlayers) {
+                if (connection.playerId() === player.id()) {
+                    connection.send(messageFactory(connection));
+                }
+            }
         }
     }
 }

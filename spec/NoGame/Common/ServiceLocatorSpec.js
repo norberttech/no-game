@@ -1,7 +1,6 @@
 import ServiceLocator from '../../../src/NoGame/Common/ServiceLocator';
 import ContainerBuilder from '../../../src/NoGame/Common/ContainerBuilder';
 
-
 class CustomContainer extends ContainerBuilder
 {
     build()

@@ -9,21 +9,22 @@ import ServerMessages from './../../Common/Network/ServerMessages';
 export default class CharacterMoveMessage extends Message
 {
     /**
-     * @param {string} characterId
-     * @param {Position} position
+     * @param {Player} player
      */
-    constructor(characterId, position)
+    constructor(player)
     {
         super();
 
-        Assert.instanceOf(position, Position);
-        Assert.string(characterId);
+        Assert.instanceOf(player, Player);
 
         this._name = ServerMessages.CHARACTER_MOVE;
         this._data = {
-            id: characterId,
-            x: position.x(),
-            y: position.y()
+            id: player.id(),
+            name: player.name(),
+            position: {
+                x: player.currentPosition().x(),
+                y: player.currentPosition().y()
+            }
         };
     }
 }

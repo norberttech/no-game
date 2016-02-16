@@ -5,8 +5,8 @@ import SpriteMap from './SpriteMap';
 import Tile from './../Map/Tile';
 import Player from './../Player';
 import Character from './../Character';
-import Calculator from './../../Common/Area/Calculator';
 import Assert from './../../../JSAssert/Assert';
+import Calculator from './../../Common/Area/Calculator';
 
 export default class Engine
 {
@@ -134,8 +134,8 @@ export default class Engine
         let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
 
         for (let character of this._characters) {
-            if (character.position().x > range.x.start && character.position().x < range.x.end
-                && character.position().y > range.y.start && character.position().y < range.y.end) {
+            if (character.position().x >= range.x.start && character.position().x <= range.x.end
+                && character.position().y >= range.y.start && character.position().y <= range.y.end) {
 
                 let absoluteX = centerSquarePosition.x - (this._player.position().x - character.position().x);
                 let absoluteY = centerSquarePosition.y - (this._player.position().y - character.position().y);

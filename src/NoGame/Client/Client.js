@@ -154,7 +154,10 @@ export default class Client
                 break;
             case ServerMessages.AREA:
                 this._kernel.setArea(new Area(message.data.name));
-                this._kernel.setVisibleTiles(message.data.visibleTiles.x, message.data.visibleTiles.y);
+                this._kernel.setVisibleTiles(
+                    message.data.visibleTiles.x - 2,
+                    message.data.visibleTiles.y - 2
+                );
                 break;
             case ServerMessages.MOVE:
                 this._kernel.player().move(message.data.x, message.data.y);
@@ -174,7 +177,16 @@ export default class Client
                 this._kernel.setCharacters(characters);
                 break;
             case ServerMessages.CHARACTER_MOVE:
-                this._kernel.characterMove(message.data.id, message.data.x, message.data.y);
+                if (this._kernel.hasCharacter(message.data.id)) {
+                    this._kernel.character(message.data.id).move(message.data.position.x, message.data.position.y);
+                } else {
+                    this._kernel.addCharacter(new Character(
+                        message.data.id,
+                        message.data.name,
+                        message.data.position.x,
+                        message.data.position.y
+                    ));
+                }
                 break;
             case ServerMessages.CHARACTER_SAY:
                 let character = this._kernel.character(message.data.id);
@@ -183,14 +195,18 @@ export default class Client
                 }
 
                 break;
-            default:
+            case ServerMessages.TILES:
                 let tiles = message.data.tiles.map((tileData) => {
                     return new Tile(tileData.x, tileData.y, tileData.canWalkOn, tileData.stack);
                 });
 
                 this._kernel.area().setTiles(tiles);
                 break;
+            default:
+                break;
         }
+
+        console.log(message);
     }
 
     /**
