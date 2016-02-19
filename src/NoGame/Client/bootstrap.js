@@ -16,7 +16,8 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
     let gfx = new Engine(
         new Canvas(window.document.getElementById('game-canvas')),
         (callback) => { window.requestAnimationFrame(callback); },
-        spriteMap
+        spriteMap,
+        true
     );
     let keyboard = new KeyBoard();
     let client = new Client('ws://localhost:8080/', new Kernel(gfx), keyboard);

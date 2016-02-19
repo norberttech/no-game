@@ -21,6 +21,7 @@ export default class Player
         this._name = name;
         this._positon = {x: x, y: y};
         this._movingTo = {x: x, y: y};
+        this._moveStart = new Date().getTime();
     }
 
     /**
@@ -32,6 +33,7 @@ export default class Player
         Assert.integer(y);
 
         this._movingTo = {x: x, y: y};
+        this._moveStart = new Date().getTime();
     }
 
     /**
@@ -39,6 +41,10 @@ export default class Player
      */
     isMoving()
     {
+        if (new Date().getTime() > this._moveStart + 3000 ) {
+            this._movingTo = this._positon;
+        }
+
         return this._positon.x !== this._movingTo.x || this._positon.y !== this._movingTo.y;
     }
 

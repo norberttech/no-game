@@ -170,7 +170,7 @@ export default class Canvas
             "#FFFFFF",
             "#000000",
             tileSize.getWidth() * (tileX - this._hiddenTiles) + pixelOffsetX + this._calculateTextTileOffset(nick, tileSize),
-            tileSize.getHeight() * (tileY  - this._hiddenTiles) +pixelOffsetY - 8
+            tileSize.getHeight() * (tileY  - this._hiddenTiles) + pixelOffsetY - 8
         );
     }
 

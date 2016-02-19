@@ -16,12 +16,14 @@ export default class Engine
      * @param {Canvas} canvas
      * @param {function} animationLoop
      * @param {SpriteMap} spriteMap
+     * @param debug
      */
-    constructor(canvas, animationLoop, spriteMap)
+    constructor(canvas, animationLoop, spriteMap, debug = false)
     {
         Assert.instanceOf(canvas, Canvas);
         Assert.isFunction(animationLoop);
         Assert.instanceOf(spriteMap, SpriteMap);
+        Assert.boolean(debug);
 
         this._canvas = canvas;
         this._animationLoop = animationLoop;
@@ -33,6 +35,7 @@ export default class Engine
         this._visibleTiles = null;
         this._playerMoveAnimation = null;
         this._onDraw = null;
+        this._debug = debug;
     }
 
     /**
@@ -106,6 +109,10 @@ export default class Engine
                 this._drawVisibleCharacters();
                 this._drawPlayer();
                 this._executeAnimations();
+
+                if (this._debug === true) {
+                    this._drawDebugInfo();
+                }
             }
         }
 
@@ -199,6 +206,7 @@ export default class Engine
         );
         let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
         let pixelOffset = this._calculateMovePixelOffset();
+        let playerPosition = this._player.position();
 
         for (let character of this._characters) {
             if (character.position().x >= range.x.start && character.position().x <= range.x.end
@@ -279,5 +287,36 @@ export default class Engine
                 animations.delete(id);
             }
         });
+    }
+
+    _drawDebugInfo()
+    {
+        this._canvas.outlineText(
+            `Me {${this._player.position().x},${this._player.position().y}}:{${this._player._movingTo.x},${this._player._movingTo.y}}`,
+            "15px Arial",
+            "#FFFFFF",
+            "#000000",
+            20,
+            20
+        );
+
+        let charNumber = 0;
+        let playerPosition = this._player.position();
+        let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
+
+        for (let character of this._characters) {
+            let absoluteX = centerSquarePosition.x - (playerPosition.x - character.position().x);
+            let absoluteY = centerSquarePosition.y - (playerPosition.y - character.position().y);
+
+            this._canvas.outlineText(
+                `"${character.name()}" {${character.position().x},${character.position().y}}, Abs{${absoluteX}, ${absoluteY}}`,
+                "15px Arial",
+                "#FFFFFF",
+                "#000000",
+                20,
+                40 + (charNumber * 20)
+            );
+            charNumber++;
+        }
     }
 }

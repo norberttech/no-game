@@ -32,7 +32,7 @@ export default class Client
         this._isConnected = false;
         this._isLoggedIn = false;
         this._onCharacterSay = null;
-        this._lastSendMoveMessageTime = 0;
+        this._lastSendMoveMessage = 0;
         this._keyboard = keyboard;
     }
 
@@ -140,9 +140,9 @@ export default class Client
                 );
                 break;
             case ServerMessages.MOVE:
-                let delta = new Date().getTime() - this._lastSendMoveMessageTime;
+                let delta = new Date().getTime() - this._lastSendMoveMessage;
 
-                this._kernel.move(message.data.x, message.data.y, message.data.moveTime - delta);
+                this._kernel.move(message.data.x, message.data.y, message.data.moveTime + delta);
                 break;
             case ServerMessages.CHARACTERS:
                 let characters = [];
@@ -240,7 +240,7 @@ export default class Client
             }
 
             this._kernel.player().prepareToMove(x, y);
-            this._lastSendMoveMessageTime = new Date().getTime();
+            this._lastSendMoveMessage = new Date().getTime();
             this._connection.send(new MoveMessage(x, y));
         }
     }
