@@ -30,6 +30,16 @@ export default class Assert
     }
 
     /**
+     * @param numberValue
+     */
+    static number(numberValue)
+    {
+        if (typeof numberValue !== 'number') {
+            throw Message.expected("number", numberValue);
+        }
+    }
+
+    /**
      * @param stringValue
      */
     static string(stringValue)
@@ -85,8 +95,8 @@ export default class Assert
      */
     static greaterThan(requiredTreshold, integerValue)
     {
-        Assert.integer(requiredTreshold);
-        Assert.integer(integerValue);
+        Assert.number(requiredTreshold);
+        Assert.number(integerValue);
 
         if (integerValue <= requiredTreshold) {
             throw `Expected value ${integerValue} to be greater than ${requiredTreshold}`;

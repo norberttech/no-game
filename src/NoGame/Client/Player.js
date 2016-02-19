@@ -19,8 +19,27 @@ export default class Player
 
         this._id = id;
         this._name = name;
-        this._x = x;
-        this._y = y;
+        this._positon = {x: x, y: y};
+        this._movingTo = {x: x, y: y};
+    }
+
+    /**
+     * Lock player when waiting for server response.
+     */
+    prepareToMove(x, y)
+    {
+        Assert.integer(x);
+        Assert.integer(y);
+
+        this._movingTo = {x: x, y: y};
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    isMoving()
+    {
+        return this._positon.x !== this._movingTo.x || this._positon.y !== this._movingTo.y;
     }
 
     /**
@@ -44,7 +63,7 @@ export default class Player
      */
     position()
     {
-        return {x: this._x, y: this._y};
+        return this._positon;
     }
 
     /**
@@ -56,7 +75,6 @@ export default class Player
         Assert.integer(x);
         Assert.integer(y);
 
-        this._x = x;
-        this._y = y;
+        this._positon = {x: x, y: y};
     }
 }

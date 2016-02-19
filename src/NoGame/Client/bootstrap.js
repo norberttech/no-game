@@ -7,7 +7,7 @@ import Engine from './Gfx/Engine';
 import Canvas from './Gfx/Canvas';
 import SpriteMap from './Gfx/SpriteMap';
 import SpriteFile from './Gfx/SpriteFile';
-import Keys from './UserInterface/Keys';
+import KeyBoard from './UserInterface/KeyBoard';
 
 window.document.addEventListener("DOMContentLoaded", (event) => {
     let spriteMap = new SpriteMap();
@@ -18,26 +18,12 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
         (callback) => { window.requestAnimationFrame(callback); },
         spriteMap
     );
-    let client = new Client('ws://localhost:8080/', new Kernel(gfx));
-    let ui = new UserInterface(window.document);
+    let keyboard = new KeyBoard();
+    let client = new Client('ws://localhost:8080/', new Kernel(gfx), keyboard);
+    let ui = new UserInterface(window.document, keyboard);
 
     ui.bindWindowResize();
-    ui.bindArrows((key) => {
-        switch (key) {
-            case Keys.LEFT:
-                client.moveLeft();
-                break;
-            case Keys.DOWN:
-                client.moveDown();
-                break;
-            case Keys.RIGHT:
-                client.moveRight();
-                break;
-            case Keys.UP:
-                client.moveUp();
-                break;
-        }
-    });
+    ui.bindArrows();
 
     ui.onSay((message) => {
         client.say(message);
@@ -56,7 +42,6 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
         ui.hideCanvas();
         ui.addErrorMessage("Disconnected from server.");
     });
-
 
     ui.onLoginSubmit((username) => {
         ui.hideLoginScreen();

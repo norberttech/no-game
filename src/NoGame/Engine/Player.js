@@ -28,7 +28,6 @@ export default class Player
 
         this._id = UUID.v4();
         this._currentPosition = null;
-        this._health = health;
         this._moveEnds = 0;
         this._name = name;
     }
@@ -72,6 +71,14 @@ export default class Player
     }
 
     /**
+     * @returns {int}
+     */
+    moveEnds()
+    {
+        return this._moveEnds;
+    }
+
+    /**
      * @returns {Position}
      */
     currentPosition()
@@ -98,8 +105,8 @@ export default class Player
             throw `Can't move that far`;
         }
 
-        this._currentPosition = newPosition;
         this._moveEnds = new Date().getTime() + this._calculateMoveTime(distance, moveSpeedModifier);
+        this._currentPosition = newPosition;
     }
 
     /**

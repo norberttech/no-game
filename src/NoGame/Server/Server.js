@@ -126,7 +126,7 @@ export default class Server
             )
         );
 
-        this._sendToPlayersVisibleBy(player.id(), (connection) => {
+        this._sendToPlayersInRange(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y, (connection) => {
             return new CharactersMessage(
                 area.visiblePlayersFor(connection.playerId(), VISIBLE_TILES.x, VISIBLE_TILES.y)
             )
@@ -148,21 +148,18 @@ export default class Server
             return;
         }
 
+        if (player.currentPosition().isEqualTo(requestedPosition)) {
+            return ;
+        }
+
         area.movePlayerTo(currentConnection.playerId(), requestedPosition);
 
-        let currentPosition = area.player(currentConnection.playerId()).currentPosition();
-
+        currentConnection.send(new MoveMessage(player));
         currentConnection.send(new TilesMessage(
             area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
         );
-        currentConnection.send(new MoveMessage(currentPosition));
-        currentConnection.send(
-            new CharactersMessage(
-                area.visiblePlayersFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y)
-            )
-        );
 
-        this._sendToPlayersVisibleBy(player.id(), (connection) => {
+        this._sendToPlayersInRange(player.id(), VISIBLE_TILES.x + 2, VISIBLE_TILES.y + 2, (connection) => {
             return new CharacterMoveMessage(player);
         });
     }
@@ -222,13 +219,15 @@ export default class Server
      * Send message only to players visible by player with id playerId
      *
      * @param {string} playerId
+     * @param {int} rangeX
+     * @param {int} rangeY
      * @param {function} messageFactory
      * @private
      */
-    _sendToPlayersVisibleBy(playerId, messageFactory)
+    _sendToPlayersInRange(playerId, rangeX, rangeY, messageFactory)
     {
         let area = this._kernel.playerArea(playerId);
-        let visiblePlayers = area.visiblePlayersFor(playerId, VISIBLE_TILES.x, VISIBLE_TILES.y);
+        let visiblePlayers = area.visiblePlayersFor(playerId, rangeX, rangeY);
 
         for (let connection of this._connections.values()) {
             if (!connection.hasPlayerId()) {

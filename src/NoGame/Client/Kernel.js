@@ -5,6 +5,7 @@ import Engine from './Gfx/Engine';
 import Area from './Map/Area';
 import Player from './Player';
 import Character from './Character';
+import Directions from './Directions';
 
 export default class Kernel
 {
@@ -39,8 +40,14 @@ export default class Kernel
         this._gfxEngine.setVisibleTiles(x, y);
     }
 
-    draw()
+    /**
+     * @param {function} onDraw
+     */
+    draw(onDraw)
     {
+        Assert.isFunction(onDraw);
+
+        this._gfxEngine.onDraw(onDraw);
         this._gfxEngine.draw();
     }
 
@@ -54,6 +61,37 @@ export default class Kernel
         }
 
         return this._player;
+    }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     * @param {int} moveTime
+     */
+    move(x, y, moveTime)
+    {
+        Assert.integer(x);
+        Assert.integer(y);
+
+        let onAnimationEnds = () => {
+            this.player().move(x, y);
+        };
+
+        if (this.player().position().x + 1 === x) {
+            this._gfxEngine.move(moveTime, onAnimationEnds, Directions.RIGHT);
+        }
+
+        if (this.player().position().x - 1 === x) {
+            this._gfxEngine.move(moveTime, onAnimationEnds, Directions.LEFT);
+        }
+
+        if (this.player().position().y + 1 === y) {
+            this._gfxEngine.move(moveTime, onAnimationEnds, Directions.UP);
+        }
+
+        if (this.player().position().y - 1 === y) {
+            this._gfxEngine.move(moveTime, onAnimationEnds, Directions.DOWN);
+        }
     }
 
     /**
@@ -109,6 +147,39 @@ export default class Kernel
         }
 
         throw `Unknown character with id "${characterId}"`;
+    }
+
+    /**
+     * @param {string} id
+     * @param {int} x
+     * @param {int} y
+     * @param {int} moveTime
+     */
+    characterMove(id, x, y, moveTime)
+    {
+        let character = this.character(id);
+        Assert.integer(x);
+        Assert.integer(y);
+
+        let onAnimationEnds = () => {
+            character.move(x, y);
+        };
+
+        if (character.position().x + 1 === x) {
+            this._gfxEngine.characterMove(id, moveTime, onAnimationEnds, Directions.RIGHT);
+        }
+
+        if (character.position().x - 1 === x) {
+            this._gfxEngine.characterMove(id, moveTime, onAnimationEnds, Directions.LEFT);
+        }
+
+        if (character.position().y + 1 === y) {
+            this._gfxEngine.characterMove(id, moveTime, onAnimationEnds, Directions.UP);
+        }
+
+        if (character.position().y - 1 === y) {
+            this._gfxEngine.characterMove(id, moveTime, onAnimationEnds, Directions.DOWN);
+        }
     }
 
     /**

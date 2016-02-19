@@ -2,19 +2,22 @@
 
 import Assert from './../../JSAssert/Assert';
 import Engine from './Gfx/Engine';
-import Keys from './UserInterface/Keys';
+import KeyBoard from './UserInterface/KeyBoard';
 import Chat from './UserInterface/Chat';
 
 export default class UserInterface
 {
     /**
      * @param {HTMLDocument} doc
+     * @param {KeyBoard} keyboard
      */
-    constructor(doc)
+    constructor(doc, keyboard)
     {
         Assert.instanceOf(doc, HTMLDocument);
+        Assert.instanceOf(keyboard, KeyBoard);
 
         this._doc = doc;
+        this._keyboard = keyboard;
         this._loginScreen = this._doc.getElementById("login-screen");
         this._loginForm = this._loginScreen.querySelector("form");
         this._messages = this._doc.querySelector("#messages");
@@ -81,36 +84,20 @@ export default class UserInterface
         this._messages.appendChild(message);
     }
 
-    /**
-     * @param callback
-     */
-    bindArrows(callback)
+    bindArrows()
     {
         this._doc.addEventListener("keydown", (event) => {
-            switch(event.keyCode) {
-                case 37: //left
-                    callback(Keys.LEFT);
-                    event.preventDefault();
-                    break;
-                case 38: //up
-                    callback(Keys.UP);
-                    event.preventDefault();
-                    break;
-                case 39: //right
-                    callback(Keys.RIGHT);
-                    event.preventDefault();
-                    break;
-                case 40: //down
-                    callback(Keys.DOWN);
-                    event.preventDefault();
-                    break;
-            }
+            this._keyboard.keyDown(event.keyCode);
+        });
+
+        this._doc.addEventListener("keyup", (event) => {
+            this._keyboard.keyUp(event.keyCode);
         });
     }
 
     bindWindowResize()
     {
-        window.addEventListener("resize", (e) => {
+        window.addEventListener("resize", (event) => {
             this.resizeUI();
         });
     }

@@ -1,10 +1,10 @@
 'use strict';
 
 let Keys = {
-    LEFT: 1,
-    DOWN: 2,
-    RIGHT: 3,
-    UP: 4
+    LEFT: 37,
+    UP: 38,
+    RIGHT: 39,
+    DOWN: 40
 };
 
 export default Keys;

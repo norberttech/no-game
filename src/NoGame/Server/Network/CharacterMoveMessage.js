@@ -21,6 +21,7 @@ export default class CharacterMoveMessage extends Message
         this._data = {
             id: player.id(),
             name: player.name(),
+            moveTime: player.moveEnds() - new Date(),
             position: {
                 x: player.currentPosition().x(),
                 y: player.currentPosition().y()
