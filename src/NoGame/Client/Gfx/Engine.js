@@ -142,6 +142,12 @@ export default class Engine
         );
     }
 
+    cancelMove()
+    {
+        this._playerMoveAnimation = null;
+    }
+
+
     /**
      * @param {string} characterId
      * @param {int} moveTime

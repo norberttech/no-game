@@ -5,26 +5,29 @@ import Assert from './../../../JSAssert/Assert';
 export default class Tile
 {
     /**
-     * @param {integer} x
-     * @param {integer} y
+     * @param {int} x
+     * @param {int} y
      * @param {boolean} canWalkOn
      * @param {array} stack
+     * @param {int} moveSpeedModifier
      */
-    constructor(x, y, canWalkOn, stack)
+    constructor(x, y, canWalkOn, stack, moveSpeedModifier)
     {
         Assert.integer(x);
         Assert.integer(y);
         Assert.boolean(canWalkOn);
         Assert.array(stack);
+        Assert.integer(moveSpeedModifier);
 
         this._x = x;
         this._y = y;
         this._canWalkOn = canWalkOn;
         this._stack = stack;
+        this._moveSpeedModifier = moveSpeedModifier;
     }
 
     /**
-     * @returns {integer}
+     * @returns {int}
      */
     x()
     {
@@ -32,7 +35,7 @@ export default class Tile
     }
 
     /**
-     * @returns {integer}
+     * @returns {int}
      */
     y()
     {
@@ -61,5 +64,13 @@ export default class Tile
     stack()
     {
         return this._stack;
+    }
+
+    /**
+     * @returns {int}
+     */
+    moveSpeedModifier()
+    {
+        return this._moveSpeedModifier;
     }
 }

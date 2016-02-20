@@ -25,7 +25,8 @@ export default class TilesMessage extends Message
                     canWalkOn: tile.canWalkOn(),
                     stack: [
                         tile.ground().spriteId()
-                    ]
+                    ],
+                    moveSpeedModifier: tile.moveSpeedModifier()
                 }
             })
         };

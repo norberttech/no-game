@@ -13,6 +13,7 @@ import SayMessage from './Network/SayMessage';
 import ServerMessages from './../Common/Network/ServerMessages';
 import KeyBoard from './UserInterface/KeyBoard';
 import Keys from './UserInterface/Keys';
+import PlayerSpeed from './../Common/PlayerSpeed';
 
 export default class Client
 {
@@ -32,7 +33,6 @@ export default class Client
         this._isConnected = false;
         this._isLoggedIn = false;
         this._onCharacterSay = null;
-        this._lastSendMoveMessage = 0;
         this._keyboard = keyboard;
     }
 
@@ -140,9 +140,10 @@ export default class Client
                 );
                 break;
             case ServerMessages.MOVE:
-                let delta = new Date().getTime() - this._lastSendMoveMessage;
-
-                this._kernel.move(message.data.x, message.data.y, message.data.moveTime + delta);
+                if (!this._kernel.player().isMovingTo(message.data.x, message.data.y)) {
+                    this._kernel.player().move(message.data.x, message.data.y);
+                    this._kernel.cancelMove();
+                }
                 break;
             case ServerMessages.CHARACTERS:
                 let characters = [];
@@ -179,7 +180,13 @@ export default class Client
                 break;
             case ServerMessages.TILES:
                 let tiles = message.data.tiles.map((tileData) => {
-                    return new Tile(tileData.x, tileData.y, tileData.canWalkOn, tileData.stack);
+                    return new Tile(
+                        tileData.x,
+                        tileData.y,
+                        tileData.canWalkOn,
+                        tileData.stack,
+                        tileData.moveSpeedModifier
+                    );
                 });
 
                 this._kernel.area().setTiles(tiles);
@@ -239,8 +246,11 @@ export default class Client
                 return ;
             }
 
-            this._kernel.player().prepareToMove(x, y);
-            this._lastSendMoveMessage = new Date().getTime();
+            this._kernel.move(x, y, PlayerSpeed.calculateMoveTime(
+                1,
+                this._kernel.area().tile(x,y).moveSpeedModifier())
+            );
+
             this._connection.send(new MoveMessage(x, y));
         }
     }

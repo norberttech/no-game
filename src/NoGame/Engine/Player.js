@@ -2,17 +2,8 @@
 
 import Assert from './../../JSAssert/Assert'
 import Position from './Map/Area/Position';
+import PlayerSpeed from './../Common/PlayerSpeed';
 import UUID from 'uuid';
-
-/**
- * @type {number}
- */
-const BASE_MOVE_SPEED_MODIFIER = 100;
-
-/**
- * @type {number}
- */
-const BASE_MOVE_TIME = 500;
 
 export default class Player
 {
@@ -105,20 +96,7 @@ export default class Player
             throw `Can't move that far`;
         }
 
-        this._moveEnds = new Date().getTime() + this._calculateMoveTime(distance, moveSpeedModifier);
+        this._moveEnds = new Date().getTime() + PlayerSpeed.calculateMoveTime(distance, moveSpeedModifier);
         this._currentPosition = newPosition;
-    }
-
-    /**
-     * @param {number} distance
-     * @param {number} moveSpeedModifier
-     * @returns {number}
-     * @private
-     */
-    _calculateMoveTime(distance, moveSpeedModifier)
-    {
-        let modifier = BASE_MOVE_SPEED_MODIFIER + moveSpeedModifier;
-
-        return ((distance * BASE_MOVE_TIME * 100) - modifier) / 100;
     }
 }

@@ -77,6 +77,8 @@ export default class Kernel
             this.player().move(x, y);
         };
 
+        this.player().movingTo(x, y);
+
         if (this.player().position().x + 1 === x) {
             this._gfxEngine.move(moveTime, onAnimationEnds, Directions.RIGHT);
         }
@@ -92,6 +94,11 @@ export default class Kernel
         if (this.player().position().y - 1 === y) {
             this._gfxEngine.move(moveTime, onAnimationEnds, Directions.DOWN);
         }
+    }
+
+    cancelMove()
+    {
+        this._gfxEngine.cancelMove();
     }
 
     /**

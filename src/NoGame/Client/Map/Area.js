@@ -58,4 +58,16 @@ export default class Area
 
         return tile.canWalkOn();
     }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     */
+    tile(x, y)
+    {
+        Assert.integer(x);
+        Assert.integer(y);
+
+        return this._tiles.get(`${x}:${y}`);
+    }
 }

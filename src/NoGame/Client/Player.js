@@ -27,13 +27,23 @@ export default class Player
     /**
      * Lock player when waiting for server response.
      */
-    prepareToMove(x, y)
+    movingTo(x, y)
     {
         Assert.integer(x);
         Assert.integer(y);
 
         this._movingTo = {x: x, y: y};
         this._moveStart = new Date().getTime();
+    }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     * @returns {boolean}
+     */
+    isMovingTo(x, y)
+    {
+        return this._movingTo.x === x && this._movingTo.y === y;
     }
 
     /**
@@ -46,6 +56,18 @@ export default class Player
         }
 
         return this._positon.x !== this._movingTo.x || this._positon.y !== this._movingTo.y;
+    }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     */
+    move(x, y)
+    {
+        Assert.integer(x);
+        Assert.integer(y);
+
+        this._positon = {x: x, y: y};
     }
 
     /**
@@ -70,17 +92,5 @@ export default class Player
     position()
     {
         return this._positon;
-    }
-
-    /**
-     * @param {int} x
-     * @param {int} y
-     */
-    move(x, y)
-    {
-        Assert.integer(x);
-        Assert.integer(y);
-
-        this._positon = {x: x, y: y};
     }
 }
