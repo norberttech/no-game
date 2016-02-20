@@ -52,11 +52,14 @@ export default class Connection
 
     /**
      * @param {Message} message
+     * @param callback
      */
-    send(message)
+    send(message, callback = () => {})
     {
-        Assert.instanceOf(message, Message);
 
-        this._socket.send(message.toString());
+        Assert.instanceOf(message, Message);
+        Assert.isFunction(callback);
+
+        this._socket.send(message.toString(), {}, callback);
     }
 }

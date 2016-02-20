@@ -34,7 +34,6 @@ export default class Engine
         this._charactersAnimations = new Map();
         this._visibleTiles = null;
         this._playerMoveAnimation = null;
-        this._onDraw = null;
         this._debug = debug;
     }
 
@@ -86,22 +85,8 @@ export default class Engine
         this._tiles = tiles;
     }
 
-    /**
-     * @param {function} callback
-     */
-    onDraw(callback)
-    {
-        Assert.isFunction(callback);
-
-        this._onDraw = callback;
-    }
-
     draw()
     {
-        if (this._onDraw !== null) {
-            this._onDraw();
-        }
-
         this._canvas.clear();
         if (this._spriteMap.isLoaded() && null !== this._visibleTiles) {
             if (null !== this._player && null !== this._tiles) {
@@ -147,7 +132,6 @@ export default class Engine
         this._playerMoveAnimation = null;
     }
 
-
     /**
      * @param {string} characterId
      * @param {int} moveTime
@@ -179,8 +163,8 @@ export default class Engine
     _drawVisibleArea()
     {
         let areaTiles = {
-            x: this._player.position().x - ((this._visibleTiles.x - 1) / 2),
-            y: this._player.position().y - ((this._visibleTiles.y - 1) / 2)
+            x: this._player.position().getX() - ((this._visibleTiles.x - 1) / 2),
+            y: this._player.position().getY() - ((this._visibleTiles.y - 1) / 2)
         };
         let pixelOffset = this._calculateMovePixelOffset();
 
@@ -205,8 +189,8 @@ export default class Engine
     _drawVisibleCharacters()
     {
         let range = Calculator.visibleTilesRange(
-            this._player.position().x,
-            this._player.position().y,
+            this._player.position().getX(),
+            this._player.position().getY(),
             this._visibleTiles.x,
             this._visibleTiles.y
         );
@@ -215,11 +199,11 @@ export default class Engine
         let playerPosition = this._player.position();
 
         for (let character of this._characters) {
-            if (character.position().x >= range.x.start && character.position().x <= range.x.end
-                && character.position().y >= range.y.start && character.position().y <= range.y.end) {
+            if (character.position().getX() >= range.x.start && character.position().getY() <= range.x.end
+                && character.position().getY() >= range.y.start && character.position().getX() <= range.y.end) {
 
-                let absoluteX = centerSquarePosition.x - (playerPosition.x - character.position().x);
-                let absoluteY = centerSquarePosition.y - (playerPosition.y - character.position().y);
+                let absoluteX = centerSquarePosition.x - (playerPosition.getX() - character.position().getX());
+                let absoluteY = centerSquarePosition.y - (playerPosition.getY() - character.position().getY());
                 let characterMoveOffset = this._calculateCharacterMovePixelOffset(character.id());
 
                 this._canvas.drawCharacter(
@@ -281,14 +265,14 @@ export default class Engine
     _executeAnimations()
     {
         if (this._playerMoveAnimation !== null) {
-            if (!this._playerMoveAnimation.isFinished()) {
+            if (this._playerMoveAnimation.isFinished()) {
                 this._playerMoveAnimation.executeCallback();
                 this._playerMoveAnimation = null;
             }
         }
 
         this._charactersAnimations.forEach((characterAnimation, id, animations) => {
-            if (!characterAnimation.isFinished()) {
+            if (characterAnimation.isFinished()) {
                 characterAnimation.executeCallback();
                 animations.delete(id);
             }
@@ -298,7 +282,7 @@ export default class Engine
     _drawDebugInfo()
     {
         this._canvas.debugText(
-            `Me {${this._player.position().x},${this._player.position().y}}:{${this._player._movingTo.x},${this._player._movingTo.y}}`,
+            `Me {${this._player.position().toString()}}:{${this._player._movingTo.toString()}}`,
             20,
             20
         );
@@ -308,11 +292,11 @@ export default class Engine
         let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
 
         for (let character of this._characters) {
-            let absoluteX = centerSquarePosition.x - (playerPosition.x - character.position().x);
-            let absoluteY = centerSquarePosition.y - (playerPosition.y - character.position().y);
+            let absoluteX = centerSquarePosition.x - (playerPosition.getX() - character.position().getX());
+            let absoluteY = centerSquarePosition.y - (playerPosition.getY() - character.position().getY());
 
             this._canvas.debugText(
-                `"${character.name()}" {${character.position().x},${character.position().y}}, Abs{${absoluteX}, ${absoluteY}}`,
+                `"${character.name()}" {${character.position().toString()}}, Abs{${absoluteX}, ${absoluteY}}`,
                 20,
                 40 + (charNumber * 20)
             );

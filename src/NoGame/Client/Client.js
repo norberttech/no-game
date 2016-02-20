@@ -5,6 +5,8 @@ import Kernel from './Kernel';
 import Tile from './Map/Tile';
 import Area from './Map/Area';
 import Player from './Player';
+import Position from './Position';
+import Directions from './Directions';
 import Character from './Character';
 import Connection from './Network/Connection';
 import LoginMessage from './Network/LoginMessage';
@@ -34,6 +36,7 @@ export default class Client
         this._isLoggedIn = false;
         this._onCharacterSay = null;
         this._keyboard = keyboard;
+        setInterval(this._gameLoop.bind(this), 1000 / 60);
     }
 
     /**
@@ -115,7 +118,7 @@ export default class Client
 
         switch (message.name) {
             case ServerMessages.LOGIN:
-                this._kernel.draw(this._gameLoop.bind(this));
+                this._kernel.draw();
                 this._kernel.login(
                     new Player(
                         message.data.id,
@@ -124,12 +127,6 @@ export default class Client
                         message.data.position.y
                     )
                 );
-                if (message.data.name === 'bot') {
-                    setInterval(() => {
-                        this._keyboard.keyDown(Keys.DOWN);
-                        setTimeout(() => {this._keyboard.keyUp(Keys.DOWN);}, 100);
-                    }, 1000);
-                }
                 this._isLoggedIn = true;
                 break;
             case ServerMessages.AREA:
@@ -141,8 +138,8 @@ export default class Client
                 break;
             case ServerMessages.MOVE:
                 if (!this._kernel.player().isMovingTo(message.data.x, message.data.y)) {
-                    this._kernel.player().move(message.data.x, message.data.y);
                     this._kernel.cancelMove();
+                    this._kernel.player().move(message.data.x, message.data.y);
                 }
                 break;
             case ServerMessages.CHARACTERS:
@@ -199,59 +196,71 @@ export default class Client
 
     _gameLoop()
     {
+
         if (this._keyboard.isKeyPressed(Keys.LEFT)) {
-            let x = this._kernel.player().position().x - 1;
-            let y = this._kernel.player().position().y;
-
-            this._move(x, y);
-
+            this._move(this._playerPosition().next(Directions.LEFT));
             return ;
         }
 
         if (this._keyboard.isKeyPressed(Keys.RIGHT)) {
-            let x = this._kernel.player().position().x + 1;
-            let y = this._kernel.player().position().y;
-
-            this._move(x, y);
+            this._move(this._playerPosition().next(Directions.RIGHT));
             return ;
         }
 
         if (this._keyboard.isKeyPressed(Keys.UP)) {
-            let x = this._kernel.player().position().x;
-            let y = this._kernel.player().position().y - 1;
-
-            this._move(x, y);
+            this._move(this._playerPosition().next(Directions.UP));
             return ;
         }
 
         if (this._keyboard.isKeyPressed(Keys.DOWN)) {
-            let x = this._kernel.player().position().x;
-            let y = this._kernel.player().position().y + 1;
-
-            this._move(x, y);
+            this._move(this._playerPosition().next(Directions.DOWN));
             return ;
         }
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @returns {Position}
      * @private
      */
-    _move(x, y)
+    _playerPosition()
     {
-        if (this._isLoggedIn && this._kernel.canMoveTo(x, y)) {
+        return this._player().position();
+    }
 
-            if (this._kernel.player().isMoving()) {
+    /**
+     * @param {Position} position
+     * @private
+     */
+    _move(position)
+    {
+
+        if (this._isLoggedIn && this._kernel.canMoveTo(position.getX(), position.getY())) {
+
+            if (this._player().isMoving()) {
                 return ;
             }
 
-            this._kernel.move(x, y, PlayerSpeed.calculateMoveTime(
-                1,
-                this._kernel.area().tile(x,y).moveSpeedModifier())
+            this._player().movingTo(position);
+
+            this._kernel.move(
+                position.getX(),
+                position.getY(),
+                PlayerSpeed.calculateMoveTime(
+                    1,
+                    this._kernel.area().tile(position.getX(), position.getY()).moveSpeedModifier()
+                )
             );
 
-            this._connection.send(new MoveMessage(x, y));
+            this._connection.send(new MoveMessage(position.getX(), position.getY()));
         }
+    }
+
+    /**
+     * @returns {Player}
+     * @private
+     */
+    _player()
+    {
+        return this._kernel.player();
     }
 }

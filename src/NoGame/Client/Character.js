@@ -1,5 +1,6 @@
 'use strict';
 
+import Position from './Position';
 import Assert from './../../JSAssert/Assert';
 
 export default class Character
@@ -19,8 +20,7 @@ export default class Character
 
         this._id = id;
         this._name = name;
-        this._x = x;
-        this._y = y;
+        this._position = new Position(x, y);
     }
 
     /**
@@ -40,11 +40,11 @@ export default class Character
     }
 
     /**
-     * @returns {{x: *, y: *}}
+     * @returns {Position}
      */
     position()
     {
-        return {x: this._x, y: this._y};
+        return this._position;
     }
 
     /**
@@ -56,7 +56,6 @@ export default class Character
         Assert.integer(x);
         Assert.integer(y);
 
-        this._x = x;
-        this._y = y;
+        this._position = new Position(x, y);
     }
 }

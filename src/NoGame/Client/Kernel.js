@@ -40,14 +40,8 @@ export default class Kernel
         this._gfxEngine.setVisibleTiles(x, y);
     }
 
-    /**
-     * @param {function} onDraw
-     */
-    draw(onDraw)
+    draw()
     {
-        Assert.isFunction(onDraw);
-
-        this._gfxEngine.onDraw(onDraw);
         this._gfxEngine.draw();
     }
 
@@ -77,21 +71,19 @@ export default class Kernel
             this.player().move(x, y);
         };
 
-        this.player().movingTo(x, y);
-
-        if (this.player().position().x + 1 === x) {
+        if (this.player().position().getX() + 1 === x) {
             this._gfxEngine.move(moveTime, onAnimationEnds, Directions.RIGHT);
         }
 
-        if (this.player().position().x - 1 === x) {
+        if (this.player().position().getX() - 1 === x) {
             this._gfxEngine.move(moveTime, onAnimationEnds, Directions.LEFT);
         }
 
-        if (this.player().position().y + 1 === y) {
+        if (this.player().position().getY() + 1 === y) {
             this._gfxEngine.move(moveTime, onAnimationEnds, Directions.UP);
         }
 
-        if (this.player().position().y - 1 === y) {
+        if (this.player().position().getY() - 1 === y) {
             this._gfxEngine.move(moveTime, onAnimationEnds, Directions.DOWN);
         }
     }
@@ -172,19 +164,19 @@ export default class Kernel
             character.move(x, y);
         };
 
-        if (character.position().x + 1 === x) {
+        if (character.position().getX() + 1 === x) {
             this._gfxEngine.characterMove(id, moveTime, onAnimationEnds, Directions.RIGHT);
         }
 
-        if (character.position().x - 1 === x) {
+        if (character.position().getX() - 1 === x) {
             this._gfxEngine.characterMove(id, moveTime, onAnimationEnds, Directions.LEFT);
         }
 
-        if (character.position().y + 1 === y) {
+        if (character.position().getY() + 1 === y) {
             this._gfxEngine.characterMove(id, moveTime, onAnimationEnds, Directions.UP);
         }
 
-        if (character.position().y - 1 === y) {
+        if (character.position().getY() - 1 === y) {
             this._gfxEngine.characterMove(id, moveTime, onAnimationEnds, Directions.DOWN);
         }
     }

@@ -20,7 +20,7 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
         true
     );
     let keyboard = new KeyBoard();
-    let client = new Client('ws://localhost:8080/', new Kernel(gfx), keyboard);
+    let client = new Client(window.Settings.host, new Kernel(gfx), keyboard);
     let ui = new UserInterface(window.document, keyboard);
 
     ui.bindWindowResize();

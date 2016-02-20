@@ -24,7 +24,7 @@ export default class MoveAnimation
      */
     isFinished()
     {
-        return (new Date().getTime() < this._endTime);
+        return new Date().getTime() > this._endTime;
     }
 
     executeCallback()

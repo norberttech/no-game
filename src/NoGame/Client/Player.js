@@ -1,5 +1,6 @@
 'use strict';
 
+import Position from './Position';
 import Assert from './../../JSAssert/Assert';
 
 export default class Player
@@ -19,21 +20,16 @@ export default class Player
 
         this._id = id;
         this._name = name;
-        this._positon = {x: x, y: y};
-        this._movingTo = {x: x, y: y};
-        this._moveStart = new Date().getTime();
+        this._positon = new Position(x, y);
+        this._movingTo = new Position(x, y);
     }
 
     /**
-     * Lock player when waiting for server response.
+     * @param {Position} position
      */
-    movingTo(x, y)
+    movingTo(position)
     {
-        Assert.integer(x);
-        Assert.integer(y);
-
-        this._movingTo = {x: x, y: y};
-        this._moveStart = new Date().getTime();
+        this._movingTo = position;
     }
 
     /**
@@ -43,7 +39,7 @@ export default class Player
      */
     isMovingTo(x, y)
     {
-        return this._movingTo.x === x && this._movingTo.y === y;
+        return this._movingTo.isEqual(new Position(x, y));
     }
 
     /**
@@ -51,11 +47,7 @@ export default class Player
      */
     isMoving()
     {
-        if (new Date().getTime() > this._moveStart + 3000 ) {
-            this._movingTo = this._positon;
-        }
-
-        return this._positon.x !== this._movingTo.x || this._positon.y !== this._movingTo.y;
+        return !this._movingTo.isEqual(this._positon);
     }
 
     /**
@@ -67,7 +59,7 @@ export default class Player
         Assert.integer(x);
         Assert.integer(y);
 
-        this._positon = {x: x, y: y};
+        this._positon = new Position(x, y);
     }
 
     /**
@@ -87,7 +79,7 @@ export default class Player
     }
 
     /**
-     * @returns {{x: *, y: *}}
+     * @returns {Position}
      */
     position()
     {
