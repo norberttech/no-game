@@ -297,11 +297,8 @@ export default class Engine
 
     _drawDebugInfo()
     {
-        this._canvas.outlineText(
+        this._canvas.debugText(
             `Me {${this._player.position().x},${this._player.position().y}}:{${this._player._movingTo.x},${this._player._movingTo.y}}`,
-            "15px Arial",
-            "#FFFFFF",
-            "#000000",
             20,
             20
         );
@@ -314,11 +311,8 @@ export default class Engine
             let absoluteX = centerSquarePosition.x - (playerPosition.x - character.position().x);
             let absoluteY = centerSquarePosition.y - (playerPosition.y - character.position().y);
 
-            this._canvas.outlineText(
+            this._canvas.debugText(
                 `"${character.name()}" {${character.position().x},${character.position().y}}, Abs{${absoluteX}, ${absoluteY}}`,
-                "15px Arial",
-                "#FFFFFF",
-                "#000000",
                 20,
                 40 + (charNumber * 20)
             );

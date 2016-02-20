@@ -128,10 +128,10 @@ export default class Canvas
 
         this.outlineText(
             nick,
-            "20px Arial",
+            "20px Verdana",
             "#FFFFFF",
             "#000000",
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + this._calculateTextTileOffset(nick, tileSize),
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + this._calculateTextTileOffset(nick, "20px Verdana", tileSize),
             tileSize.getHeight() * (tileY - this._hiddenTiles) - 8
         );
     }
@@ -166,14 +166,30 @@ export default class Canvas
 
         this.outlineText(
             nick,
-            "20px Arial",
+            "20px Verdana",
             "#FFFFFF",
             "#000000",
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + pixelOffsetX + this._calculateTextTileOffset(nick, tileSize),
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + pixelOffsetX + this._calculateTextTileOffset(nick, "20px Verdana", tileSize),
             tileSize.getHeight() * (tileY  - this._hiddenTiles) + pixelOffsetY - 8
         );
     }
 
+    /**
+     * @param {string} text
+     * @param {int} pixelX
+     * @param {int} pixelY
+     */
+    debugText(text, pixelX, pixelY)
+    {
+        this.outlineText(
+            text,
+            "15px Verdana",
+            "#FFFFFF",
+            "#000000",
+            pixelX,
+            pixelY
+        )
+    }
 
     /**
      * @param {string} text
@@ -190,12 +206,13 @@ export default class Canvas
         this._context.font = font;
         this._context.fillStyle = outlineColor;
         this._context.fillText(text, pixelX - outlineSize, pixelY);
-        this._context.fillText(text, pixelX,   pixelY-outlineSize);
+        this._context.fillText(text, pixelX,   pixelY - outlineSize);
         this._context.fillText(text, pixelX + outlineSize, pixelY);
-        this._context.fillText(text, pixelX,   pixelY+outlineSize);
+        this._context.fillText(text, pixelX,   pixelY + outlineSize);
 
         this._context.fillStyle = color;
         this._context.fillText(text, pixelX, pixelY);
+        this._context.font = font;
     }
 
     /**
@@ -211,15 +228,17 @@ export default class Canvas
 
     /**
      * @param {string} text
+     * @param {stirng} font
      * @param {Size} tileSize
      * @returns {number}
      * @private
      */
-    _calculateTextTileOffset(text, tileSize)
+    _calculateTextTileOffset(text, font, tileSize)
     {
-        let textWidth = this._context.measureText(text);
+        this._context.font = font;
+        let textWidth = this._context.measureText(text).width;
 
-        return (Math.round(tileSize.getWidth() / 2) - Math.round(textWidth.width / 2));
+        return (Math.round(tileSize.getWidth() / 2) - Math.round(textWidth / 2));
     }
 
     /**
