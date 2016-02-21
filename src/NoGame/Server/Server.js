@@ -152,7 +152,13 @@ export default class Server
             return ;
         }
 
-        area.movePlayerTo(currentConnection.playerId(), requestedPosition);
+        try {
+            area.movePlayerTo(currentConnection.playerId(), requestedPosition);
+        } catch (error) {
+            console.log(`Player ${player.name()} attempts to move from ${player.currentPosition().toString()} to ${requestedPosition.toString()}`);
+            currentConnection.send(new MoveMessage(player));
+            return ;
+        }
 
         currentConnection.send(new MoveMessage(player));
         currentConnection.send(new TilesMessage(
