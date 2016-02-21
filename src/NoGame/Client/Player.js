@@ -60,6 +60,7 @@ export default class Player
         Assert.integer(y);
 
         this._positon = new Position(x, y);
+        this._movingTo = this._positon;
     }
 
     /**
