@@ -43,7 +43,7 @@ export default class Server
         Assert.integer(port);
 
         let onConnection = (socket) => {
-            let connection = new Connection(socket);
+            let connection = new Connection(socket, this._debug);
 
             connection.bindOnMessage(this.onMessage.bind(this));
             connection.bindOnClose(this.onClose.bind(this));

@@ -141,13 +141,13 @@ export default class Engine
     characterMove(characterId, moveTime, finishCallback, moveDirection)
     {
         if (this._charactersAnimations.has(characterId)) {
-            return ;
+            this._charactersAnimations.get(characterId).executeCallback();
+            this._charactersAnimations.delete(characterId);
         }
 
         let distancePx = (moveDirection === Directions.LEFT || moveDirection === Directions.RIGHT)
             ? this._canvas.calculateTileSize().getWidth()
             : this._canvas.calculateTileSize().getHeight();
-
 
         this._charactersAnimations.set(characterId, new MoveAnimation(
             moveTime,
@@ -287,6 +287,16 @@ export default class Engine
             20
         );
 
+
+        this._canvas.debugText(
+            `Animation {${(this._playerMoveAnimation)
+                ? this._playerMoveAnimation.calculatePixelOffset().x + ':' + this._playerMoveAnimation.calculatePixelOffset().y
+                : 'not moving'}}`,
+            20,
+            40
+        );
+
+
         let charNumber = 0;
         let playerPosition = this._player.position();
         let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
@@ -298,7 +308,16 @@ export default class Engine
             this._canvas.debugText(
                 `"${character.name()}" {${character.position().toString()}}, Abs{${absoluteX}, ${absoluteY}}`,
                 20,
-                40 + (charNumber * 20)
+                140 + (charNumber * 20)
+            );
+
+            this._canvas.debugText(
+                `Animation {${(this._charactersAnimations.has(character.id()))
+                    ? this._charactersAnimations.get(character.id()).calculatePixelOffset().x + ':' + this._charactersAnimations.get(character.id()).calculatePixelOffset().y
+                    : 'not moving'}}
+                `,
+                20,
+                160 + (charNumber * 20)
             );
             charNumber++;
         }
