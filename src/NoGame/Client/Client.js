@@ -36,6 +36,7 @@ export default class Client
         this._isLoggedIn = false;
         this._onCharacterSay = null;
         this._keyboard = keyboard;
+        this._moveLock = false;
         setInterval(this._gameLoop.bind(this), 1000 / 60);
     }
 
@@ -115,6 +116,7 @@ export default class Client
      */
     _onMessage(event, connection) {
         let message = JSON.parse(event.data);
+        console.log(`Received: ${event.data.substr(0, 150)}`);
 
         switch (message.name) {
             case ServerMessages.LOGIN:
@@ -141,6 +143,7 @@ export default class Client
                     this._kernel.cancelMove();
                     this._kernel.player().move(message.data.x, message.data.y);
                 }
+                this._moveLock = false;
                 break;
             case ServerMessages.CHARACTERS:
                 let characters = [];
@@ -158,14 +161,16 @@ export default class Client
                 break;
             case ServerMessages.CHARACTER_MOVE:
                 if (this._kernel.hasCharacter(message.data.id)) {
-                    this._kernel.characterMove(message.data.id, message.data.position.x, message.data.position.y, message.data.moveTime);
+                    this._kernel.character(message.data.id).move(message.data.from.x, message.data.from.y);
+                    this._kernel.characterMove(message.data.id, message.data.to.x, message.data.to.y, message.data.moveTime);
                 } else {
                     this._kernel.addCharacter(new Character(
                         message.data.id,
                         message.data.name,
-                        message.data.position.x,
-                        message.data.position.y
+                        message.data.from.x,
+                        message.data.from.y
                     ));
+                    this._kernel.characterMove(message.data.id, message.data.to.x, message.data.to.y, message.data.moveTime);
                 }
                 break;
             case ServerMessages.CHARACTER_SAY:
@@ -189,6 +194,7 @@ export default class Client
                 this._kernel.area().setTiles(tiles);
                 break;
             default:
+                console.log("Unhandled packet");
                 console.log(message);
                 break;
         }
@@ -196,7 +202,6 @@ export default class Client
 
     _gameLoop()
     {
-
         if (this._keyboard.isKeyPressed(Keys.LEFT)) {
             this._move(this._playerPosition().next(Directions.LEFT));
             return ;
@@ -234,11 +239,17 @@ export default class Client
     _move(position)
     {
 
+        if (this._moveLock === true) {
+            return ;
+        }
+
         if (this._isLoggedIn && this._kernel.canMoveTo(position.getX(), position.getY())) {
 
             if (this._player().isMoving()) {
                 return ;
             }
+
+            this._moveLock = true;
 
             this._player().movingTo(position);
 

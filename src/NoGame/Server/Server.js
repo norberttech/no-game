@@ -141,33 +141,37 @@ export default class Server
     _handleMove(packet, currentConnection)
     {
         let area = this._kernel.playerArea(currentConnection.playerId());
-        let requestedPosition = new Position(packet.data.x, packet.data.y);
+        let toPosition = new Position(packet.data.x, packet.data.y);
         let player = area.player(currentConnection.playerId());
+        let fromPosition = player.currentPosition();
+
+        console.log(`Player ${player.name()} ${player.currentPosition().toString()} wants to move to: ${packet.data.x}:${packet.data.y}`);
 
         if (player.isMoving()) {
+            currentConnection.send(new MoveMessage(player));
             return;
         }
 
-        if (player.currentPosition().isEqualTo(requestedPosition)) {
+        if (player.currentPosition().isEqualTo(toPosition)) {
+            currentConnection.send(new MoveMessage(player));
             return ;
         }
 
         try {
-            area.movePlayerTo(currentConnection.playerId(), requestedPosition);
+            area.movePlayerTo(currentConnection.playerId(), toPosition);
         } catch (error) {
-            console.log(`Player ${player.name()} attempts to move from ${player.currentPosition().toString()} to ${requestedPosition.toString()}`);
+            console.log(`Player ${player.name()} attempts to move from ${player.currentPosition().toString()} to ${toPosition.toString()}`);
             currentConnection.send(new MoveMessage(player));
             return ;
         }
 
         currentConnection.send(new MoveMessage(player));
+        this._sendToPlayersInRange(player.id(), VISIBLE_TILES.x + 2, VISIBLE_TILES.y + 2, (connection) => {
+            return new CharacterMoveMessage(player, fromPosition);
+        });
         currentConnection.send(new TilesMessage(
             area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
         );
-
-        this._sendToPlayersInRange(player.id(), VISIBLE_TILES.x + 2, VISIBLE_TILES.y + 2, (connection) => {
-            return new CharacterMoveMessage(player);
-        });
     }
 
     /**

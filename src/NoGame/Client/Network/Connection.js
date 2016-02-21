@@ -12,6 +12,7 @@ export default class Connection
     {
         Assert.instanceOf(socket, WebSocket);
         this._socket = socket;
+        this._index = 0;
     }
 
     /**
@@ -60,6 +61,10 @@ export default class Connection
         Assert.instanceOf(message, Message);
         Assert.isFunction(callback);
 
-        this._socket.send(message.toString(), {}, callback);
+        message.setIndex(this._index);
+        console.log(`Send: ${message.toString().substr(0, 150)}`);
+        this._socket.send(message.toString());
+        this._index++;
+        callback();
     }
 }

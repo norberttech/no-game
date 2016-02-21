@@ -5,8 +5,10 @@ import Server from './Server';
 import fs from 'fs';
 
 var parametersFilePath = __dirname + '/parameters.json';
-let config = fs.exists(parametersFilePath)
-    ? fs.read(parametersFilePath)
+console.log(parametersFilePath);
+
+let config = (fs.existsSync(parametersFilePath))
+    ? JSON.parse(fs.readFileSync(parametersFilePath))
     : {port: 8080, debug: true};
 
 let kernel = new Kernel();

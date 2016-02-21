@@ -10,11 +10,13 @@ export default class CharacterMoveMessage extends Message
 {
     /**
      * @param {Player} player
+     * @param {Position} fromPosition
      */
-    constructor(player)
+    constructor(player, fromPosition)
     {
         super();
 
+        Assert.instanceOf(fromPosition, Position);
         Assert.instanceOf(player, Player);
 
         this._name = ServerMessages.CHARACTER_MOVE;
@@ -22,7 +24,11 @@ export default class CharacterMoveMessage extends Message
             id: player.id(),
             name: player.name(),
             moveTime: player.moveEnds() - new Date(),
-            position: {
+            from: {
+                x: fromPosition.x(),
+                y: fromPosition.y()
+            },
+            to: {
                 x: player.currentPosition().x(),
                 y: player.currentPosition().y()
             }

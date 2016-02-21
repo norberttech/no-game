@@ -21,6 +21,7 @@ export default class Connection
         this._playerId = null;
         this._id = UUID.v4();
         this._emulateLags = emulateLags;
+        this._index = 0;
     }
 
     /**
@@ -65,6 +66,7 @@ export default class Connection
         Assert.isFunction(callback);
 
         this._socket.on('message', (message) => {
+            console.log(`Received: ${message.substr(0, 150)}`);
             callback(message, this)
         });
     }
@@ -92,6 +94,9 @@ export default class Connection
             Utils.sleep(Utils.randomRange(0, 100));
         }
 
+        message.setIndex(this._index);
+        console.log(`Send: ${message.toString().substr(0, 150)}`);
         this._socket.send(message.toString());
+        this._index++;
     }
 }
