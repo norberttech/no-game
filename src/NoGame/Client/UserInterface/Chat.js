@@ -19,7 +19,7 @@ export default class Chat
 
         this._doc = doc;
         this._chatContainer = chatContainer;
-        this._messages = chatContainer.querySelector('.messages');
+        this._packet = chatContainer.querySelector('.messages');
         this._input = inputContainer.querySelector('input[type="text"]');
         this._currentUsername = null;
         this._onCharacterSay = null;
@@ -84,7 +84,7 @@ export default class Chat
             ).replace('__USERNAME__', username)
             .replace('__MESSAGE__', message);
 
-        this._messages.appendChild(msgElement);
+        this._packet.appendChild(msgElement);
         this._chatContainer.scrollTop = this._chatContainer.scrollHeight;
 
     }

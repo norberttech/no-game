@@ -20,7 +20,7 @@ export default class UserInterface
         this._keyboard = keyboard;
         this._loginScreen = this._doc.getElementById("login-screen");
         this._loginForm = this._loginScreen.querySelector("form");
-        this._messages = this._doc.querySelector("#messages");
+        this._packet = this._doc.querySelector("#messages");
         this._gameCanvasWrapper = this._doc.querySelector("#canvas-wrapper");
         this._gameCanvas = this._doc.querySelector("#game-canvas");
         this._chat = new Chat(this._doc, this._doc.querySelector('#chat'), this._doc.querySelector('#chat-input'));
@@ -81,7 +81,7 @@ export default class UserInterface
         message.classList.add("alert-error");
         message.innerHTML = text;
 
-        this._messages.appendChild(message);
+        this._packet.appendChild(message);
     }
 
     bindArrows()

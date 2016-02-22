@@ -6,6 +6,7 @@ import LoginMessage from './Network/LoginMessage';
 import AreaMessage from './Network/AreaMessage';
 import TilesMessage from './Network/TilesMessage';
 import MoveMessage from './Network/MoveMessage';
+import MessageQueue from './MessageQueue';
 import CharactersMessage from './Network/CharactersMessage';
 import CharacterMoveMessage from './Network/CharacterMoveMessage';
 import CharacterSayMessage from './Network/CharacterSayMessage';
@@ -14,6 +15,7 @@ import Kernel from './../Engine/Kernel';
 import Player from './../Engine/Player';
 import Position from './../Engine/Map/Area/Position';
 import ClientMessages from './../Common/Network/ClientMessages'
+import GameLoop from './GameLoop';
 
 /**
  * Client displays x: 15 and y: 11 but it keeps 2 tiles hidden.
@@ -33,6 +35,8 @@ export default class Server
         this._kernel = kernel;
         this._debug = debug;
         this._connections = new Map();
+        this._messageQueue = new MessageQueue();
+        this._gameLoop = new GameLoop(1000 / 45, this.update.bind(this));
     }
 
     /**
@@ -52,30 +56,41 @@ export default class Server
             console.log(`New connection with id: ${connection.id()}`);
         };
 
+        this._gameLoop.start();
         this._server = ws.createServer({ port: port, verifyClient: !this._debug}, onConnection);
     }
 
     /**
-     * @param {string} rawPacket
+     * @param {string} rawMessage
      * @param {Connection} currentConnection
      */
-    onMessage(rawPacket, currentConnection)
+    onMessage(rawMessage, currentConnection)
     {
-        let packet = JSON.parse(rawPacket);
+        this._messageQueue.addMessage(rawMessage, currentConnection);
+    }
 
-        switch (packet.name) {
-            case ClientMessages.LOGIN:
-                    this._handleLogin(packet, currentConnection);
-                break;
-            case ClientMessages.MOVE:
-                    this._handleMove(packet, currentConnection);
-                break;
-            case ClientMessages.MESSAGE:
-                    this._handleMessage(packet, currentConnection);
-                break;
-            default:
-                console.log(packet);
-                break;
+    update()
+    {
+        let messages = this._messageQueue.flushMessages();
+
+        for (let message of messages) {
+            let packet = message.getPacket();
+
+            switch (packet.name) {
+                case ClientMessages.LOGIN:
+                    this._handleLogin(packet, message.getConnection());
+                    break;
+                case ClientMessages.MOVE:
+                    this._handleMove(packet, message.getConnection());
+                    break;
+                case ClientMessages.MESSAGE:
+                    this._handleMessage(packet, message.getConnection());
+                    break;
+                default:
+                    console.log("Unhandled message");
+                    console.log(message);
+                    break;
+            }
         }
     }
 
@@ -126,9 +141,9 @@ export default class Server
             )
         );
 
-        this._sendToPlayersInRange(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y, (connection) => {
+        this._sendToPlayersInRange(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y, (playerConnection) => {
             return new CharactersMessage(
-                area.visiblePlayersFor(connection.playerId(), VISIBLE_TILES.x, VISIBLE_TILES.y)
+                area.visiblePlayersFor(playerConnection.playerId(), VISIBLE_TILES.x, VISIBLE_TILES.y)
             )
         });
     }
@@ -166,7 +181,7 @@ export default class Server
         }
 
         currentConnection.send(new MoveMessage(player));
-        this._sendToPlayersInRange(player.id(), VISIBLE_TILES.x + 2, VISIBLE_TILES.y + 2, (connection) => {
+        this._sendToPlayersInRange(player.id(), VISIBLE_TILES.x + 2, VISIBLE_TILES.y + 2, () => {
             return new CharacterMoveMessage(player, fromPosition);
         });
         currentConnection.send(new TilesMessage(
@@ -181,7 +196,7 @@ export default class Server
      */
     _handleMessage(packet, currentConnection)
     {
-        this._sendToOtherConnectedClients(currentConnection, (connection) => {
+        this._sendToOtherConnectedClients(currentConnection, () => {
             return new CharacterSayMessage(currentConnection.playerId(), packet.data.message)
         });
     }
