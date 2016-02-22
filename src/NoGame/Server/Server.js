@@ -37,7 +37,6 @@ export default class Server
         this._kernel = kernel;
         this._debug = debug;
         this._broadcaster = new Broadcaster();
-        this._connections = new Map();
         this._messageQueue = new MessageQueue();
         this._gameLoop = new GameLoop(1000 / 45, this.update.bind(this));
     }
@@ -55,7 +54,6 @@ export default class Server
             connection.bindOnMessage(this.onMessage.bind(this));
             connection.bindOnClose(this.onClose.bind(this));
 
-            this._connections.set(connection.id(), connection);
             this._broadcaster.addConnection(connection);
         };
 
@@ -118,7 +116,6 @@ export default class Server
         }
 
         this._broadcaster.removeConnection(closedConnection.id());
-        this._connections.delete(closedConnection.id());
     }
 
     /**

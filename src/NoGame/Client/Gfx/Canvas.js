@@ -71,6 +71,12 @@ export default class Canvas
             tileSize.getWidth(),
             tileSize.getHeight()
         );
+
+        this.debugSmallText(
+            `${tileX}:${tileY}`,
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offsetPixelX + 8,
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offsetPixelY + 8
+        );
     }
 
     /**
@@ -98,6 +104,12 @@ export default class Canvas
             tileSize.getWidth(),
             tileSize.getWidth()
         );
+
+        this.debugSmallText(
+            `${tileX}:${tileY}`,
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + pixelOffsetX + 8,
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + pixelOffsetY + 8
+        );
     }
 
     /**
@@ -105,7 +117,7 @@ export default class Canvas
      * @param {int} tileX
      * @param {int} tileY
      */
-    drawPLayer(nick, tileX, tileY)
+    drawPlayer(nick, tileX, tileY)
     {
         if (!this._canDraw()) {
             return ;
@@ -172,6 +184,12 @@ export default class Canvas
             tileSize.getWidth() * (tileX - this._hiddenTiles) + pixelOffsetX + this._calculateTextTileOffset(nick, "20px Verdana", tileSize),
             tileSize.getHeight() * (tileY  - this._hiddenTiles) + pixelOffsetY - 8
         );
+
+        this.debugSmallText(
+            `${tileX}:${tileY}`,
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + pixelOffsetX + 8,
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + pixelOffsetY + 8
+        );
     }
 
     /**
@@ -184,6 +202,23 @@ export default class Canvas
         this.outlineText(
             text,
             "15px Verdana",
+            "#FFFFFF",
+            "#000000",
+            pixelX,
+            pixelY
+        )
+    }
+
+    /**
+     * @param {string} text
+     * @param {int} pixelX
+     * @param {int} pixelY
+     */
+    debugSmallText(text, pixelX, pixelY)
+    {
+        this.outlineText(
+            text,
+            "8px Verdana",
             "#FFFFFF",
             "#000000",
             pixelX,

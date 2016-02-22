@@ -168,8 +168,8 @@ export default class Engine
         };
         let pixelOffset = this._calculateMovePixelOffset();
 
-        for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
-            for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
+        for (let tileX = 0; tileX <= this._visibleTiles.x; tileX++) {
+            for (let tileY = 0; tileY <= this._visibleTiles.y; tileY++) {
                 let absoluteX = areaTiles.x + tileX;
                 let absoluteY = areaTiles.y + tileY;
                 let tile = this._tiles.get(`${absoluteX}:${absoluteY}`);
@@ -188,28 +188,20 @@ export default class Engine
 
     _drawVisibleCharacters()
     {
-        let range = Calculator.visibleTilesRange(
-            this._player.position().getX(),
-            this._player.position().getY(),
-            this._visibleTiles.x,
-            this._visibleTiles.y
-        );
         let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
         let pixelOffset = this._calculateMovePixelOffset();
-        let playerPosition = this._player.position();
 
         for (let character of this._characters) {
-            if (character.position().getX() >= range.x.start && character.position().getY() <= range.x.end
-                && character.position().getY() >= range.y.start && character.position().getX() <= range.y.end) {
+            let relativeX = centerSquarePosition.x - (this._player.position().getX() - character.position().getX());
+            let relativeY = centerSquarePosition.y - (this._player.position().getY() - character.position().getY());
 
-                let absoluteX = centerSquarePosition.x - (playerPosition.getX() - character.position().getX());
-                let absoluteY = centerSquarePosition.y - (playerPosition.getY() - character.position().getY());
+            if (relativeX > 0 && relativeX < this._visibleTiles.x && relativeY > 0 && relativeY < this._visibleTiles.y) {
                 let characterMoveOffset = this._calculateCharacterMovePixelOffset(character.id());
 
                 this._canvas.drawCharacter(
                     character.name(),
-                    absoluteX,
-                    absoluteY,
+                    relativeX,
+                    relativeY,
                     pixelOffset.x + characterMoveOffset.x,
                     pixelOffset.y + characterMoveOffset.y
                 );
@@ -224,7 +216,7 @@ export default class Engine
     {
         let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
 
-        this._canvas.drawPLayer(
+        this._canvas.drawPlayer(
             this._player.name(),
             centerSquarePosition.x,
             centerSquarePosition.y
@@ -308,7 +300,7 @@ export default class Engine
             this._canvas.debugText(
                 `"${character.name()}" {${character.position().toString()}}, Abs{${absoluteX}, ${absoluteY}}`,
                 20,
-                140 + (charNumber * 20)
+                140 + (charNumber * 40)
             );
 
             this._canvas.debugText(
@@ -317,7 +309,7 @@ export default class Engine
                     : 'not moving'}}
                 `,
                 20,
-                160 + (charNumber * 20)
+                160 + (charNumber * 40)
             );
             charNumber++;
         }
