@@ -1,6 +1,7 @@
 'use strict';
 
 import ws from 'ws';
+import Broadcaster from './Broadcaster';
 import Connection from './Network/Connection';
 import BatchMessage from './Network/BatchMessage';
 import LoginMessage from './Network/LoginMessage';
@@ -35,6 +36,7 @@ export default class Server
     {
         this._kernel = kernel;
         this._debug = debug;
+        this._broadcaster = new Broadcaster();
         this._connections = new Map();
         this._messageQueue = new MessageQueue();
         this._gameLoop = new GameLoop(1000 / 45, this.update.bind(this));
@@ -54,7 +56,7 @@ export default class Server
             connection.bindOnClose(this.onClose.bind(this));
 
             this._connections.set(connection.id(), connection);
-            console.log(`New connection with id: ${connection.id()}`);
+            this._broadcaster.addConnection(connection);
         };
 
         this._gameLoop.start();
@@ -107,7 +109,7 @@ export default class Server
             this._kernel.logout(closedConnection.playerId());
 
             // update other players characters list
-            this._sendToOtherConnectedClients(closedConnection, (connection) => {
+            this._broadcaster.sendToOtherConnectedClients(closedConnection, (connection) => {
                 return new CharactersMessage(
                     this._kernel.playerArea(connection.playerId())
                         .visiblePlayersFor(connection.playerId(), VISIBLE_TILES.x, VISIBLE_TILES.y)
@@ -115,22 +117,23 @@ export default class Server
             });
         }
 
+        this._broadcaster.removeConnection(closedConnection.id());
         this._connections.delete(closedConnection.id());
     }
 
     /**
      * @param {object} packet
-     * @param {Connection} currentConnection
+     * @param {Connection} connection
      * @private
      */
-    _handleLogin(packet, currentConnection)
+    _handleLogin(packet, connection)
     {
         let player = new Player(packet.data.username);
         this._kernel.login(player);
         let area = this._kernel.playerArea(player.id());
         let messagesBatch = [];
 
-        currentConnection.setPlayerId(player.id());
+        connection.setPlayerId(player.id());
 
         messagesBatch.push(new LoginMessage(player));
         messagesBatch.push(new AreaMessage(area.name(), VISIBLE_TILES.x, VISIBLE_TILES.y));
@@ -143,13 +146,13 @@ export default class Server
             )
         );
 
-        currentConnection.send(new BatchMessage(messagesBatch));
+        connection.send(new BatchMessage(messagesBatch));
 
-        this._sendToPlayersInRange(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y, (playerConnection) => {
+        this._broadcaster.sendToPlayersInRange(area, player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y, (playerConnection) => {
             return new CharactersMessage(
                 area.visiblePlayersFor(playerConnection.playerId(), VISIBLE_TILES.x, VISIBLE_TILES.y)
             )
-        });
+        })
     }
 
     /**
@@ -164,8 +167,6 @@ export default class Server
         let player = area.player(currentConnection.playerId());
         let fromPosition = player.currentPosition();
 
-        console.log(`Player ${player.name()} ${player.currentPosition().toString()} wants to move to: ${packet.data.x}:${packet.data.y}`);
-
         if (player.isMoving()) {
             currentConnection.send(new MoveMessage(player));
             return;
@@ -179,7 +180,6 @@ export default class Server
         try {
             area.movePlayerTo(currentConnection.playerId(), toPosition);
         } catch (error) {
-            console.log(`Player ${player.name()} attempts to move from ${player.currentPosition().toString()} to ${toPosition.toString()}`);
             currentConnection.send(new MoveMessage(player));
             return ;
         }
@@ -191,7 +191,7 @@ export default class Server
         );
         currentConnection.send(new BatchMessage(messages));
 
-        this._sendToPlayersInRange(player.id(), VISIBLE_TILES.x + 2, VISIBLE_TILES.y + 2, () => {
+        this._broadcaster.sendToPlayersInRange(area, player.id(), VISIBLE_TILES.x + 2, VISIBLE_TILES.y + 2, () => {
             return new CharacterMoveMessage(player, fromPosition);
         });
     }
@@ -203,78 +203,8 @@ export default class Server
      */
     _handleMessage(packet, currentConnection)
     {
-        this._sendToOtherConnectedClients(currentConnection, () => {
+        this._broadcaster.sendToOtherConnectedClients(currentConnection, () => {
             return new CharacterSayMessage(currentConnection.playerId(), packet.data.message)
         });
-    }
-
-    /**
-     * Send message to all connected clients
-     *
-     * @param {function} messageFactory
-     * @private
-     */
-    _sendToAllConnectedClients(messageFactory)
-    {
-        for (let connection of this._connections.values()) {
-            if (!connection.hasPlayerId()) {
-                continue;
-            }
-
-            connection.send(messageFactory(connection));
-        }
-    }
-
-    /**
-     * Send message to all connected clients except currentConnection
-     *
-     * @param {Connection} currentConnection
-     * @param {function} messageFactory
-     * @private
-     */
-    _sendToOtherConnectedClients(currentConnection, messageFactory)
-    {
-        for (let connection of this._connections.values()) {
-            if (connection.id() === currentConnection.id()) {
-                continue;
-            }
-
-            if (!connection.hasPlayerId()) {
-                continue;
-            }
-
-            connection.send(messageFactory(connection));
-        }
-    }
-
-    /**
-     * Send message only to players visible by player with id playerId
-     *
-     * @param {string} playerId
-     * @param {int} rangeX
-     * @param {int} rangeY
-     * @param {function} messageFactory
-     * @private
-     */
-    _sendToPlayersInRange(playerId, rangeX, rangeY, messageFactory)
-    {
-        let area = this._kernel.playerArea(playerId);
-        let visiblePlayers = area.visiblePlayersFor(playerId, rangeX, rangeY);
-
-        for (let connection of this._connections.values()) {
-            if (!connection.hasPlayerId()) {
-                continue;
-            }
-
-            if (connection.playerId() === playerId) {
-                continue;
-            }
-
-            for (let player of visiblePlayers) {
-                if (connection.playerId() === player.id()) {
-                    connection.send(messageFactory(connection));
-                }
-            }
-        }
     }
 }
