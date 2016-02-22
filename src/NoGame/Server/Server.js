@@ -2,6 +2,7 @@
 
 import ws from 'ws';
 import Connection from './Network/Connection';
+import BatchMessage from './Network/BatchMessage';
 import LoginMessage from './Network/LoginMessage';
 import AreaMessage from './Network/AreaMessage';
 import TilesMessage from './Network/TilesMessage';
@@ -127,19 +128,22 @@ export default class Server
         let player = new Player(packet.data.username);
         this._kernel.login(player);
         let area = this._kernel.playerArea(player.id());
+        let messagesBatch = [];
 
         currentConnection.setPlayerId(player.id());
-        currentConnection.send(new LoginMessage(player));
-        currentConnection.send(new AreaMessage(area.name(), VISIBLE_TILES.x, VISIBLE_TILES.y));
-        currentConnection.send(new TilesMessage(
+
+        messagesBatch.push(new LoginMessage(player));
+        messagesBatch.push(new AreaMessage(area.name(), VISIBLE_TILES.x, VISIBLE_TILES.y));
+        messagesBatch.push(new TilesMessage(
             area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
         );
-
-        currentConnection.send(
+        messagesBatch.push(
             new CharactersMessage(
                 area.visiblePlayersFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y)
             )
         );
+
+        currentConnection.send(new BatchMessage(messagesBatch));
 
         this._sendToPlayersInRange(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y, (playerConnection) => {
             return new CharactersMessage(
@@ -180,13 +184,16 @@ export default class Server
             return ;
         }
 
-        currentConnection.send(new MoveMessage(player));
+        let messages = [];
+        messages.push(new MoveMessage(player));
+        messages.push(new TilesMessage(
+            area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
+        );
+        currentConnection.send(new BatchMessage(messages));
+
         this._sendToPlayersInRange(player.id(), VISIBLE_TILES.x + 2, VISIBLE_TILES.y + 2, () => {
             return new CharacterMoveMessage(player, fromPosition);
         });
-        currentConnection.send(new TilesMessage(
-            area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
-        );
     }
 
     /**

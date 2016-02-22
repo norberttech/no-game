@@ -114,90 +114,12 @@ export default class Client
      * @param {Connection} connection
      * @private
      */
-    _onMessage(event, connection) {
+    _onMessage(event, connection)
+    {
         let message = JSON.parse(event.data);
         console.log(`Received: ${event.data.substr(0, 150)}`);
 
-        switch (message.name) {
-            case ServerMessages.LOGIN:
-                this._kernel.draw();
-                this._kernel.login(
-                    new Player(
-                        message.data.id,
-                        message.data.name,
-                        message.data.position.x,
-                        message.data.position.y
-                    )
-                );
-                this._isLoggedIn = true;
-                break;
-            case ServerMessages.AREA:
-                this._kernel.setArea(new Area(message.data.name));
-                this._kernel.setVisibleTiles(
-                    message.data.visibleTiles.x,
-                    message.data.visibleTiles.y
-                );
-                break;
-            case ServerMessages.MOVE:
-                if (!this._kernel.player().isMovingTo(message.data.x, message.data.y)) {
-                    this._kernel.cancelMove();
-                    this._kernel.player().move(message.data.x, message.data.y);
-                }
-                this._moveLock = false;
-                break;
-            case ServerMessages.CHARACTERS:
-                let characters = [];
-                for (let characterData of message.data.characters) {
-                    characters.push(
-                        new Character(
-                            characterData.id,
-                            characterData.name,
-                            characterData.position.x,
-                            characterData.position.y
-                        )
-                    );
-                }
-                this._kernel.setCharacters(characters);
-                break;
-            case ServerMessages.CHARACTER_MOVE:
-                if (this._kernel.hasCharacter(message.data.id)) {
-                    this._kernel.character(message.data.id).move(message.data.from.x, message.data.from.y);
-                    this._kernel.characterMove(message.data.id, message.data.to.x, message.data.to.y, message.data.moveTime);
-                } else {
-                    this._kernel.addCharacter(new Character(
-                        message.data.id,
-                        message.data.name,
-                        message.data.from.x,
-                        message.data.from.y
-                    ));
-                    this._kernel.characterMove(message.data.id, message.data.to.x, message.data.to.y, message.data.moveTime);
-                }
-                break;
-            case ServerMessages.CHARACTER_SAY:
-                let character = this._kernel.character(message.data.id);
-                if (null !== this._onCharacterSay) {
-                    this._onCharacterSay(character.name(), message.data.message);
-                }
-
-                break;
-            case ServerMessages.TILES:
-                let tiles = message.data.tiles.map((tileData) => {
-                    return new Tile(
-                        tileData.x,
-                        tileData.y,
-                        tileData.canWalkOn,
-                        tileData.stack,
-                        tileData.moveSpeedModifier
-                    );
-                });
-
-                this._kernel.area().setTiles(tiles);
-                break;
-            default:
-                console.log("Unhandled packet");
-                console.log(message);
-                break;
-        }
+        this._handleMessage(message, connection);
     }
 
     _gameLoop()
@@ -273,5 +195,97 @@ export default class Client
     _player()
     {
         return this._kernel.player();
+    }
+
+    _handleMessage(message, connection)
+    {
+        switch (message.name) {
+            case ServerMessages.LOGIN:
+                this._kernel.draw();
+                this._kernel.login(
+                    new Player(
+                        message.data.id,
+                        message.data.name,
+                        message.data.position.x,
+                        message.data.position.y
+                    )
+                );
+                this._isLoggedIn = true;
+                break;
+            case ServerMessages.AREA:
+                this._kernel.setArea(new Area(message.data.name));
+                this._kernel.setVisibleTiles(
+                    message.data.visibleTiles.x,
+                    message.data.visibleTiles.y
+                );
+                break;
+            case ServerMessages.MOVE:
+                if (!this._kernel.player().isMovingTo(message.data.x, message.data.y)) {
+                    this._kernel.cancelMove();
+                    this._kernel.player().move(message.data.x, message.data.y);
+                }
+                this._moveLock = false;
+                break;
+            case ServerMessages.CHARACTERS:
+                let characters = [];
+                for (let characterData of message.data.characters) {
+                    characters.push(
+                        new Character(
+                            characterData.id,
+                            characterData.name,
+                            characterData.position.x,
+                            characterData.position.y
+                        )
+                    );
+                }
+                this._kernel.setCharacters(characters);
+                break;
+            case ServerMessages.CHARACTER_MOVE:
+                if (this._kernel.hasCharacter(message.data.id)) {
+                    this._kernel.character(message.data.id).move(message.data.from.x, message.data.from.y);
+                    this._kernel.characterMove(message.data.id, message.data.to.x, message.data.to.y, message.data.moveTime);
+                } else {
+                    this._kernel.addCharacter(new Character(
+                        message.data.id,
+                        message.data.name,
+                        message.data.from.x,
+                        message.data.from.y
+                    ));
+                    this._kernel.characterMove(message.data.id, message.data.to.x, message.data.to.y, message.data.moveTime);
+                }
+                break;
+            case ServerMessages.CHARACTER_SAY:
+                let character = this._kernel.character(message.data.id);
+                if (null !== this._onCharacterSay) {
+                    this._onCharacterSay(character.name(), message.data.message);
+                }
+
+                break;
+            case ServerMessages.TILES:
+                let tiles = message.data.tiles.map((tileData) => {
+                    return new Tile(
+                        tileData.x,
+                        tileData.y,
+                        tileData.canWalkOn,
+                        tileData.stack,
+                        tileData.moveSpeedModifier
+                    );
+                });
+
+                this._kernel.area().setTiles(tiles);
+                break;
+            case ServerMessages.BATCH_MESSAGE:
+                let rawMessages = message.data.messages;
+
+                for (let rawMessage of rawMessages) {
+                    this._handleMessage(JSON.parse(rawMessage), connection);
+                }
+
+                break;
+            default:
+                console.log("Unhandled packet");
+                console.log(message);
+                break;
+        }
     }
 }

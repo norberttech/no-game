@@ -1,6 +1,7 @@
 'use strict';
 
 const ServerMessages = {
+    BATCH_MESSAGE: 'batch',
     LOGIN: 'login',
     AREA: 'area',
     TILES: 'tiles',
