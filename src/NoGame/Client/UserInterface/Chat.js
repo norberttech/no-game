@@ -52,6 +52,10 @@ export default class Chat
      */
     say(time, message)
     {
+        if (!message.length) {
+            return ;
+        }
+
         if (null === this._currentUsername) {
             throw `Only logged users can use chat`;
         }

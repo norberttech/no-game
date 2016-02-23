@@ -29,6 +29,14 @@ export default class Kernel
     }
 
     /**
+     * @returns {Engine}
+     */
+    getGfx()
+    {
+        return this._gfxEngine;
+    }
+
+    /**
      * @param {int} x
      * @param {int} y
      */

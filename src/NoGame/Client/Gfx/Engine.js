@@ -73,6 +73,23 @@ export default class Engine
     }
 
     /**
+     * @param {string} message
+     */
+    playerSay(message)
+    {
+        this._player.say(message);
+    }
+
+    /**
+     * @param {string} characterId
+     * @param {string} text
+     */
+    characterSay(characterId, text)
+    {
+        this._characters.say(characterId, text);
+    }
+
+    /**
      * @param {Tile[]} tiles
      */
     setTiles(tiles)
@@ -136,12 +153,17 @@ export default class Engine
         let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
 
         for (let character of visibleCharacters) {
-            this._canvas.drawCharacter(
-                character.getName(),
-                character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y),
-                character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y),
-                animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()))
-            );
+            let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
+            let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
+            let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
+
+            this._canvas.drawCharacter(character.getName(), relativeX, relativeY, offset);
+
+            let messageIndex = 0;
+            for (let message of character.getMessages()) {
+                this._canvas.drawCharacterMessage(message.getText(), messageIndex, relativeX, relativeY, offset);
+                messageIndex++;
+            }
         }
     }
 
@@ -157,6 +179,12 @@ export default class Engine
             centerSquarePosition.x,
             centerSquarePosition.y
         );
+
+        let messageIndex = 0;
+        for (let message of this._player.getMessages()) {
+            this._canvas.drawCharacterMessage(message.getText(), messageIndex, centerSquarePosition.x, centerSquarePosition.y);
+            messageIndex++;
+        }
     }
 
     _drawDebugInfo()

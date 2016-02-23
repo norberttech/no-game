@@ -4,6 +4,7 @@ import Assert from './../../../JSAssert/Assert';
 import PlayerUI from './PlayerUI';
 import Character from './../Character';
 import Size from './Size';
+import MessageUI from './MessageUI';
 import Calculator from './../../Common/Area/Calculator';
 
 export default class CharacterUI
@@ -19,6 +20,15 @@ export default class CharacterUI
 
         this._character = character;
         this._player = player;
+        this._messages = [];
+    }
+
+    /**
+     * @returns {string}
+     */
+    getId()
+    {
+        return this._character.id();
     }
 
     /**
@@ -104,6 +114,38 @@ export default class CharacterUI
         return new Size(-offsetX, -offsetY);
     }
 
+    /**
+     * @param {string} text
+     */
+    say(text)
+    {
+        this._messages.unshift(new MessageUI(text));
+
+        if (this._messages.length > 6) {
+            this._messages.pop();
+        }
+    }
+
+    /**
+     * @return {MessageUI[]}
+     */
+    getMessages()
+    {
+        let visibleMessages = [];
+
+        for (let message of this._messages) {
+            if (message.isVisible()) {
+                visibleMessages.push(message);
+            }
+        }
+        return visibleMessages;
+    }
+
+    /**
+     * @param distance
+     * @returns {int}
+     * @private
+     */
     _getProgress(distance)
     {
         let duration = this._character.getMoveTime();

@@ -3,6 +3,7 @@
 import Assert from './../../../JSAssert/Assert';
 import Player from './../Player';
 import Size from './Size';
+import MessageUI from './MessageUI';
 
 export default class PlayerUI
 {
@@ -13,6 +14,7 @@ export default class PlayerUI
     {
         Assert.instanceOf(player, Player);
         this._player = player;
+        this._messages = [];
     }
 
     /**
@@ -71,6 +73,33 @@ export default class PlayerUI
     getName()
     {
         return this._player.name();
+    }
+
+    /**
+     * @param {string} text
+     */
+    say(text)
+    {
+        this._messages.unshift(new MessageUI(text));
+
+        if (this._messages.length > 6) {
+            this._messages.pop();
+        }
+    }
+
+    /**
+     * @return {MessageUI[]}
+     */
+    getMessages()
+    {
+        let visibleMessages = [];
+
+        for (let message of this._messages) {
+            if (message.isVisible()) {
+                visibleMessages.push(message);
+            }
+        }
+        return visibleMessages;
     }
 
     /**

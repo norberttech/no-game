@@ -73,6 +73,7 @@ export default class Client
 
         if (this._isLoggedIn) {
             this._connection.send(new SayMessage(message));
+            this._kernel.getGfx().playerSay(message);
         }
     }
 
@@ -280,6 +281,7 @@ export default class Client
                     this._onCharacterSay(character.getName(), message.data.message);
                 }
 
+                this._kernel.getGfx().characterSay(character.id(), message.data.message);
                 break;
             case ServerMessages.TILES:
                 let tiles = message.data.tiles.map((tileData) => {

@@ -47,4 +47,18 @@ export default class CharactersUI
 
         return visibleCharacters;
     }
+
+    /**
+     * @param {string} characterId
+     * @param {string} text
+     */
+    say(characterId, text)
+    {
+        for (let character of this._characters) {
+            if (character.getId() === characterId) {
+                character.say(text);
+                return ;
+            }
+        }
+    }
 }

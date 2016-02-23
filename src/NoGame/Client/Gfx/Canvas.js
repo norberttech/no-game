@@ -7,6 +7,8 @@ import Tile from './../Map/Tile';
 import Sprite from './Sprite';
 
 const NICK_FONT = '12px Verdana';
+const MESSAGE_FONT_SIZE = 12;
+const MESSAGE_FONT = MESSAGE_FONT_SIZE + 'px Verdana';
 
 export default class Canvas
 {
@@ -21,6 +23,7 @@ export default class Canvas
         this._context = canvas.getContext('2d');
         this._visibleTiles = null;
         this._hiddenTiles = null;
+        this._debug = false;
     }
 
     /**
@@ -75,14 +78,16 @@ export default class Canvas
             tileSize.getHeight()
         );
 
-        this.debugSmallText(
-            `${tileX}:${tileY}`,
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
-            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
-        );
-
         if (offset.getWidth() > 0) {
             console.log(tileX + ' ' + tileY);
+        }
+
+        if (this._debug) {
+            this.debugSmallText(
+                `${tileX}:${tileY}`,
+                tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
+                tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
+            );
         }
     }
 
@@ -111,11 +116,13 @@ export default class Canvas
             tileSize.getWidth()
         );
 
-        this.debugSmallText(
-            `${tileX}:${tileY}`,
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
-            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
-        );
+        if (this._debug) {
+            this.debugSmallText(
+                `${tileX}:${tileY}`,
+                tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
+                tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
+            );
+        }
     }
 
     /**
@@ -155,6 +162,28 @@ export default class Canvas
     }
 
     /**
+     * @param {string} text
+     * @param {int} index
+     * @param {int} tileX
+     * @param {int} tileY
+     * @param {Size} offset
+     */
+    drawCharacterMessage(text, index, tileX, tileY, offset = new Size(0, 0))
+    {
+        let tileSize = this.calculateTileSize();
+        let topOffset = -(index * (MESSAGE_FONT_SIZE + 8));
+
+        this.outlineText(
+            text,
+            MESSAGE_FONT,
+            "#c5bf13",
+            "#000000",
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(text, MESSAGE_FONT, tileSize),
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 30 + topOffset
+        );
+    }
+
+    /**
      * @param {string} nick
      * @param {int} tileX
      * @param {int} tileY
@@ -181,11 +210,6 @@ export default class Canvas
             tileSize.getHeight()
         );
 
-        this.debugSmallText(
-            `${tileX}:${tileY}`,
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
-            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
-        );
 
         if (tileY < (this._visibleTiles.y - this._hiddenTiles)
             && tileX < (this._visibleTiles.x - this._hiddenTiles)
@@ -197,6 +221,14 @@ export default class Canvas
                 "#000000",
                 tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(nick, NICK_FONT, tileSize),
                 tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 8
+            );
+        }
+
+        if (this._debug) {
+            this.debugSmallText(
+                `${tileX}:${tileY}`,
+                tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
+                tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
             );
         }
     }
@@ -272,7 +304,7 @@ export default class Canvas
 
     /**
      * @param {string} text
-     * @param {stirng} font
+     * @param {string} font
      * @param {Size} tileSize
      * @returns {number}
      * @private
