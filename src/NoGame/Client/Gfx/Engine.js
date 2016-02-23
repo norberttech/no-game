@@ -175,31 +175,5 @@ export default class Engine
             20,
             40
         );
-
-
-        //let charNumber = 0;
-        //let playerPosition = this._player.position();
-        //let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
-        //
-        //for (let character of this._characters) {
-        //    let absoluteX = centerSquarePosition.x - (playerPosition.getX() - character.position().getX());
-        //    let absoluteY = centerSquarePosition.y - (playerPosition.getY() - character.position().getY());
-        //
-        //    this._canvas.debugText(
-        //        `"${character.name()}" {${character.position().toString()}}, Abs{${absoluteX}, ${absoluteY}}`,
-        //        20,
-        //        140 + (charNumber * 40)
-        //    );
-        //
-        //    this._canvas.debugText(
-        //        `Animation {${(this._charactersAnimations.has(character.id()))
-        //            ? this._charactersAnimations.get(character.id()).calculatePixelOffset().x + ':' + this._charactersAnimations.get(character.id()).calculatePixelOffset().y
-        //            : 'not moving'}}
-        //        `,
-        //        20,
-        //        160 + (charNumber * 40)
-        //    );
-        //    charNumber++;
-        //}
     }
 }

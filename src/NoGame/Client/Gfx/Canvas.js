@@ -6,6 +6,8 @@ import Size from './Size';
 import Tile from './../Map/Tile';
 import Sprite from './Sprite';
 
+const NICK_FONT = '12px Verdana';
+
 export default class Canvas
 {
     /**
@@ -142,10 +144,10 @@ export default class Canvas
 
         this.outlineText(
             nick,
-            "20px Verdana",
+            NICK_FONT,
             "#FFFFFF",
             "#000000",
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + this._calculateTextTileOffset(nick, "20px Verdana", tileSize),
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + this._calculateTextTileOffset(nick, NICK_FONT, tileSize),
             tileSize.getHeight() * (tileY - this._hiddenTiles) - 8
         );
     }
@@ -177,20 +179,24 @@ export default class Canvas
             tileSize.getHeight()
         );
 
-        this.outlineText(
-            nick,
-            "20px Verdana",
-            "#FFFFFF",
-            "#000000",
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(nick, "20px Verdana", tileSize),
-            tileSize.getHeight() * (tileY  - this._hiddenTiles) + offset.getHeight() - 8
-        );
-
         this.debugSmallText(
             `${tileX}:${tileY}`,
             tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
             tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
         );
+
+        if (tileY < (this._visibleTiles.y - this._hiddenTiles)
+            && tileX < (this._visibleTiles.x - this._hiddenTiles)
+            && tileX > 0) {
+            this.outlineText(
+                nick,
+                NICK_FONT,
+                "#FFFFFF",
+                "#000000",
+                tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(nick, NICK_FONT, tileSize),
+                tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 8
+            );
+        }
     }
 
     /**
