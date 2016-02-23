@@ -76,6 +76,10 @@ export default class Canvas
             tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
             tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
         );
+
+        if (offset.getWidth() > 0) {
+            console.log(tileX + ' ' + tileY);
+        }
     }
 
     /**
@@ -150,10 +154,9 @@ export default class Canvas
      * @param {string} nick
      * @param {int} tileX
      * @param {int} tileY
-     * @param {int} pixelOffsetX
-     * @param {int} pixelOffsetY
+     * @param {Size} offset
      */
-    drawCharacter(nick, tileX, tileY, pixelOffsetX, pixelOffsetY)
+    drawCharacter(nick, tileX, tileY, offset)
     {
         if (!this._canDraw()) {
             return ;
@@ -168,8 +171,8 @@ export default class Canvas
         this._context.fillStyle = '#44BBE3';
 
         this._context.fillRect(
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + pixelOffsetX,
-            tileSize.getHeight() * (tileY - this._hiddenTiles) + pixelOffsetY,
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth(),
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight(),
             tileSize.getWidth(),
             tileSize.getHeight()
         );
@@ -179,14 +182,14 @@ export default class Canvas
             "20px Verdana",
             "#FFFFFF",
             "#000000",
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + pixelOffsetX + this._calculateTextTileOffset(nick, "20px Verdana", tileSize),
-            tileSize.getHeight() * (tileY  - this._hiddenTiles) + pixelOffsetY - 8
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(nick, "20px Verdana", tileSize),
+            tileSize.getHeight() * (tileY  - this._hiddenTiles) + offset.getHeight() - 8
         );
 
         this.debugSmallText(
             `${tileX}:${tileY}`,
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + pixelOffsetX + 8,
-            tileSize.getHeight() * (tileY - this._hiddenTiles) + pixelOffsetY + 8
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
         );
     }
 

@@ -91,6 +91,7 @@ export default class Kernel
         Assert.instanceOf(character, Character);
 
         this._characters.push(character);
+        this._gfxEngine.setCharacters(this._characters);
     }
 
     /**
@@ -138,26 +139,9 @@ export default class Kernel
         let character = this.character(id);
         Assert.integer(x);
         Assert.integer(y);
+        Assert.integer(moveTime);
 
-        let onAnimationEnds = () => {
-            character.move(x, y);
-        };
-
-        if (character.position().getX() + 1 === x) {
-            this._gfxEngine.characterMove(id, moveTime, onAnimationEnds, Directions.RIGHT);
-        }
-
-        if (character.position().getX() - 1 === x) {
-            this._gfxEngine.characterMove(id, moveTime, onAnimationEnds, Directions.LEFT);
-        }
-
-        if (character.position().getY() + 1 === y) {
-            this._gfxEngine.characterMove(id, moveTime, onAnimationEnds, Directions.UP);
-        }
-
-        if (character.position().getY() - 1 === y) {
-            this._gfxEngine.characterMove(id, moveTime, onAnimationEnds, Directions.DOWN);
-        }
+        character.startMovingTo(x, y, moveTime);
     }
 
     /**

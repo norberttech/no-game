@@ -32,4 +32,15 @@ export default class Size
     {
         return this._height;
     }
+
+    /**
+     * @param {Size} size
+     * @returns {Size}
+     */
+    add(size)
+    {
+        Assert.instanceOf(size, Size);
+
+        return new Size(this._width + size.getWidth(), this._height + size.getHeight());
+    }
 }

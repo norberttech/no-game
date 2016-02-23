@@ -135,13 +135,9 @@ export default class Server
         messagesBatch.push(new LoginMessage(player));
         messagesBatch.push(new AreaMessage(area.name(), VISIBLE_TILES.x, VISIBLE_TILES.y));
         messagesBatch.push(new TilesMessage(
-            area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
-        );
-        messagesBatch.push(
-            new CharactersMessage(
-                area.visiblePlayersFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y)
-            )
-        );
+            area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y),
+            area.visiblePlayersFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y)
+        ));
 
         connection.send(new BatchMessage(messagesBatch));
 
@@ -149,7 +145,7 @@ export default class Server
             return new CharactersMessage(
                 area.visiblePlayersFor(playerConnection.playerId(), VISIBLE_TILES.x, VISIBLE_TILES.y)
             )
-        })
+        });
     }
 
     /**
@@ -184,9 +180,12 @@ export default class Server
         let messages = [];
         messages.push(new MoveMessage(player));
         messages.push(new TilesMessage(
-            area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y))
-        );
+            area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y),
+            area.visiblePlayersFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y)
+        ));
         currentConnection.send(new BatchMessage(messages));
+        // we need to send visible characters also because player may enter to map part where
+        // players already stands
 
         this._broadcaster.sendToPlayersInRange(area, player.id(), VISIBLE_TILES.x + 2, VISIBLE_TILES.y + 2, () => {
             return new CharacterMoveMessage(player, fromPosition);

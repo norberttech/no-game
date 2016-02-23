@@ -20,7 +20,10 @@ export default class Character
 
         this._id = id;
         this._name = name;
+        this._moveFrom = new Position(x, y);
         this._position = new Position(x, y);
+        this._moveTime = 0;
+        this._moveEnds = new Date().getTime();
     }
 
     /**
@@ -34,28 +37,66 @@ export default class Character
     /**
      * @returns {string}
      */
-    name()
+    getName()
     {
         return this._name;
     }
 
     /**
-     * @returns {Position}
+     * @returns {boolean}
      */
-    position()
+    isMoving()
     {
-        return this._position;
+        return new Date().getTime() < this._moveEnds;
+    }
+
+    /**
+     * @returns {int}
+     */
+    getMoveEnds()
+    {
+        return this._moveEnds;
+    }
+
+    /**
+     * @returns {int}
+     */
+    getMoveTime()
+    {
+        return this._moveTime;
     }
 
     /**
      * @param {int} x
      * @param {int} y
+     * @param {int} moveTime
      */
-    move(x, y)
+    startMovingTo(x, y, moveTime)
     {
         Assert.integer(x);
         Assert.integer(y);
+        Assert.integer(moveTime);
 
+        this._moveTime = moveTime;
+        this._moveFrom = this._position;
         this._position = new Position(x, y);
+        this._moveEnds = new Date().getTime() + moveTime;
+    }
+
+
+    /**
+     * @returns {Position}
+     */
+    getCurrentPosition()
+    {
+        return this._position;
+    }
+
+    /**
+     * @returns {Position}
+     */
+    getMovingFromPosition()
+    {
+        return this._moveFrom;
     }
 }

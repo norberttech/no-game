@@ -17,6 +17,8 @@ import KeyBoard from './UserInterface/KeyBoard';
 import Keys from './UserInterface/Keys';
 import PlayerSpeed from './../Common/PlayerSpeed';
 
+const LATENCY_DELAY = 50;
+
 export default class Client
 {
     /**
@@ -174,7 +176,7 @@ export default class Client
             );
 
             // add extra 50ms to handle latency - need to find better way for that
-            moveTime += 50;
+            moveTime += LATENCY_DELAY;
 
             this._kernel.move(
                 position.getX(),
@@ -236,8 +238,12 @@ export default class Client
                 break;
             case ServerMessages.CHARACTER_MOVE:
                 if (this._kernel.hasCharacter(message.data.id)) {
-                    this._kernel.character(message.data.id).move(message.data.from.x, message.data.from.y);
-                    this._kernel.characterMove(message.data.id, message.data.to.x, message.data.to.y, message.data.moveTime);
+                    this._kernel.characterMove(
+                        message.data.id,
+                        message.data.to.x,
+                        message.data.to.y,
+                        message.data.moveTime + LATENCY_DELAY
+                    );
                 } else {
                     this._kernel.addCharacter(new Character(
                         message.data.id,
@@ -245,7 +251,12 @@ export default class Client
                         message.data.from.x,
                         message.data.from.y
                     ));
-                    this._kernel.characterMove(message.data.id, message.data.to.x, message.data.to.y, message.data.moveTime);
+                    this._kernel.characterMove(
+                        message.data.id,
+                        message.data.to.x,
+                        message.data.to.y,
+                        message.data.moveTime + LATENCY_DELAY
+                    );
                 }
                 break;
             case ServerMessages.CHARACTER_SAY:
@@ -265,6 +276,18 @@ export default class Client
                         tileData.moveSpeedModifier
                     );
                 });
+                for (let characterData of message.data.characters) {
+                    if (!this._kernel.hasCharacter(characterData.id)) {
+                        this._kernel.addCharacter(
+                            new Character(
+                                characterData.id,
+                                characterData.name,
+                                characterData.position.x,
+                                characterData.position.y
+                            )
+                        );
+                    }
+                }
 
                 this._kernel.area().setTiles(tiles);
                 break;

@@ -1,11 +1,11 @@
 'use strict';
 
 import Canvas from './Canvas';
-import MoveAnimation from './MoveAnimation';
 import SpriteMap from './SpriteMap';
 import Directions from './../Directions';
 import Tile from './../Map/Tile';
 import PlayerUI from './PlayerUI';
+import CharactersUI from './CharactersUI';
 import Character from './../Character';
 import Assert from './../../../JSAssert/Assert';
 import Calculator from './../../Common/Area/Calculator';
@@ -30,7 +30,7 @@ export default class Engine
         this._spriteMap = spriteMap;
         this._tiles = null;
         this._player = null;
-        this._characters = [];
+        this._characters = new CharactersUI();
         this._charactersAnimations = new Map();
         this._visibleTiles = null;
         this._debug = debug;
@@ -69,7 +69,7 @@ export default class Engine
     {
         Assert.containsOnly(characters, Character);
 
-        this._characters = characters;
+        this._characters.updateCharacters(characters, this._player);
     }
 
     /**
@@ -88,9 +88,8 @@ export default class Engine
         if (this._spriteMap.isLoaded() && null !== this._visibleTiles) {
             if (null !== this._player && null !== this._tiles) {
                 this._drawVisibleArea();
-                //this._drawVisibleCharacters();
+                this._drawVisibleCharacters();
                 this._drawPlayer();
-                //this._executeAnimations();
 
                 if (this._debug === true) {
                     this._drawDebugInfo();
@@ -99,31 +98,6 @@ export default class Engine
         }
 
         this._animationLoop(this.draw.bind(this));
-    }
-
-    /**
-     * @param {string} characterId
-     * @param {int} moveTime
-     * @param {function} finishCallback
-     * @param {int} moveDirection
-     */
-    characterMove(characterId, moveTime, finishCallback, moveDirection)
-    {
-        if (this._charactersAnimations.has(characterId)) {
-            this._charactersAnimations.get(characterId).executeCallback();
-            this._charactersAnimations.delete(characterId);
-        }
-
-        let distancePx = (moveDirection === Directions.LEFT || moveDirection === Directions.RIGHT)
-            ? this._canvas.calculateTileSize().getWidth()
-            : this._canvas.calculateTileSize().getHeight();
-
-        this._charactersAnimations.set(characterId, new MoveAnimation(
-            moveTime,
-            distancePx,
-            finishCallback,
-            moveDirection
-        ));
     }
 
     /**
@@ -136,20 +110,20 @@ export default class Engine
             y: this._player.getY() - ((this._visibleTiles.y - 1) / 2)
         };
 
-        let pixelOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
 
-        for (let tileX = 0; tileX <= this._visibleTiles.x; tileX++) {
-            for (let tileY = 0; tileY <= this._visibleTiles.y; tileY++) {
+        for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
+            for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
                 let absoluteX = areaTiles.x + tileX;
                 let absoluteY = areaTiles.y + tileY;
                 let tile = this._tiles.get(`${absoluteX}:${absoluteY}`);
 
                 if (tile === undefined) {
-                    this._canvas.drawBlankTile(tileX, tileY, pixelOffset);
+                    this._canvas.drawBlankTile(tileX, tileY, animationOffset);
                 } else {
                     for (let spriteId of tile.stack()) {
                         let sprite = this._spriteMap.getSprite(spriteId);
-                        this._canvas.drawTile(tileX, tileY, sprite, pixelOffset);
+                        this._canvas.drawTile(tileX, tileY, sprite, animationOffset);
                     }
                 }
             }
@@ -158,24 +132,16 @@ export default class Engine
 
     _drawVisibleCharacters()
     {
-        let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
-        let pixelOffset = this._calculateMovePixelOffset();
+        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
 
-        for (let character of this._characters) {
-            let relativeX = centerSquarePosition.x - (this._player.position().getX() - character.position().getX());
-            let relativeY = centerSquarePosition.y - (this._player.position().getY() - character.position().getY());
-
-            if (relativeX > 0 && relativeX < this._visibleTiles.x && relativeY > 0 && relativeY < this._visibleTiles.y) {
-                let characterMoveOffset = this._calculateCharacterMovePixelOffset(character.id());
-
-                this._canvas.drawCharacter(
-                    character.name(),
-                    relativeX,
-                    relativeY,
-                    pixelOffset.x + characterMoveOffset.x,
-                    pixelOffset.y + characterMoveOffset.y
-                );
-            }
+        for (let character of visibleCharacters) {
+            this._canvas.drawCharacter(
+                character.getName(),
+                character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y),
+                character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y),
+                animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()))
+            );
         }
     }
 
@@ -191,34 +157,6 @@ export default class Engine
             centerSquarePosition.x,
             centerSquarePosition.y
         );
-    }
-
-    /**
-     * @returns {{x: number, y: number}}
-     * @private
-     */
-    _calculateCharacterMovePixelOffset(id)
-    {
-        if (this._charactersAnimations.has(id)) {
-            let offset = this._charactersAnimations.get(id).calculatePixelOffset();
-
-            return {x: -offset.x, y: -offset.y};
-        }
-
-        return {x: 0, y: 0};
-    }
-
-    /**
-     * @private
-     */
-    _executeAnimations()
-    {
-        this._charactersAnimations.forEach((characterAnimation, id, animations) => {
-            if (characterAnimation.isFinished()) {
-                characterAnimation.executeCallback();
-                animations.delete(id);
-            }
-        });
     }
 
     _drawDebugInfo()
