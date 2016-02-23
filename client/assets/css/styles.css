@@ -4,6 +4,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    background: #969593;
 }
 
 #login-screen {
@@ -11,6 +12,7 @@ html, body {
     border: 1px solid black;
     display: none;
     margin: 150px auto 0;
+    background: #ffffff;
 }
 
 #login-screen form {
@@ -41,64 +43,72 @@ html, body {
     color: #a94442;
 }
 
-#canvas-wrapper {
+#game-wrapper {
     width: 100%;
     height: 100%;
     display: none;
     position: relative;
+    background-color: #000000;
 }
 
-#canvas-wrapper canvas {
+#game-wrapper canvas {
     position: absolute;
     background-color: #000000;
     z-index: 0;
 }
 
-#canvas-wrapper #chat {
-    position: absolute;
-    z-index: 100;
+#ui {
     width: 20%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 0;
+    border-left: 1px solid #000000;
+    background-color: #969593;
+}
+
+#chat {
+    position: absolute;
+    width: 100%;
+    z-index: 100;
     background: #808080;
     color: #ffce46;
     right: 0;
-    bottom: 25px;
+    bottom: 35px;
     padding: 10px 0;
     height: 20%;
     overflow-y: scroll;;
 }
 
-#canvas-wrapper #chat .messages {
+#chat .messages {
 }
 
-#canvas-wrapper #chat .messages .message {
+#chat .messages .message {
     padding: 2px 5px;
     display: table;
 }
 
 
-#canvas-wrapper #chat .messages .message .time {
+#chat .messages .message .time {
     display: table-cell;
 }
 
-#canvas-wrapper #chat .messages .message .username {
-    display: table-cell;
-    padding-left: 5px;
-}
-
-#canvas-wrapper #chat .messages .message .content {
+#chat .messages .message .content {
     display: table-cell;
     padding-left: 5px;
 }
 
-#canvas-wrapper #chat-input {
+#chat-input {
     position: absolute;
     right: 0;
     bottom: 0;
-    width: 20%;
+    width: 100%;
 }
 
-#canvas-wrapper #chat-input input {
+#chat-input input {
     width: 100%;
     border: 0;
     outline: none;
+    padding: 7px 3px;
 }

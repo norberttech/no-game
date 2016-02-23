@@ -37,8 +37,8 @@ export default class Client
         this._isConnected = false;
         this._isLoggedIn = false;
         this._onCharacterSay = null;
+        this._onLogin = null;
         this._keyboard = keyboard;
-        this._moveLock = false;
         setInterval(this._gameLoop.bind(this), 1000 / 60);
     }
 
@@ -52,6 +52,16 @@ export default class Client
         if (this._isConnected) {
             this._connection.send(new LoginMessage(username));
         }
+    }
+
+    /**
+     * @param {function} callback - gets {Client} as a argument
+     */
+    onLogin(callback)
+    {
+        Assert.isFunction(callback);
+
+        this._onLogin = callback;
     }
 
     /**
@@ -209,6 +219,11 @@ export default class Client
                     )
                 );
                 this._isLoggedIn = true;
+
+                if (this._onLogin !== null) {
+                    this._onLogin(this);
+                }
+
                 break;
             case ServerMessages.AREA:
                 this._kernel.setArea(new Area(message.data.name));
@@ -262,7 +277,7 @@ export default class Client
             case ServerMessages.CHARACTER_SAY:
                 let character = this._kernel.character(message.data.id);
                 if (null !== this._onCharacterSay) {
-                    this._onCharacterSay(character.name(), message.data.message);
+                    this._onCharacterSay(character.getName(), message.data.message);
                 }
 
                 break;

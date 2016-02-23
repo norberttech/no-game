@@ -199,8 +199,16 @@ export default class Server
      */
     _handleMessage(packet, currentConnection)
     {
-        this._broadcaster.sendToOtherConnectedClients(currentConnection, () => {
-            return new CharacterSayMessage(currentConnection.playerId(), packet.data.message)
-        });
+        let area = this._kernel.playerArea(currentConnection.playerId());
+
+        this._broadcaster.sendToPlayersInRange(
+            area,
+            currentConnection.playerId(),
+            VISIBLE_TILES.x + 2,
+            VISIBLE_TILES.y + 2,
+            () => {
+                return new CharacterSayMessage(currentConnection.playerId(), packet.data.message)
+            }
+        );
     }
 }

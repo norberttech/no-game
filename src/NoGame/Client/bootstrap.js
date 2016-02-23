@@ -49,6 +49,11 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
         ui.showCanvas();
         client.login(username);
         ui.chat().setCurrentUsername(username);
-        ui.resizeUI();
+    });
+
+    client.onLogin(() => {
+        setTimeout(() => {
+            ui.resizeUI();
+        }, 100);
     });
 });

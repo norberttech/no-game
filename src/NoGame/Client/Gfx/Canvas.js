@@ -36,6 +36,8 @@ export default class Canvas
 
         this._visibleTiles = {x: tilesX, y: tilesY};
         this._hiddenTiles = hiddenTiles;
+        this._canvas.setAttribute('data-visible-tiles-x', this._visibleTiles.x - this._hiddenTiles * 2);
+        this._canvas.setAttribute('data-visible-tiles-y', this._visibleTiles.y - this._hiddenTiles * 2);
     }
 
     clear()

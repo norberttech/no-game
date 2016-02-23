@@ -21,7 +21,7 @@ export default class UserInterface
         this._loginScreen = this._doc.getElementById("login-screen");
         this._loginForm = this._loginScreen.querySelector("form");
         this._packet = this._doc.querySelector("#messages");
-        this._gameCanvasWrapper = this._doc.querySelector("#canvas-wrapper");
+        this._gameCanvasWrapper = this._doc.querySelector("#game-wrapper");
         this._gameCanvas = this._doc.querySelector("#game-canvas");
         this._chat = new Chat(this._doc, this._doc.querySelector('#chat'), this._doc.querySelector('#chat-input'));
     }
@@ -104,10 +104,32 @@ export default class UserInterface
 
     resizeUI()
     {
-        let width = this._doc.body.clientWidth;
+        let width = (this._doc.body.clientWidth * 0.8);
         let height = this._doc.body.clientHeight;
 
-        this._gameCanvas.setAttribute('width', (width * 0.8));
-        this._gameCanvas.setAttribute('height', height);
+        if (this._gameCanvas.hasAttribute('data-visible-tiles-x') && this._gameCanvas.hasAttribute('data-visible-tiles-y')) {
+            let tilesY = this._gameCanvas.getAttribute('data-visible-tiles-y');
+            let tilesX = this._gameCanvas.getAttribute('data-visible-tiles-x');
+
+            let tileWidth = Math.round(width / tilesX);
+            let tileHeight = Math.round(height / tilesY);
+            let tileSize = Math.max(tileWidth, tileHeight);
+
+            while(tileSize > 32) {
+                if (tileSize * tilesX < width && tileSize * tilesY < height) {
+                    break;
+                }
+
+                tileSize--;
+            }
+
+            this._gameCanvas.setAttribute('width', tileSize * tilesX);
+            this._gameCanvas.setAttribute('height', tileSize * tilesY);
+
+            this._gameCanvas.style.marginLeft = Math.round((width - (tileSize * tilesX)) / 2) + 'px';
+        }
+        //
+        //this._gameCanvas.setAttribute('width', (width * 0.8));
+        //this._gameCanvas.setAttribute('height', height);
     }
 }

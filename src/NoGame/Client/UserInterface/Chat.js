@@ -2,7 +2,7 @@
 
 import Assert from './../../../JSAssert/Assert';
 
-const MESSAGE_TEMPLATE = `<div class="time">__TIME__</div><div class="username">__USERNAME__: </div><div class="content">__MESSAGE__</div>`;
+const MESSAGE_TEMPLATE = `<div class="time">__TIME__</div><div class="content">__USERNAME__: __MESSAGE__</div>`;
 
 export default class Chat
 {
