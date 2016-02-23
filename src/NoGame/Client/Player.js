@@ -20,16 +20,18 @@ export default class Player
 
         this._id = id;
         this._name = name;
+        this._moveFrom = new Position(x, y);
         this._positon = new Position(x, y);
-        this._movingTo = new Position(x, y);
+        this._moveEnds = new Date().getTime();
+        this._moveTime = 0;
     }
 
     /**
-     * @param {Position} position
+     * @returns {boolean}
      */
-    movingTo(position)
+    isMoving()
     {
-        this._movingTo = position;
+        return new Date().getTime() < this._moveEnds;
     }
 
     /**
@@ -39,28 +41,55 @@ export default class Player
      */
     isMovingTo(x, y)
     {
-        return this._movingTo.isEqual(new Position(x, y));
+        return this._positon.isEqual(new Position(x, y));
     }
 
     /**
-     * @returns {boolean}
+     * @returns {int}
      */
-    isMoving()
+    getMoveEnds()
     {
-        return !this._movingTo.isEqual(this._positon);
+        return this._moveEnds;
+    }
+
+    /**
+     * @returns {int}
+     */
+    getMoveTime()
+    {
+        return this._moveTime;
     }
 
     /**
      * @param {int} x
      * @param {int} y
+     * @param {int} moveTime
      */
-    move(x, y)
+    startMovingTo(x, y, moveTime)
     {
         Assert.integer(x);
         Assert.integer(y);
+        Assert.integer(moveTime);
 
+        this._moveTime = moveTime;
+        this._moveFrom = this._positon;
         this._positon = new Position(x, y);
-        this._movingTo = this._positon;
+        this._moveEnds = new Date().getTime() + moveTime;
+    }
+
+    /**
+     * @param moveTime
+     */
+    updateMoveTime(moveTime)
+    {
+        this._moveEnds = new Date().getTime() + moveTime;
+    }
+
+    cancelMove()
+    {
+        this._moveEnds = new Date().getTime();
+        this._positon = this._moveFrom;
+        this._moveTime = 0;
     }
 
     /**
@@ -82,8 +111,16 @@ export default class Player
     /**
      * @returns {Position}
      */
-    position()
+    getCurrentPosition()
     {
         return this._positon;
+    }
+
+    /**
+     * @returns {Position}
+     */
+    getMovingFromPosition()
+    {
+        return this._moveFrom;
     }
 }

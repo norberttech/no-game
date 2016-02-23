@@ -5,7 +5,7 @@ import MoveAnimation from './MoveAnimation';
 import SpriteMap from './SpriteMap';
 import Directions from './../Directions';
 import Tile from './../Map/Tile';
-import Player from './../Player';
+import PlayerUI from './PlayerUI';
 import Character from './../Character';
 import Assert from './../../../JSAssert/Assert';
 import Calculator from './../../Common/Area/Calculator';
@@ -33,7 +33,6 @@ export default class Engine
         this._characters = [];
         this._charactersAnimations = new Map();
         this._visibleTiles = null;
-        this._playerMoveAnimation = null;
         this._debug = debug;
     }
 
@@ -60,9 +59,7 @@ export default class Engine
      */
     setPlayer(player)
     {
-        Assert.instanceOf(player, Player);
-
-        this._player = player;
+        this._player = new PlayerUI(player);
     }
 
     /**
@@ -91,9 +88,9 @@ export default class Engine
         if (this._spriteMap.isLoaded() && null !== this._visibleTiles) {
             if (null !== this._player && null !== this._tiles) {
                 this._drawVisibleArea();
-                this._drawVisibleCharacters();
+                //this._drawVisibleCharacters();
                 this._drawPlayer();
-                this._executeAnimations();
+                //this._executeAnimations();
 
                 if (this._debug === true) {
                     this._drawDebugInfo();
@@ -102,34 +99,6 @@ export default class Engine
         }
 
         this._animationLoop(this.draw.bind(this));
-    }
-
-    /**
-     * @param moveTime
-     * @param {function} finishCallback
-     * @param {int} moveDirection
-     */
-    move(moveTime, finishCallback, moveDirection)
-    {
-        if (null !== this._playerMoveAnimation) {
-            return ;
-        }
-
-        let distancePx = (moveDirection === Directions.LEFT || moveDirection === Directions.RIGHT)
-            ? this._canvas.calculateTileSize().getWidth()
-            : this._canvas.calculateTileSize().getHeight();
-
-        this._playerMoveAnimation = new MoveAnimation(
-            moveTime,
-            distancePx,
-            finishCallback,
-            moveDirection
-        );
-    }
-
-    cancelMove()
-    {
-        this._playerMoveAnimation = null;
     }
 
     /**
@@ -163,10 +132,11 @@ export default class Engine
     _drawVisibleArea()
     {
         let areaTiles = {
-            x: this._player.position().getX() - ((this._visibleTiles.x - 1) / 2),
-            y: this._player.position().getY() - ((this._visibleTiles.y - 1) / 2)
+            x: this._player.getX() - ((this._visibleTiles.x - 1) / 2),
+            y: this._player.getY() - ((this._visibleTiles.y - 1) / 2)
         };
-        let pixelOffset = this._calculateMovePixelOffset();
+
+        let pixelOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
 
         for (let tileX = 0; tileX <= this._visibleTiles.x; tileX++) {
             for (let tileY = 0; tileY <= this._visibleTiles.y; tileY++) {
@@ -175,11 +145,11 @@ export default class Engine
                 let tile = this._tiles.get(`${absoluteX}:${absoluteY}`);
 
                 if (tile === undefined) {
-                    this._canvas.drawBlankTile(tileX, tileY, pixelOffset.x, pixelOffset.y);
+                    this._canvas.drawBlankTile(tileX, tileY, pixelOffset);
                 } else {
                     for (let spriteId of tile.stack()) {
                         let sprite = this._spriteMap.getSprite(spriteId);
-                        this._canvas.drawTile(tileX, tileY, sprite, pixelOffset.x, pixelOffset.y);
+                        this._canvas.drawTile(tileX, tileY, sprite, pixelOffset);
                     }
                 }
             }
@@ -217,23 +187,10 @@ export default class Engine
         let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
 
         this._canvas.drawPlayer(
-            this._player.name(),
+            this._player.getName(),
             centerSquarePosition.x,
             centerSquarePosition.y
         );
-    }
-
-    /**
-     * @returns {{x: number, y: number}}
-     * @private
-     */
-    _calculateMovePixelOffset()
-    {
-        if (this._playerMoveAnimation !== null) {
-            return this._playerMoveAnimation.calculatePixelOffset();
-        }
-
-        return {x: 0, y: 0};
     }
 
     /**
@@ -256,13 +213,6 @@ export default class Engine
      */
     _executeAnimations()
     {
-        if (this._playerMoveAnimation !== null) {
-            if (this._playerMoveAnimation.isFinished()) {
-                this._playerMoveAnimation.executeCallback();
-                this._playerMoveAnimation = null;
-            }
-        }
-
         this._charactersAnimations.forEach((characterAnimation, id, animations) => {
             if (characterAnimation.isFinished()) {
                 characterAnimation.executeCallback();
@@ -274,7 +224,7 @@ export default class Engine
     _drawDebugInfo()
     {
         this._canvas.debugText(
-            `Me {${this._player.position().toString()}}:{${this._player._movingTo.toString()}}`,
+            `Me {${this._player.getX()}:${this._player.getY()}}`,
             20,
             20
         );
@@ -289,29 +239,29 @@ export default class Engine
         );
 
 
-        let charNumber = 0;
-        let playerPosition = this._player.position();
-        let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
-
-        for (let character of this._characters) {
-            let absoluteX = centerSquarePosition.x - (playerPosition.getX() - character.position().getX());
-            let absoluteY = centerSquarePosition.y - (playerPosition.getY() - character.position().getY());
-
-            this._canvas.debugText(
-                `"${character.name()}" {${character.position().toString()}}, Abs{${absoluteX}, ${absoluteY}}`,
-                20,
-                140 + (charNumber * 40)
-            );
-
-            this._canvas.debugText(
-                `Animation {${(this._charactersAnimations.has(character.id()))
-                    ? this._charactersAnimations.get(character.id()).calculatePixelOffset().x + ':' + this._charactersAnimations.get(character.id()).calculatePixelOffset().y
-                    : 'not moving'}}
-                `,
-                20,
-                160 + (charNumber * 40)
-            );
-            charNumber++;
-        }
+        //let charNumber = 0;
+        //let playerPosition = this._player.position();
+        //let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
+        //
+        //for (let character of this._characters) {
+        //    let absoluteX = centerSquarePosition.x - (playerPosition.getX() - character.position().getX());
+        //    let absoluteY = centerSquarePosition.y - (playerPosition.getY() - character.position().getY());
+        //
+        //    this._canvas.debugText(
+        //        `"${character.name()}" {${character.position().toString()}}, Abs{${absoluteX}, ${absoluteY}}`,
+        //        20,
+        //        140 + (charNumber * 40)
+        //    );
+        //
+        //    this._canvas.debugText(
+        //        `Animation {${(this._charactersAnimations.has(character.id()))
+        //            ? this._charactersAnimations.get(character.id()).calculatePixelOffset().x + ':' + this._charactersAnimations.get(character.id()).calculatePixelOffset().y
+        //            : 'not moving'}}
+        //        `,
+        //        20,
+        //        160 + (charNumber * 40)
+        //    );
+        //    charNumber++;
+        //}
     }
 }

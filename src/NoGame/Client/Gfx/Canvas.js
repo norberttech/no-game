@@ -42,13 +42,12 @@ export default class Canvas
     }
 
     /**
-     * @param {integer} tileX
-     * @param {integer} tileY
+     * @param {int} tileX
+     * @param {int} tileY
      * @param {Sprite} sprite
-     * @param {int} offsetPixelX
-     * @param {int} offsetPixelY
+     * @param {Size} offset
      */
-    drawTile(tileX, tileY, sprite, offsetPixelX, offsetPixelY)
+    drawTile(tileX, tileY, sprite, offset)
     {
         if (!this._canDraw()) {
             return ;
@@ -66,26 +65,25 @@ export default class Canvas
             sprite.offsetY(),
             sprite.width(),
             sprite.height(),
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + offsetPixelX,
-            tileSize.getHeight() * (tileY - this._hiddenTiles) + offsetPixelY,
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth(),
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight(),
             tileSize.getWidth(),
             tileSize.getHeight()
         );
 
         this.debugSmallText(
             `${tileX}:${tileY}`,
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + offsetPixelX + 8,
-            tileSize.getHeight() * (tileY - this._hiddenTiles) + offsetPixelY + 8
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
         );
     }
 
     /**
      * @param {int} tileX
      * @param {int} tileY
-     * @param {int} pixelOffsetX
-     * @param {int} pixelOffsetY
+     * @param {Size} offset
      */
-    drawBlankTile(tileX, tileY, pixelOffsetX, pixelOffsetY)
+    drawBlankTile(tileX, tileY, offset)
     {
         if (!this._canDraw()) {
             return ;
@@ -99,16 +97,16 @@ export default class Canvas
         this._context.fillStyle = '#000000';
 
         this._context.fillRect(
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + pixelOffsetX,
-            tileSize.getHeight() * (tileY - this._hiddenTiles) + pixelOffsetY,
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getHeight(),
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight(),
             tileSize.getWidth(),
             tileSize.getWidth()
         );
 
         this.debugSmallText(
             `${tileX}:${tileY}`,
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + pixelOffsetX + 8,
-            tileSize.getHeight() * (tileY - this._hiddenTiles) + pixelOffsetY + 8
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
         );
     }
 

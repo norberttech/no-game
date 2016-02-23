@@ -10,8 +10,8 @@ export default class Size
      */
     constructor(width, height)
     {
-        Assert.greaterThan(0, width);
-        Assert.greaterThan(0, height);
+        Assert.integer(width);
+        Assert.integer(height);
 
         this._width = width;
         this._height = height;

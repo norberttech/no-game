@@ -151,7 +151,7 @@ export default class Client
      */
     _playerPosition()
     {
-        return this._player().position();
+        return this._player().getCurrentPosition();
     }
 
     /**
@@ -160,31 +160,27 @@ export default class Client
      */
     _move(position)
     {
-
-        if (this._moveLock === true) {
-            return ;
-        }
-
         if (this._isLoggedIn && this._kernel.canMoveTo(position.getX(), position.getY())) {
 
             if (this._player().isMoving()) {
                 return ;
             }
 
-            this._moveLock = true;
+            this._connection.send(new MoveMessage(position.getX(), position.getY()));
 
-            this._player().movingTo(position);
+            let moveTime = PlayerSpeed.calculateMoveTime(
+                1,
+                this._kernel.area().tile(position.getX(), position.getY()).moveSpeedModifier()
+            );
+
+            // add extra 50ms to handle latency - need to find better way for that
+            moveTime += 50;
 
             this._kernel.move(
                 position.getX(),
                 position.getY(),
-                PlayerSpeed.calculateMoveTime(
-                    1,
-                    this._kernel.area().tile(position.getX(), position.getY()).moveSpeedModifier()
-                )
+                moveTime
             );
-
-            this._connection.send(new MoveMessage(position.getX(), position.getY()));
         }
     }
 
@@ -221,10 +217,8 @@ export default class Client
                 break;
             case ServerMessages.MOVE:
                 if (!this._kernel.player().isMovingTo(message.data.x, message.data.y)) {
-                    this._kernel.cancelMove();
-                    this._kernel.player().move(message.data.x, message.data.y);
+                    this._player().cancelMove();
                 }
-                this._moveLock = false;
                 break;
             case ServerMessages.CHARACTERS:
                 let characters = [];

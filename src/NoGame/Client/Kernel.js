@@ -64,28 +64,7 @@ export default class Kernel
      */
     move(x, y, moveTime)
     {
-        Assert.integer(x);
-        Assert.integer(y);
-
-        let onAnimationEnds = () => {
-            this.player().move(x, y);
-        };
-
-        if (this.player().position().getX() + 1 === x) {
-            this._gfxEngine.move(moveTime, onAnimationEnds, Directions.RIGHT);
-        }
-
-        if (this.player().position().getX() - 1 === x) {
-            this._gfxEngine.move(moveTime, onAnimationEnds, Directions.LEFT);
-        }
-
-        if (this.player().position().getY() + 1 === y) {
-            this._gfxEngine.move(moveTime, onAnimationEnds, Directions.UP);
-        }
-
-        if (this.player().position().getY() - 1 === y) {
-            this._gfxEngine.move(moveTime, onAnimationEnds, Directions.DOWN);
-        }
+        this.player().startMovingTo(x, y, moveTime);
     }
 
     cancelMove()
