@@ -2,20 +2,17 @@
 
 import Assert from './../../JSAssert/Assert';
 import Kernel from './Kernel';
-import Tile from './Map/Tile';
-import Area from './Map/Area';
-import Player from './Player';
+import Protocol from './Protocol';
 import Position from './Position';
 import Directions from './Directions';
-import Character from './Character';
 import Connection from './Network/Connection';
-import LoginMessage from './Network/LoginMessage';
-import MoveMessage from './Network/MoveMessage';
-import SayMessage from './Network/SayMessage';
-import ServerMessages from './../Common/Network/ServerMessages';
 import KeyBoard from './UserInterface/KeyBoard';
 import Keys from './UserInterface/Keys';
 import PlayerSpeed from './../Common/PlayerSpeed';
+
+import LoginMessage from './Network/LoginMessage';
+import MoveMessage from './Network/MoveMessage';
+import SayMessage from './Network/SayMessage';
 
 const LATENCY_DELAY = 50;
 
@@ -36,9 +33,8 @@ export default class Client
         this._serverAddress = serverAddress;
         this._isConnected = false;
         this._isLoggedIn = false;
-        this._onCharacterSay = null;
-        this._onLogin = null;
         this._keyboard = keyboard;
+        this._protocol = new Protocol(this._kernel);
         setInterval(this._gameLoop.bind(this), 1000 / 60);
     }
 
@@ -52,16 +48,6 @@ export default class Client
         if (this._isConnected) {
             this._connection.send(new LoginMessage(username));
         }
-    }
-
-    /**
-     * @param {function} callback - gets {Client} as a argument
-     */
-    onLogin(callback)
-    {
-        Assert.isFunction(callback);
-
-        this._onLogin = callback;
     }
 
     /**
@@ -99,6 +85,17 @@ export default class Client
     }
 
     /**
+     * @param {function} callback - gets {Client} as a argument
+     */
+    onLogin(callback)
+    {
+        this._protocol.onLogin(() => {
+            this._isLoggedIn = true;
+            callback();
+        });
+    }
+
+    /**
      * @param {function} callback
      */
     onDisconnect(callback)
@@ -117,9 +114,7 @@ export default class Client
      */
     onCharacterSay(callback)
     {
-        Assert.isFunction(callback);
-
-        this._onCharacterSay = callback;
+        this._protocol.onCharacterSay(callback);
     }
 
     /**
@@ -132,9 +127,14 @@ export default class Client
         let message = JSON.parse(event.data);
         console.log(`Received: ${event.data.substr(0, 150)}`);
 
-        this._handleMessage(message, connection);
+        this._protocol.parseMessage(message, connection);
     }
 
+    /**
+     * Client game loop
+     *
+     * @private
+     */
     _gameLoop()
     {
         if (this._keyboard.isKeyPressed(Keys.LEFT)) {
@@ -156,15 +156,6 @@ export default class Client
             this._move(this._playerPosition().next(Directions.DOWN));
             return ;
         }
-    }
-
-    /**
-     * @returns {Position}
-     * @private
-     */
-    _playerPosition()
-    {
-        return this._player().getCurrentPosition();
     }
 
     /**
@@ -197,6 +188,16 @@ export default class Client
         }
     }
 
+
+    /**
+     * @returns {Position}
+     * @private
+     */
+    _playerPosition()
+    {
+        return this._player().getCurrentPosition();
+    }
+
     /**
      * @returns {Player}
      * @private
@@ -204,122 +205,5 @@ export default class Client
     _player()
     {
         return this._kernel.player();
-    }
-
-    _handleMessage(message, connection)
-    {
-        switch (message.name) {
-            case ServerMessages.LOGIN:
-                this._kernel.draw();
-                this._kernel.login(
-                    new Player(
-                        message.data.id,
-                        message.data.name,
-                        message.data.position.x,
-                        message.data.position.y
-                    )
-                );
-                this._isLoggedIn = true;
-
-                if (this._onLogin !== null) {
-                    this._onLogin(this);
-                }
-
-                break;
-            case ServerMessages.AREA:
-                this._kernel.setArea(new Area(message.data.name));
-                this._kernel.setVisibleTiles(
-                    message.data.visibleTiles.x,
-                    message.data.visibleTiles.y
-                );
-                break;
-            case ServerMessages.MOVE:
-                if (!this._kernel.player().isMovingTo(message.data.x, message.data.y)) {
-                    this._player().cancelMove();
-                }
-                break;
-            case ServerMessages.CHARACTERS:
-                let characters = [];
-                for (let characterData of message.data.characters) {
-                    characters.push(
-                        new Character(
-                            characterData.id,
-                            characterData.name,
-                            characterData.position.x,
-                            characterData.position.y
-                        )
-                    );
-                }
-                this._kernel.setCharacters(characters);
-                break;
-            case ServerMessages.CHARACTER_MOVE:
-                if (this._kernel.hasCharacter(message.data.id)) {
-                    this._kernel.characterMove(
-                        message.data.id,
-                        message.data.to.x,
-                        message.data.to.y,
-                        message.data.moveTime + LATENCY_DELAY
-                    );
-                } else {
-                    this._kernel.addCharacter(new Character(
-                        message.data.id,
-                        message.data.name,
-                        message.data.from.x,
-                        message.data.from.y
-                    ));
-                    this._kernel.characterMove(
-                        message.data.id,
-                        message.data.to.x,
-                        message.data.to.y,
-                        message.data.moveTime + LATENCY_DELAY
-                    );
-                }
-                break;
-            case ServerMessages.CHARACTER_SAY:
-                let character = this._kernel.character(message.data.id);
-                if (null !== this._onCharacterSay) {
-                    this._onCharacterSay(character.getName(), message.data.message);
-                }
-
-                this._kernel.getGfx().characterSay(character.id(), message.data.message);
-                break;
-            case ServerMessages.TILES:
-                let tiles = message.data.tiles.map((tileData) => {
-                    return new Tile(
-                        tileData.x,
-                        tileData.y,
-                        tileData.canWalkOn,
-                        tileData.stack,
-                        tileData.moveSpeedModifier
-                    );
-                });
-                for (let characterData of message.data.characters) {
-                    if (!this._kernel.hasCharacter(characterData.id)) {
-                        this._kernel.addCharacter(
-                            new Character(
-                                characterData.id,
-                                characterData.name,
-                                characterData.position.x,
-                                characterData.position.y
-                            )
-                        );
-                    }
-                }
-
-                this._kernel.area().setTiles(tiles);
-                break;
-            case ServerMessages.BATCH_MESSAGE:
-                let rawMessages = message.data.messages;
-
-                for (let rawMessage of rawMessages) {
-                    this._handleMessage(JSON.parse(rawMessage), connection);
-                }
-
-                break;
-            default:
-                console.log("Unhandled packet");
-                console.log(message);
-                break;
-        }
     }
 }
