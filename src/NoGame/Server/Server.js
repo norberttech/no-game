@@ -9,21 +9,23 @@ import Assert from './../../JSAssert/Assert';
 import Kernel from './../Engine/Kernel';
 import GameLoop from './GameLoop';
 import Protocol from './Protocol';
+import Logger from './../Common/Logger';
 
 export default class Server
 {
     /**
      * @param {Kernel} kernel
-     * @param {boolean} debug
+     * @param {Logger} logger
      */
-    constructor(kernel, debug = false)
+    constructor(kernel, logger)
     {
         Assert.instanceOf(kernel, Kernel);
+        Assert.instanceOf(logger, Logger);
 
-        this._debug = debug;
         this._broadcaster = new Broadcaster();
         this._messageQueue = new MessageQueue();
         this._protocol = new Protocol(kernel, this._messageQueue, this._broadcaster);
+        this._logger = logger;
         this._gameLoop = new GameLoop(1000 / 45, this.update.bind(this));
     }
 
@@ -35,7 +37,7 @@ export default class Server
         Assert.integer(port);
 
         let onConnection = (socket) => {
-            let connection = new Connection(socket, this._debug);
+            let connection = new Connection(socket, this._logger);
 
             connection.bindOnMessage(this.onMessage.bind(this));
             connection.bindOnClose(this.onClose.bind(this));
@@ -44,8 +46,12 @@ export default class Server
         };
 
         this._gameLoop.start();
-        this._server = ws.createServer({ port: port, verifyClient: !this._debug}, onConnection);
-        console.log(`Server is listening on port: ${port}`);
+        this._server = ws.createServer({
+            port: port,
+            verifyClient: false
+        }, onConnection);
+
+        this._logger.info(`Server is listening on port: ${port}`);
     }
 
     /**

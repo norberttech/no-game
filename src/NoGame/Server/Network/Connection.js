@@ -2,7 +2,7 @@
 
 import Assert from './../../../JSAssert/Assert';
 import WebSocket from 'ws/lib/WebSocket';
-import Utils from './../../Common/Utils';
+import Logger from './../../Common/Logger';
 import Message from '../../Common/Network/Message';
 import UUID from 'uuid';
 
@@ -10,20 +10,19 @@ export default class Connection
 {
     /**
      * @param {WebSocket} socket
-     * @param {boolean} emulateLags
+     * @param {Logger} logger
      */
-    constructor(socket, emulateLags = false)
+    constructor(socket, logger)
     {
         Assert.instanceOf(socket, WebSocket);
-        Assert.boolean(emulateLags);
+        Assert.instanceOf(logger, Logger);
 
         this._socket = socket;
         this._playerId = null;
         this._id = UUID.v4();
-        this._emulateLags = emulateLags;
         this._index = 0;
-
-        console.log(`Connection ${this.id()} open.`);
+        this._logger = logger;
+        this._logReceived('Connection open');
     }
 
     /**
@@ -68,7 +67,7 @@ export default class Connection
         Assert.isFunction(callback);
 
         this._socket.on('message', (message) => {
-            console.log(`Received: ${message.substr(0, 150)}`);
+            this._logReceived(message);
             callback(message, this)
         });
     }
@@ -81,7 +80,7 @@ export default class Connection
         Assert.isFunction(callback);
 
         this._socket.on('close', () => {
-            console.log(`Connection ${this.id()} closed.`);
+            this._logReceived('Connection closed.');
             callback(this)
         });
     }
@@ -93,13 +92,31 @@ export default class Connection
     {
         Assert.instanceOf(message, Message);
 
-        if (this._emulateLags) {
-            Utils.sleep(Utils.randomRange(0, 100));
-        }
-
         message.setIndex(this._index);
-        console.log(`Send: ${message.toString().substr(0, 150)}`);
+        this._logSend(message);
         this._socket.send(message.toString());
         this._index++;
+    }
+
+    _logSend(entry)
+    {
+        this._logger.debug({
+            direction: 'send',
+            entry: entry,
+            connection: {
+                id: this._id
+            }
+        })
+    }
+
+    _logReceived(entry)
+    {
+        this._logger.debug({
+            direction: 'received',
+            entry: entry,
+            connection: {
+                id: this._id
+            }
+        })
     }
 }

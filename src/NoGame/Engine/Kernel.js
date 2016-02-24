@@ -1,22 +1,29 @@
 'use strict';
 
 import Assert from './../../JSAssert/Assert';
+import Logger from './../Common/Logger';
 import Loader from './Loader';
 import Player from './Player';
 import Area from './Map/Area';
 
 export default class Kernel
 {
-    constructor()
+    /**
+     * @param {Logger} logger
+     */
+    constructor(logger)
     {
+        Assert.instanceOf(logger, Logger);
+
         this._version = '1.0.0-DEV';
         this._loaded = false;
         this._area = null;
+        this._logger = logger;
     }
 
     boot()
     {
-        Loader.loadAreas(this);
+        Loader.loadAreas(this, this._logger);
 
         this.getArea();
 

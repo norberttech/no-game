@@ -2,19 +2,22 @@
 
 import Kernel from './../Engine/Kernel';
 import Server from './Server';
+import Logger from './../Common/Logger';
 import fs from 'fs';
 
-var parametersFilePath = __dirname + '/parameters.json';
+let parametersFilePath = __dirname + '/parameters.json';
 console.log(parametersFilePath);
 
 let config = (fs.existsSync(parametersFilePath))
     ? JSON.parse(fs.readFileSync(parametersFilePath))
-    : {port: 8080, debug: true};
+    : {port: 8080};
 
-let kernel = new Kernel();
+let logger = new Logger();
+
+let kernel = new Kernel(logger);
 kernel.boot();
 
-let server = new Server(kernel, config.debug);
+let server = new Server(kernel, logger);
 server.listen(config.port);
 
 

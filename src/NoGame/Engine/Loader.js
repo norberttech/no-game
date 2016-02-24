@@ -2,6 +2,7 @@
 
 import Assert from './../../JSAssert/Assert'
 import Area from './Map/Area';
+import Logger from './../Common/Logger';
 import Tile from './Map/Area/Tile';
 import Item from './Map/Area/Item';
 import Position from './Map/Area/Position';
@@ -11,10 +12,11 @@ export default class Loader
 {
     /**
      * @param {Kernel} kernel
+     * @param {Logger} logger
      */
-    static loadAreas(kernel)
+    static loadAreas(kernel, logger)
     {
-        console.log('Loading tesaria.json...');
+        logger.info('Loading tesaria.json...');
         var areaData = JSON.parse(fs.readFileSync(__dirname + '/../Engine/Resources/Map/tesaria.json', 'utf8'));
 
         let area = new Area("Tesaria", areaData.width, areaData.height);
@@ -47,6 +49,6 @@ export default class Loader
 
         kernel.setArea(area);
 
-        console.log('tesaria.json loaded!');
+        logger.info('tesaria.json loaded!');
     }
 }
