@@ -19,21 +19,39 @@ export default class Loader
 
     loadAreas()
     {
-        var areaData = JSON.parse(fs.readFileSync(__dirname + '/../Common/Resources/Map/testera.json', 'utf8'));
+        console.log('Loading tesaria.json...');
+        var areaData = JSON.parse(fs.readFileSync(__dirname + '/../Common/Resources/Map/tesaria.json', 'utf8'));
 
-        let area = new Area(areaData.name, areaData.x, areaData.y);
+        let area = new Area("Tesaria", areaData.width, areaData.height);
 
-        area.changeSpawnPosition(new Position(areaData.spawnPosition.x, areaData.spawnPosition.y));
+        let groundTiles = areaData.layers[0];
+        let groundsTileSet = areaData.tilesets[0];
 
-        for (let tileConfig of areaData.tiles) {
+        area.changeSpawnPosition(new Position(groundTiles.properties.spawnPositionX, groundTiles.properties.spawnPositionY));
+
+        let x = 0;
+        let y = 0;
+
+        for (let sprite of groundTiles.data) {
+            if (x >= areaData.width) {
+                x = 0;
+                y++;
+            }
+            if (groundsTileSet.tileproperties[sprite - 1] === undefined) {
+                throw `Missing "blocking" property on tile ${x}:${y} - ${sprite}`;
+            }
+
             let tile = new Tile(
-                new Position(tileConfig.x, tileConfig.y),
-                new Item(tileConfig.ground.id, tileConfig.ground.blocking)
+                new Position(x, y),
+                new Item(sprite, groundsTileSet.tileproperties[sprite - 1].blocking === 1)
             );
             area.addTile(tile);
+
+            x++;
         }
 
 
         this._locator.get('nogame.map').addArea(area);
+        console.log('tesaria.json loaded!');
     }
 }
