@@ -8,7 +8,7 @@
     "test": "jasmine JASMINE_CONFIG_PATH=spec/support/jasmine.json",
     "client:build": "node_modules/.bin/webpack --config webpack.client.build.js --progress --color --display-modules",
     "client:dev": "node webpack.client.dev.js",
-    "server:build": "node_modules/.bin/babel src --out-dir bin/server --ignore src/NoGame/Client",
+    "server:build": "node_modules/.bin/babel src --out-dir bin/server --ignore src/NoGame/Client && cp -r src/NoGame/Engine/Resources/Map bin/server/NoGame/Engine/Resources",
     "server:run": "node bin/server/NoGame/Server/bootstrap.js",
     "server:dev": "babel-node src/NoGame/Server/bootstrap.js --ignore src/NoGame/Client"
   },

@@ -20,7 +20,7 @@ export default class Loader
     loadAreas()
     {
         console.log('Loading tesaria.json...');
-        var areaData = JSON.parse(fs.readFileSync(__dirname + '/../Common/Resources/Map/tesaria.json', 'utf8'));
+        var areaData = JSON.parse(fs.readFileSync(__dirname + '/../Engine/Resources/Map/tesaria.json', 'utf8'));
 
         let area = new Area("Tesaria", areaData.width, areaData.height);
 
@@ -43,7 +43,7 @@ export default class Loader
 
             let tile = new Tile(
                 new Position(x, y),
-                new Item(sprite, groundsTileSet.tileproperties[sprite - 1].blocking === 1)
+                new Item(sprite, groundsTileSet.tileproperties[sprite - 1].blocking)
             );
             area.addTile(tile);
 

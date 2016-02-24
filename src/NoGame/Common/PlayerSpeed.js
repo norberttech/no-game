@@ -10,7 +10,7 @@ const BASE_MOVE_SPEED_MODIFIER = 100;
 /**
  * @type {number}
  */
-const BASE_MOVE_TIME = 800;
+const BASE_MOVE_TIME = 500;
 
 export default class PlayerSpeed
 {

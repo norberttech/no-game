@@ -107,10 +107,6 @@ export default class Engine
                 this._drawVisibleArea();
                 this._drawVisibleCharacters();
                 this._drawPlayer();
-
-                if (this._debug === true) {
-                    this._drawDebugInfo();
-                }
             }
         }
 
@@ -185,23 +181,5 @@ export default class Engine
             this._canvas.drawCharacterMessage(message.getText(), messageIndex, centerSquarePosition.x, centerSquarePosition.y);
             messageIndex++;
         }
-    }
-
-    _drawDebugInfo()
-    {
-        this._canvas.debugText(
-            `Me {${this._player.getX()}:${this._player.getY()}}`,
-            20,
-            20
-        );
-
-
-        this._canvas.debugText(
-            `Animation {${(this._playerMoveAnimation)
-                ? this._playerMoveAnimation.calculatePixelOffset().x + ':' + this._playerMoveAnimation.calculatePixelOffset().y
-                : 'not moving'}}`,
-            20,
-            40
-        );
     }
 }
