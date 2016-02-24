@@ -49,22 +49,4 @@ describe("Player", () => {
 
         expect(player.isMoving()).toBe(false);
     });
-
-    it ("calculates move forward speed without move speed modifier", () => {
-        let player = new Player("yaboomaster", 100);
-        let posA = new Position(1,1);
-        let posB = new Position(2,1); //move right
-        let distance = posA.calculateDistanceTo(posB);
-
-        expect(player._calculateMoveTime(distance, 0)).toBe(499);
-    });
-
-    it ("calculates move diagonally speed without move speed modifier", () => {
-        let player = new Player("yaboomaster", 100);
-        let posA = new Position(1,1);
-        let posB = new Position(2,2); //move down right
-        let distance = posA.calculateDistanceTo(posB);
-
-        expect(player._calculateMoveTime(distance, 0)).toBe(699);
-    });
 });

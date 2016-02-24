@@ -45,6 +45,7 @@ export default class Server
 
         this._gameLoop.start();
         this._server = ws.createServer({ port: port, verifyClient: !this._debug}, onConnection);
+        console.log(`Server is listening on port: ${port}`);
     }
 
     /**

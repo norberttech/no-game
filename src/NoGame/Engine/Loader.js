@@ -1,7 +1,6 @@
 'use strict';
 
 import Assert from './../../JSAssert/Assert'
-import ServiceLocator from './../Common/ServiceLocator';
 import Area from './Map/Area';
 import Tile from './Map/Area/Tile';
 import Item from './Map/Area/Item';
@@ -10,14 +9,10 @@ import fs from 'fs';
 
 export default class Loader
 {
-    constructor(locator)
-    {
-        Assert.instanceOf(locator, ServiceLocator);
-
-        this._locator = locator;
-    }
-
-    loadAreas()
+    /**
+     * @param {Kernel} kernel
+     */
+    static loadAreas(kernel)
     {
         console.log('Loading tesaria.json...');
         var areaData = JSON.parse(fs.readFileSync(__dirname + '/../Engine/Resources/Map/tesaria.json', 'utf8'));
@@ -50,8 +45,8 @@ export default class Loader
             x++;
         }
 
+        kernel.setArea(area);
 
-        this._locator.get('nogame.map').addArea(area);
         console.log('tesaria.json loaded!');
     }
 }

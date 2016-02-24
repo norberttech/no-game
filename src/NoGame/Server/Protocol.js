@@ -83,7 +83,7 @@ export default class Protocol
             // update other players characters list
             this._broadcaster.sendToOtherConnectedClients(closedConnection, (connection) => {
                 return new CharactersMessage(
-                    this._kernel.playerArea(connection.playerId())
+                    this._kernel.getArea()
                         .visiblePlayersFor(connection.playerId(), VISIBLE_TILES.x, VISIBLE_TILES.y)
                 )
             });
@@ -99,7 +99,7 @@ export default class Protocol
     {
         let player = new Player(packet.data.username);
         this._kernel.login(player);
-        let area = this._kernel.playerArea(player.id());
+        let area = this._kernel.getArea();
         let messagesBatch = [];
 
         connection.setPlayerId(player.id());
@@ -127,7 +127,7 @@ export default class Protocol
      */
     _handleMove(packet, currentConnection)
     {
-        let area = this._kernel.playerArea(currentConnection.playerId());
+        let area = this._kernel.getArea();
         let toPosition = new Position(packet.data.x, packet.data.y);
         let player = area.player(currentConnection.playerId());
         let fromPosition = player.currentPosition();
@@ -171,7 +171,7 @@ export default class Protocol
      */
     _handleMessage(packet, currentConnection)
     {
-        let area = this._kernel.playerArea(currentConnection.playerId());
+        let area = this._kernel.getArea();
 
         this._broadcaster.sendToPlayersInRange(
             area,

@@ -2,25 +2,51 @@
 
 import Assert from './../../JSAssert/Assert';
 import Loader from './Loader';
-import ContainerBuilder from './ContainerBuilder';
-import ServiceLocator from './../Common/ServiceLocator';
 import Player from './Player';
+import Area from './Map/Area';
 
 export default class Kernel
 {
     constructor()
     {
         this._version = '1.0.0-DEV';
-        this._locator = new ServiceLocator(new ContainerBuilder());
-        this._loader = new Loader(this._locator);
         this._loaded = false;
+        this._area = null;
     }
 
     boot()
     {
-        this._loader.loadAreas();
+        Loader.loadAreas(this);
+
+        this.getArea();
 
         this._loaded = true;
+    }
+
+    /**
+     * @return {Area}
+     */
+    getArea()
+    {
+        if (this._area === null) {
+            throw `Area not loaded`;
+        }
+
+        return this._area;
+    }
+
+    /**
+     * @param {Area} area
+     */
+    setArea(area)
+    {
+        Assert.instanceOf(area, Area);
+
+        if (this._area !== null && this._loaded) {
+            throw `Area already set and kernel already loaded.`;
+        }
+
+        this._area = area;
     }
 
     /**
@@ -38,7 +64,7 @@ export default class Kernel
     {
         Assert.instanceOf(player, Player);
 
-        this._locator.get('nogame.map').area().spawnPlayer(player);
+        this._area.spawnPlayer(player);
     }
 
     /**
@@ -48,15 +74,6 @@ export default class Kernel
     {
         Assert.string(playerId);
 
-        this._locator.get('nogame.map').area().logoutPlayer(playerId);
-    }
-
-    /**
-     * @param {string} id
-     * @return {Area}
-     */
-    playerArea(id)
-    {
-        return this._locator.get('nogame.map').area();
+        this._area.logoutPlayer(playerId);
     }
 }
