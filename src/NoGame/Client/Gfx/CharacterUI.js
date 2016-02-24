@@ -119,7 +119,13 @@ export default class CharacterUI
      */
     say(text)
     {
-        this._messages.unshift(new MessageUI(text));
+        if (text.length > 40) {
+            for (let textPart of text.match(/.{1,40}/g)) {
+                this._messages.unshift(new MessageUI(textPart));
+            }
+        } else {
+            this._messages.unshift(new MessageUI(text));
+        }
 
         if (this._messages.length > 6) {
             this._messages.pop();

@@ -6,8 +6,8 @@ import Size from './Size';
 import Tile from './../Map/Tile';
 import Sprite from './Sprite';
 
-const NICK_FONT = '12px Verdana';
-const MESSAGE_FONT_SIZE = 12;
+const NICK_FONT = '15px Verdana';
+const MESSAGE_FONT_SIZE = 15;
 const MESSAGE_FONT = MESSAGE_FONT_SIZE + 'px Verdana';
 
 export default class Canvas
