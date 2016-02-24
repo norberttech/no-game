@@ -9,7 +9,6 @@ export default class BatchMessage extends Message
     constructor(messages)
     {
         super();
-        console.log(messages);
         Assert.containsOnly(messages, Message);
 
         this._name = ServerMessages.BATCH_MESSAGE;

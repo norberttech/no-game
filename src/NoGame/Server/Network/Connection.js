@@ -22,6 +22,8 @@ export default class Connection
         this._id = UUID.v4();
         this._emulateLags = emulateLags;
         this._index = 0;
+
+        console.log(`Connection ${this.id()} open.`);
     }
 
     /**
@@ -79,6 +81,7 @@ export default class Connection
         Assert.isFunction(callback);
 
         this._socket.on('close', () => {
+            console.log(`Connection ${this.id()} closed.`);
             callback(this)
         });
     }
