@@ -57,8 +57,6 @@ export default class Character
             this._position = move.position;
             this._moveTime = move.moveTime;
             this._moveEnds = move.moveEnds;
-            console.log(move);
-            console.log(this._moves.length);
         } else {
             return isMoving;
         }

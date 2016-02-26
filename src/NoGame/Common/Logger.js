@@ -4,11 +4,14 @@ import bunyan from 'bunyan';
 
 export default class Logger
 {
-    constructor()
+    /**
+     * @param {string} logLevel
+     */
+    constructor(logLevel)
     {
         this._logger = bunyan.createLogger({
             name: "server",
-            level: "debug"
+            level: logLevel
         });
     }
 

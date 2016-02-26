@@ -10,9 +10,9 @@ console.log(parametersFilePath);
 
 let config = (fs.existsSync(parametersFilePath))
     ? JSON.parse(fs.readFileSync(parametersFilePath))
-    : {port: 8080};
+    : {port: 8080, logLevel: "info"};
 
-let logger = new Logger();
+let logger = new Logger(config.logLevel);
 
 let kernel = new Kernel(logger);
 kernel.boot();

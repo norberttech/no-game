@@ -78,10 +78,6 @@ export default class Canvas
             tileSize.getHeight()
         );
 
-        if (offset.getWidth() > 0) {
-            console.log(tileX + ' ' + tileY);
-        }
-
         if (this._debug) {
             this.debugSmallText(
                 `${tileX}:${tileY}`,
