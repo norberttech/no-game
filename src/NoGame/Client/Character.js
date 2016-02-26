@@ -20,6 +20,7 @@ export default class Character
 
         this._id = id;
         this._name = name;
+        this._moves = [];
         this._moveFrom = new Position(x, y);
         this._position = new Position(x, y);
         this._moveTime = 0;
@@ -47,6 +48,21 @@ export default class Character
      */
     isMoving()
     {
+        let isMoving = new Date().getTime() < this._moveEnds;
+
+        if (this._moves.length > 0 && !isMoving) {
+            let move = this._moves.shift();
+
+            this._moveFrom = move.moveFrom;
+            this._position = move.position;
+            this._moveTime = move.moveTime;
+            this._moveEnds = move.moveEnds;
+            console.log(move);
+            console.log(this._moves.length);
+        } else {
+            return isMoving;
+        }
+
         return new Date().getTime() < this._moveEnds;
     }
 
@@ -77,10 +93,19 @@ export default class Character
         Assert.integer(y);
         Assert.integer(moveTime);
 
-        this._moveTime = moveTime;
-        this._moveFrom = this._position;
-        this._position = new Position(x, y);
-        this._moveEnds = new Date().getTime() + moveTime;
+        if (this._moves.length === 0) {
+            this._moveTime = moveTime;
+            this._moveFrom = this._position;
+            this._position = new Position(x, y);
+            this._moveEnds = new Date().getTime() + moveTime;
+        } else {
+            this._moves.push({
+                moveFrom: this._position,
+                position: new Position(x, y),
+                moveTime: moveTime,
+                moveEnds: new Date().getTime() + moveTime
+            });
+        }
     }
 
 
