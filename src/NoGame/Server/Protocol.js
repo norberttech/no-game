@@ -4,6 +4,7 @@ import Kernel from './../Engine/Kernel';
 import Assert from './../../JSAssert/Assert';
 import MessageQueue from './MessageQueue';
 import Broadcaster from './Broadcaster';
+import Logger from './../Common/Logger';
 
 import Player from './../Engine/Player';
 import Position from './../Engine/Map/Area/Position';
@@ -31,8 +32,9 @@ export default class Protocol
      * @param {Kernel} kernel
      * @param {MessageQueue} messages
      * @param {Broadcaster} broadcaster
+     * @param {Logger} logger
      */
-    constructor(kernel, messages, broadcaster)
+    constructor(kernel, messages, broadcaster, logger)
     {
         Assert.instanceOf(kernel, Kernel);
         Assert.instanceOf(messages, MessageQueue);
@@ -41,6 +43,7 @@ export default class Protocol
         this._kernel = kernel;
         this._messages = messages;
         this._broadcaster = broadcaster;
+        this._logger = logger;
     }
 
     /**
@@ -133,11 +136,13 @@ export default class Protocol
         let fromPosition = player.currentPosition();
 
         if (player.isMoving()) {
+            this._logger.error({msg: 'still moving', player});
             currentConnection.send(new MoveMessage(player));
             return;
         }
 
         if (player.currentPosition().isEqualTo(toPosition)) {
+            this._logger.error({msg: 'already on position', player});
             currentConnection.send(new MoveMessage(player));
             return ;
         }

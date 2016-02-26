@@ -24,7 +24,7 @@ export default class Server
 
         this._broadcaster = new Broadcaster();
         this._messageQueue = new MessageQueue();
-        this._protocol = new Protocol(kernel, this._messageQueue, this._broadcaster);
+        this._protocol = new Protocol(kernel, this._messageQueue, this._broadcaster, this._logger);
         this._logger = logger;
         this._gameLoop = new GameLoop(1000 / 45, this.update.bind(this));
     }

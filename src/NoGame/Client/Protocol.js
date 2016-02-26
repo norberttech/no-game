@@ -67,7 +67,7 @@ export default class Protocol
                 break;
             case ServerMessages.MOVE:
                 if (!this._kernel.player().isMovingTo(message.data.x, message.data.y)) {
-                    this._player().cancelMove();
+                    this._kernel.player().cancelMove();
                 }
                 break;
             case ServerMessages.CHARACTERS:
