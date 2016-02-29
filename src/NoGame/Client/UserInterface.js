@@ -3,6 +3,7 @@
 import Assert from './../../JSAssert/Assert';
 import Engine from './Gfx/Engine';
 import KeyBoard from './UserInterface/KeyBoard';
+import Mouse from './UserInterface/Mouse';
 import Chat from './UserInterface/Chat';
 
 export default class UserInterface
@@ -10,14 +11,17 @@ export default class UserInterface
     /**
      * @param {HTMLDocument} doc
      * @param {KeyBoard} keyboard
+     * @param {Mouse} mouse
      */
-    constructor(doc, keyboard)
+    constructor(doc, keyboard, mouse)
     {
         Assert.instanceOf(doc, HTMLDocument);
         Assert.instanceOf(keyboard, KeyBoard);
+        Assert.instanceOf(mouse, Mouse);
 
         this._doc = doc;
         this._keyboard = keyboard;
+        this._mouse = mouse;
         this._loginScreen = this._doc.getElementById("login-screen");
         this._loginForm = this._loginScreen.querySelector("form");
         this._packet = this._doc.querySelector("#messages");
@@ -95,6 +99,20 @@ export default class UserInterface
         });
     }
 
+    bindMouse()
+    {
+        this._gameCanvas.addEventListener("mousemove", (event) => {
+            this._mouse.setPosition(
+                event.pageX - this._gameCanvas.offsetLeft,
+                event.pageY - this._gameCanvas.offsetTop
+            );
+        });
+
+        this._gameCanvas.addEventListener("click", (event) => {
+            this._mouse.click();
+        });
+    }
+
     bindWindowResize()
     {
         window.addEventListener("resize", (event) => {
@@ -128,8 +146,5 @@ export default class UserInterface
 
             this._gameCanvas.style.marginLeft = Math.round((width - (tileSize * tilesX)) / 2) + 'px';
         }
-        //
-        //this._gameCanvas.setAttribute('width', (width * 0.8));
-        //this._gameCanvas.setAttribute('height', height);
     }
 }

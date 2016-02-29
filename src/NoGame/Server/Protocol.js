@@ -67,8 +67,7 @@ export default class Protocol
                     this._handleMessage(packet, message.getConnection());
                     break;
                 default:
-                    console.log("Unhandled message");
-                    console.log(message);
+                    this._logger.error({msg: "Unhandled message", message: message});
                     break;
             }
         }
@@ -136,13 +135,13 @@ export default class Protocol
         let fromPosition = player.currentPosition();
 
         if (player.isMoving()) {
-            this._logger.error({msg: 'still moving', player});
+            this._logger.error({msg: 'still moving', player: player});
             currentConnection.send(new MoveMessage(player));
             return;
         }
 
         if (player.currentPosition().isEqualTo(toPosition)) {
-            this._logger.error({msg: 'already on position', player});
+            this._logger.error({msg: 'already on position', player: player});
             currentConnection.send(new MoveMessage(player));
             return ;
         }

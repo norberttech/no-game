@@ -46,6 +46,7 @@ export default class Canvas
     clear()
     {
         this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        this._context.beginPath();
     }
 
     /**
@@ -85,6 +86,34 @@ export default class Canvas
                 tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
             );
         }
+    }
+
+    /**
+     * @param color
+     * @param tileX
+     * @param tileY
+     * @param offset
+     */
+    drawPointer(color, tileX, tileY, offset)
+    {
+        if (!this._canDraw()) {
+            return ;
+        }
+
+        Assert.integer(tileX);
+        Assert.integer(tileY);
+
+        let tileSize = this.calculateTileSize();
+
+        this._context.lineWidth = 2;
+        this._context.strokeStyle = color;
+        this._context.rect(
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth(),
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight(),
+            tileSize.getWidth(),
+            tileSize.getHeight()
+        );
+        this._context.stroke();
     }
 
     /**

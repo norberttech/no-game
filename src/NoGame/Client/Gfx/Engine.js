@@ -1,6 +1,7 @@
 'use strict';
 
 import Canvas from './Canvas';
+import Mouse from './../UserInterface/Mouse';
 import SpriteMap from './SpriteMap';
 import Directions from './../Directions';
 import Tile from './../Map/Tile';
@@ -9,6 +10,7 @@ import CharactersUI from './CharactersUI';
 import Character from './../Character';
 import Assert from './../../../JSAssert/Assert';
 import Calculator from './../../Common/Area/Calculator';
+import Position from './../Position';
 
 export default class Engine
 {
@@ -16,24 +18,24 @@ export default class Engine
      * @param {Canvas} canvas
      * @param {function} animationLoop
      * @param {SpriteMap} spriteMap
-     * @param debug
+     * @param {Mouse} mouse
      */
-    constructor(canvas, animationLoop, spriteMap, debug = false)
+    constructor(canvas, animationLoop, spriteMap, mouse)
     {
         Assert.instanceOf(canvas, Canvas);
         Assert.isFunction(animationLoop);
         Assert.instanceOf(spriteMap, SpriteMap);
-        Assert.boolean(debug);
+        Assert.instanceOf(mouse, Mouse);
 
         this._canvas = canvas;
         this._animationLoop = animationLoop;
         this._spriteMap = spriteMap;
+        this._mouse = mouse;
         this._tiles = null;
         this._player = null;
         this._characters = new CharactersUI();
-        this._charactersAnimations = new Map();
         this._visibleTiles = null;
-        this._debug = debug;
+        this._hiddenTiles = 1;
     }
 
     /**
@@ -45,8 +47,16 @@ export default class Engine
         Assert.integer(x);
         Assert.integer(y);
 
-        this._canvas.setVisibleTiles(x, y, 1);
+        this._canvas.setVisibleTiles(x, y, this._hiddenTiles);
         this._visibleTiles = {x: x, y: y};
+    }
+
+    /**
+     * @returns {{x: int, y: int}}
+     */
+    getVisibleTiles()
+    {
+        return this._visibleTiles;
     }
 
     loadSprites()
@@ -107,10 +117,26 @@ export default class Engine
                 this._drawVisibleArea();
                 this._drawVisibleCharacters();
                 this._drawPlayer();
+                this._drawMousePointer();
             }
         }
 
         this._animationLoop(this.draw.bind(this));
+    }
+
+    /**
+     * @returns {Position}
+     */
+    getMouseRelativePosition()
+    {
+        let x = this._mouse.getX();
+        let y = this._mouse.getY();
+        let tileSize = this._canvas.calculateTileSize();
+
+        return new Position(
+            Math.floor(x / tileSize.getWidth()) + this._hiddenTiles,
+            Math.floor(y / tileSize.getHeight()) + this._hiddenTiles
+        );
     }
 
     /**
@@ -143,6 +169,9 @@ export default class Engine
         }
     }
 
+    /**
+     * @private
+     */
     _drawVisibleCharacters()
     {
         let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
@@ -181,5 +210,21 @@ export default class Engine
             this._canvas.drawCharacterMessage(message.getText(), messageIndex, centerSquarePosition.x, centerSquarePosition.y);
             messageIndex++;
         }
+    }
+
+    /**
+     * @private
+     */
+    _drawMousePointer()
+    {
+        let position = this.getMouseRelativePosition();
+        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+
+        this._canvas.drawPointer(
+            "#2979CF",
+            position.getX(),
+            position.getY(),
+            animationOffset
+        );
     }
 }

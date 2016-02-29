@@ -4,23 +4,32 @@ import Assert from './../../JSAssert/Assert';
 import Engine from './Gfx/Engine';
 import Area from './Map/Area';
 import Player from './Player';
+import Position from './Position';
+import Path from './Path';
 import Character from './Character';
 import Directions from './Directions';
+import PathFinder from './../Common/PathFinder';
+import Grid from './../Common/PathFinder/Grid';
+import Calculator from './../Common/Area/Calculator';
 
 export default class Kernel
 {
     /**
      * @param {Engine} gfxEngine
+     * @param {PathFinder} pathFinder
      */
-    constructor(gfxEngine)
+    constructor(gfxEngine, pathFinder)
     {
         Assert.instanceOf(gfxEngine, Engine);
+        Assert.instanceOf(pathFinder, PathFinder);
 
         this._gfxEngine = gfxEngine;
+        this._pathFinder = pathFinder;
         this._version = '1.0.0-DEV';
         this._player = null;
         this._characters = [];
         this._area = null;
+        this._walkPath = null;
     }
 
     boot()
@@ -72,12 +81,62 @@ export default class Kernel
      */
     move(x, y, moveTime)
     {
+        Assert.integer(x);
+        Assert.integer(y);
+        Assert.integer(moveTime);
+
         this.player().startMovingTo(x, y, moveTime);
     }
 
-    cancelMove()
+    /**
+     * @returns {boolean}
+     */
+    hasWalkPath()
     {
-        this._gfxEngine.cancelMove();
+        if (this._walkPath !==null && !this._walkPath.hasNextPosition()) {
+            this._walkPath = null;
+        }
+
+        return (this._walkPath !== null);
+    }
+
+    clearWalkPath()
+    {
+        this._walkPath = null;
+    }
+
+    /**
+     * @returns {Position}
+     */
+    getNextWalkPathPosition()
+    {
+        return this._walkPath.getNextPosition();
+    }
+
+    /**
+     * @param {Position} position
+     */
+    setWalkPath(position)
+    {
+        let visibleTiles = this._gfxEngine.getVisibleTiles();
+        let grid = new Grid(visibleTiles.x, visibleTiles.y);
+        let centerPosition = Calculator.centerPosition(visibleTiles.x, visibleTiles.y);
+
+        for (let tile of this._area.tiles().values()) {
+            grid.addTile(
+                tile.x() - this._player.getCurrentPosition().getX() + centerPosition.x,
+                tile.y() - this._player.getCurrentPosition().getY() + centerPosition.y,
+                tile.canWalkOn()
+            );
+        }
+
+        try {
+            let path = this._pathFinder.findPath(centerPosition.x, centerPosition.y, position.getX(), position.getY(), grid);
+
+            this._walkPath = new Path(path, this._player.getCurrentPosition(), new Position(centerPosition.x, centerPosition.y));
+        } catch (e) {
+            return ;
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 'use strict';
 
 import Tile from './Tile';
+import Positon from './../Position';
 import Assert from './../../../JSAssert/Assert';
 
 export default class Area

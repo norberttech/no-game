@@ -20,6 +20,7 @@
     "faye-websocket": "^0.10.0",
     "json-loader": "^0.5.4",
     "markdown-loader": "^0.1.7",
+    "pathfinding": "^0.4.17",
     "utf-8-validate": "^1.2.1",
     "uuid": "^2.0.1",
     "webpack": "^1.12.12",

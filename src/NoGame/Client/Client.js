@@ -7,6 +7,7 @@ import Position from './Position';
 import Directions from './Directions';
 import Connection from './Network/Connection';
 import KeyBoard from './UserInterface/KeyBoard';
+import Mouse from './UserInterface/Mouse';
 import Keys from './UserInterface/Keys';
 import PlayerSpeed from './../Common/PlayerSpeed';
 
@@ -22,20 +23,24 @@ export default class Client
      * @param {string} serverAddress
      * @param {Kernel} kernel
      * @param {KeyBoard} keyboard
+     * @param {Mouse} mouse
      */
-    constructor(serverAddress, kernel, keyboard)
+    constructor(serverAddress, kernel, keyboard, mouse)
     {
         Assert.string(serverAddress);
         Assert.instanceOf(kernel, Kernel);
         Assert.instanceOf(keyboard, KeyBoard);
+        Assert.instanceOf(mouse, Mouse);
 
         this._kernel = kernel;
+        this._mouse = mouse;
         this._serverAddress = serverAddress;
         this._isConnected = false;
         this._isLoggedIn = false;
         this._keyboard = keyboard;
         this._protocol = new Protocol(this._kernel);
         setInterval(this._gameLoop.bind(this), 1000 / 60);
+        mouse.onClick(this._onMouseClick.bind(this));
     }
 
     /**
@@ -130,6 +135,12 @@ export default class Client
         this._protocol.parseMessage(message, connection);
     }
 
+    _onMouseClick()
+    {
+        this._kernel.clearWalkPath();
+        this._kernel.setWalkPath(this._kernel.getGfx().getMouseRelativePosition());
+    }
+
     /**
      * Client game loop
      *
@@ -138,23 +149,35 @@ export default class Client
     _gameLoop()
     {
         if (this._keyboard.isKeyPressed(Keys.LEFT)) {
+            this._kernel.clearWalkPath();
             this._move(this._playerPosition().next(Directions.LEFT));
             return ;
         }
 
         if (this._keyboard.isKeyPressed(Keys.RIGHT)) {
+            this._kernel.clearWalkPath();
             this._move(this._playerPosition().next(Directions.RIGHT));
             return ;
         }
 
         if (this._keyboard.isKeyPressed(Keys.UP)) {
+            this._kernel.clearWalkPath();
             this._move(this._playerPosition().next(Directions.UP));
             return ;
         }
 
         if (this._keyboard.isKeyPressed(Keys.DOWN)) {
+            this._kernel.clearWalkPath();
             this._move(this._playerPosition().next(Directions.DOWN));
             return ;
+        }
+
+        if (this._kernel.hasWalkPath()) {
+            if (this._player().isMoving()) {
+                return ;
+            }
+
+            this._move(this._kernel.getNextWalkPathPosition());
         }
     }
 
@@ -164,7 +187,11 @@ export default class Client
      */
     _move(position)
     {
-        if (this._isLoggedIn && this._kernel.canMoveTo(position.getX(), position.getY())) {
+        if (!this._isLoggedIn) {
+            return ;
+        }
+
+        if (this._kernel.canMoveTo(position.getX(), position.getY())) {
 
             if (this._player().isMoving()) {
                 return ;
@@ -180,11 +207,10 @@ export default class Client
             // add extra 50ms to handle latency - need to find better way for that
             moveTime += LATENCY_DELAY;
 
-            this._kernel.move(
-                position.getX(),
-                position.getY(),
-                moveTime
-            );
+            this._kernel.move(position.getX(), position.getY(), moveTime);
+
+        } else {
+            this._kernel.clearWalkPath();
         }
     }
 
