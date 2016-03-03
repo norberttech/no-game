@@ -1,6 +1,6 @@
 'use strict';
 
-import Assert from './../../JSAssert/Assert';
+import Assert from 'assert-js';
 import Logger from './../Common/Logger';
 import Loader from './Loader';
 import Player from './Player';

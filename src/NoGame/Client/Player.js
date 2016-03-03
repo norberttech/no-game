@@ -1,7 +1,7 @@
 'use strict';
 
 import Position from './Position';
-import Assert from './../../JSAssert/Assert';
+import Assert from 'assert-js';
 
 export default class Player
 {

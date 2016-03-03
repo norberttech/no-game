@@ -1,6 +1,6 @@
 'use strict';
 
-import Assert from './../../../JSAssert/Assert';
+import Assert from 'assert-js';
 import PlayerUI from './PlayerUI';
 import Character from './../Character';
 import CharacterUI from './CharacterUI';

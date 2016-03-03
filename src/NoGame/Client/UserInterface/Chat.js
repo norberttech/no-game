@@ -1,6 +1,6 @@
 'use strict';
 
-import Assert from './../../../JSAssert/Assert';
+import Assert from 'assert-js';
 
 const MESSAGE_TEMPLATE = `<div class="time">__TIME__</div><div class="content">__USERNAME__: __MESSAGE__</div>`;
 

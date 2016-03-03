@@ -8,7 +8,7 @@ import Tile from './../Map/Tile';
 import PlayerUI from './PlayerUI';
 import CharactersUI from './CharactersUI';
 import Character from './../Character';
-import Assert from './../../../JSAssert/Assert';
+import Assert from 'assert-js';
 import Calculator from './../../Common/Area/Calculator';
 import Position from './../Position';
 

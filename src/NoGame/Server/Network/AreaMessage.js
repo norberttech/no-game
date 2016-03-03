@@ -1,6 +1,6 @@
 'use strict';
 
-import Assert from './../../../JSAssert/Assert';
+import Assert from 'assert-js';
 import Message from './../../Common/Network/Message';
 import Area from './../../Engine/Map/Area';
 import ServerMessages from './../../Common/Network/ServerMessages';

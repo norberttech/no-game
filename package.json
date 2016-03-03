@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "assert-js": "git://github.com/Tiliqua/assert-js.git",
     "bufferutil": "^1.2.1",
     "bunyan": "^1.7.0",
     "faye-websocket": "^0.10.0",

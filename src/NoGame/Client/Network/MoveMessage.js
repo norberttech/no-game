@@ -1,6 +1,6 @@
 'use strict';
 
-import Assert from './../../../JSAssert/Assert';
+import Assert from 'assert-js';
 import Message from './../../Common/Network/Message';
 import ClientMessages from './../../Common/Network/ClientMessages'
 

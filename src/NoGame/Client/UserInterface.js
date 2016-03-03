@@ -1,6 +1,6 @@
 'use strict';
 
-import Assert from './../../JSAssert/Assert';
+import Assert from 'assert-js';
 import Engine from './Gfx/Engine';
 import KeyBoard from './UserInterface/KeyBoard';
 import Mouse from './UserInterface/Mouse';
