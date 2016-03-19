@@ -1,6 +1,6 @@
 'use strict';
 
-import Assert from './../../JSAssert/Assert';
+import Assert from 'assert-js';
 import Player from './Player';
 import Tile from './Map/Tile';
 import Area from './Map/Area';

@@ -5,7 +5,7 @@ import Broadcaster from './Broadcaster';
 import Connection from './Network/Connection';
 import MessageQueue from './MessageQueue';
 import CharactersMessage from './Network/CharactersMessage';
-import Assert from './../../JSAssert/Assert';
+import Assert from 'assert-js';
 import Kernel from './../Engine/Kernel';
 import GameLoop from './GameLoop';
 import Protocol from './Protocol';

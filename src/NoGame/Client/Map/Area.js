@@ -2,7 +2,7 @@
 
 import Tile from './Tile';
 import Positon from './../Position';
-import Assert from './../../../JSAssert/Assert';
+import Assert from 'assert-js';
 
 export default class Area
 {

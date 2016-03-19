@@ -2,7 +2,7 @@
 
 import Connection from './Network/Connection';
 import Area from './../Engine/Map/Area';
-import Assert from './../../JSAssert/Assert';
+import Assert from 'assert-js';
 
 export default class Broadcaster
 {

@@ -1,7 +1,7 @@
 'use strict';
 
 import Kernel from './../Engine/Kernel';
-import Assert from './../../JSAssert/Assert';
+import Assert from 'assert-js';
 import MessageQueue from './MessageQueue';
 import Broadcaster from './Broadcaster';
 import Logger from './../Common/Logger';

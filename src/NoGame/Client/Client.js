@@ -1,6 +1,6 @@
 'use strict';
 
-import Assert from './../../JSAssert/Assert';
+import Assert from 'assert-js';
 import Kernel from './Kernel';
 import Protocol from './Protocol';
 import Position from './Position';

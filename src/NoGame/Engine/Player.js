@@ -1,6 +1,6 @@
 'use strict';
 
-import Assert from './../../JSAssert/Assert'
+import Assert from 'assert-js'
 import Position from './Map/Area/Position';
 import PlayerSpeed from './../Common/PlayerSpeed';
 import UUID from 'uuid';

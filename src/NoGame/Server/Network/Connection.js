@@ -1,6 +1,6 @@
 'use strict';
 
-import Assert from './../../../JSAssert/Assert';
+import Assert from 'assert-js';
 import WebSocket from 'ws/lib/WebSocket';
 import Logger from './../../Common/Logger';
 import Message from '../../Common/Network/Message';

@@ -4,7 +4,7 @@ import Tile from './Area/Tile';
 import Position from './Area/Position';
 import Calculator from './../../Common/Area/Calculator';
 import Player from './../Player';
-import Assert from './../../../JSAssert/Assert';
+import Assert from 'assert-js';
 
 export default class Area
 {
