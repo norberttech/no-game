@@ -4,7 +4,7 @@ import Assert from 'assert-js';
 
 export default class Message
 {
-    constroctor()
+    constructor()
     {
         this._name = null;
         this._data = {};
