@@ -9,7 +9,7 @@ import Connection from './Network/Connection';
 import KeyBoard from './UserInterface/KeyBoard';
 import Mouse from './UserInterface/Mouse';
 import Keys from './UserInterface/Keys';
-import PlayerSpeed from './../Common/PlayerSpeed';
+import MoveSpeed from './../Common/MoveSpeed';
 
 import LoginMessage from './Network/LoginMessage';
 import MoveMessage from './Network/MoveMessage';
@@ -130,7 +130,7 @@ export default class Client
     _onMessage(event, connection)
     {
         let message = JSON.parse(event.data);
-        console.log(`Received: ${event.data.substr(0, 150)}`);
+        console.log(`Received: ${message.name} - ${event.data.substr(0, 150)}`);
 
         this._protocol.parseMessage(message, connection);
     }
@@ -199,7 +199,7 @@ export default class Client
 
             this._connection.send(new MoveMessage(position.getX(), position.getY()));
 
-            let moveTime = PlayerSpeed.calculateMoveTime(
+            let moveTime = MoveSpeed.calculateMoveTime(
                 1,
                 this._kernel.area().tile(position.getX(), position.getY()).moveSpeedModifier()
             );

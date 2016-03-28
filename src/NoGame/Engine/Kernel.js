@@ -5,6 +5,7 @@ import Logger from './../Common/Logger';
 import Loader from './Loader';
 import Player from './Player';
 import Area from './Map/Area';
+import MonsterFactory from './MonsterFactory';
 
 export default class Kernel
 {
@@ -18,12 +19,14 @@ export default class Kernel
         this._version = '1.0.0-DEV';
         this._loaded = false;
         this._area = null;
+        this._monsterFactory = null;
         this._logger = logger;
     }
 
     boot()
     {
-        Loader.loadAreas(this, this._logger);
+        Loader.loadMapArea(this, this._logger);
+        Loader.loadMonsterFactory(this, this._logger);
 
         this.getArea();
 
@@ -57,6 +60,31 @@ export default class Kernel
     }
 
     /**
+     * @param {MonsterFactory} factory
+     */
+    setMonsterFactory(factory)
+    {
+        this._monsterFactory = factory;
+    }
+
+    /**
+     * @param {function} onMonsterSpawn
+     */
+    spawnMonsters(onMonsterSpawn)
+    {
+        Assert.isFunction(onMonsterSpawn);
+
+        this._area.spawnMonsters(this._monsterFactory, onMonsterSpawn);
+    }
+
+    moveMonsters(onMonsterMove)
+    {
+        Assert.isFunction(onMonsterMove);
+
+        this._area.moveMonsters(onMonsterMove)
+    }
+
+    /**
      * @returns {boolean}
      */
     isLoaded()
@@ -71,7 +99,7 @@ export default class Kernel
     {
         Assert.instanceOf(player, Player);
 
-        this._area.spawnPlayer(player);
+        this._area.loginPlayer(player);
     }
 
     /**

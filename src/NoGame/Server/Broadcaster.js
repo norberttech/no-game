@@ -2,6 +2,7 @@
 
 import Connection from './Network/Connection';
 import Area from './../Engine/Map/Area';
+import Player from './../Engine/Player';
 import Assert from 'assert-js';
 
 export default class Broadcaster
@@ -32,17 +33,34 @@ export default class Broadcaster
     }
 
     /**
+     * @param {Player[]} [players]
+     * @param {function} messageFactory
+     */
+    sendToPlayers(players = [], messageFactory)
+    {
+        Assert.containsOnly(players, Player);
+        Assert.isFunction(messageFactory);
+
+        for (let player of players) {
+            for (let connection of this._connections.values()) {
+                if (connection.playerId() === player.id()) {
+                    connection.send(messageFactory(connection));
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
      * Send message only to players visible by player with id playerId
      *
      * @param {Area} area;
      * @param {string} playerId
-     * @param {int} rangeX
-     * @param {int} rangeY
      * @param {function} messageFactory
      */
-    sendToPlayersInRange(area, playerId, rangeX, rangeY, messageFactory)
+    sendToPlayersInRange(area, playerId, messageFactory)
     {
-        let visiblePlayers = area.visiblePlayersFor(playerId, rangeX, rangeY);
+        let visiblePlayers = area.visiblePlayersFor(playerId);
 
         for (let connection of this._connections.values()) {
             if (!connection.hasPlayerId()) {

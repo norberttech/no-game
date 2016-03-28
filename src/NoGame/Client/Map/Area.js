@@ -15,7 +15,7 @@ export default class Area
     /**
      * @param tile
      */
-    addTile(tile)
+    setTile(tile)
     {
         Assert.instanceOf(tile, Tile);
 
@@ -63,6 +63,7 @@ export default class Area
     /**
      * @param {int} x
      * @param {int} y
+     * @returns {Tile}
      */
     tile(x, y)
     {

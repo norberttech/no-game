@@ -1,8 +1,8 @@
 'use strict';
 
-import Message from './MessageQueue/Message';
+import IncomeMessage from './IncomeMessage';
 
-export default class MessageQueue
+export default class IncomeQueue
 {
     constructor()
     {
@@ -13,11 +13,11 @@ export default class MessageQueue
     {
         let message = JSON.parse(rawMessage);
 
-        this._packet.push(new Message(message, connection));
+        this._packet.push(new IncomeMessage(message, connection));
     }
 
     /**
-     * @returns {Message[]}
+     * @returns {IncomeMessage[]}
      */
     flushMessages()
     {

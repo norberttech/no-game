@@ -13,6 +13,17 @@ export default class Utils
     }
 
     /**
+     * @param {int} number
+     * @returns {number}
+     */
+    static randomSign(number)
+    {
+        let sign = Utils.randomRange(0, 1);
+
+        return sign === 0 ? number : -number;
+    }
+
+    /**
      * @param {int} milliseconds
      */
     static sleep(milliseconds)

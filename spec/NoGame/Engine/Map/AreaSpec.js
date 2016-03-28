@@ -31,8 +31,10 @@ describe("Area", () => {
         let area = new Area("test area", 10, 10);
         let player = new Player("yaboomaster", 100);
 
-        area.spawnPlayer(player);
-        expect(() => {area.spawnPlayer(player);})
+        area.addTile(new Tile(new Position(0, 0), new Item(1)));
+
+        area.loginPlayer(player);
+        expect(() => {area.loginPlayer(player);})
             .toThrow(`Player with id "${player.id()}" is already present in area "test area"`);
     });
 
@@ -40,7 +42,9 @@ describe("Area", () => {
         let area = new Area("test area", 10, 10);
         let player = new Player("yaboomaster", 100);
 
-        area.spawnPlayer(player);
+        area.addTile(new Tile(new Position(0, 0), new Item(1)));
+
+        area.loginPlayer(player);
         expect(() => {area.movePlayerTo(player.id(), new Position(1,1))})
             .toThrow(`There is no tile on position 1:1`);
     });
@@ -48,15 +52,16 @@ describe("Area", () => {
     it ("throws error on attempt to move player to position where tile is not walkable", () => {
         let grass = new Item(100);
         let stack = [new Item(2, true)];
-        let grassTile = new Tile(new Position(1, 1), grass, stack);
+        let grassTile = new Tile(new Position(1, 0), grass, stack);
         let area = new Area("test area", 1, 1);
         let player = new Player("yaboomaster", 100);
 
+        area.addTile(new Tile(new Position(0, 0), new Item(1)));
         area.addTile(grassTile);
-        area.spawnPlayer(player);
+        area.loginPlayer(player);
 
-        expect(() => {area.movePlayerTo(player.id(), new Position(1,1))})
-            .toThrow(`Can't walk on tile on 1:1`);
+        expect(() => {area.movePlayerTo(player.id(), new Position(1,0))})
+            .toThrow(`Can't walk on tile on 1:0`);
     });
 
     it ("returns players except player with specific ID", () => {
@@ -67,9 +72,10 @@ describe("Area", () => {
         let player1 = new Player("yaboo1", 100);
         let player2 = new Player("yaboo2", 100);
 
+        area.addTile(new Tile(new Position(0, 0), new Item(1)));
         area.addTile(grassTile);
-        area.spawnPlayer(player1);
-        area.spawnPlayer(player2);
+        area.loginPlayer(player1);
+        area.loginPlayer(player2);
 
         expect(area.visiblePlayersFor(player1.id(), 15, 11)).toEqual([player2]);
     });
@@ -77,7 +83,9 @@ describe("Area", () => {
     it ("throws error when visible tiles sizes are not odd", () => {
         let area = new Area("test area", 100, 100);
         let player = new Player("yaboo1", 100);
-        area.spawnPlayer(player);
+
+        area.addTile(new Tile(new Position(0, 0), new Item(1)));
+        area.loginPlayer(player);
 
         expect(() => {area.visibleTilesFor(player.id(), 6, 7);})
             .toThrow(`Expected odd number but got "int[6]".`);
@@ -94,7 +102,7 @@ describe("Area", () => {
             }
         }
         area.changeSpawnPosition(new Position(50, 50));
-        area.spawnPlayer(player);
+        area.loginPlayer(player);
 
         let tiles = area.visibleTilesFor(player.id(), 15, 11);
 

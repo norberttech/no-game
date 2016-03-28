@@ -10,14 +10,12 @@ export default class TilesMessage extends Message
 {
     /**
      * @param {Tile[]} tiles
-     * @param {Player[]} characters
      */
-    constructor(tiles, characters)
+    constructor(tiles)
     {
         super();
 
         Assert.containsOnly(tiles, Tile);
-        Assert.containsOnly(characters, Player);
 
         this._name = ServerMessages.TILES;
         this._data = {
@@ -29,17 +27,9 @@ export default class TilesMessage extends Message
                     stack: [
                         tile.ground().spriteId()
                     ],
+                    monster: tile.monster,
+                    players: tile.players,
                     moveSpeedModifier: tile.moveSpeedModifier()
-                }
-            }),
-            characters: characters.map((character) => {
-                return {
-                    id: character.id(),
-                    name: character.name(),
-                    position: {
-                        x: character.currentPosition().x(),
-                        y: character.currentPosition().y()
-                    }
                 }
             })
         };

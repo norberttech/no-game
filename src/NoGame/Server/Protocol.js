@@ -2,46 +2,43 @@
 
 import Kernel from './../Engine/Kernel';
 import Assert from 'assert-js';
-import MessageQueue from './MessageQueue';
+import IncomeMessageQueue from './MessageQueue/IncomeQueue';
 import Broadcaster from './Broadcaster';
 import Logger from './../Common/Logger';
 
 import Player from './../Engine/Player';
+import Monster from './../Engine/Monster';
+import Area from './../Engine/Map/Area';
 import Position from './../Engine/Map/Area/Position';
 
 import ClientMessages from './../Common/Network/ClientMessages'
 import BatchMessage from './Network/BatchMessage';
 import LoginMessage from './Network/LoginMessage';
 import AreaMessage from './Network/AreaMessage';
+import TileMessage from './Network/TileMessage';
 import TilesMessage from './Network/TilesMessage';
 import MoveMessage from './Network/MoveMessage';
 import CharactersMessage from './Network/CharactersMessage';
 import CharacterMoveMessage from './Network/CharacterMoveMessage';
 import CharacterSayMessage from './Network/CharacterSayMessage';
-
-/**
- * Client displays x: 15 and y: 11 but it keeps 2 tiles hidden.
- *
- * @type {{x: number, y: number}}
- */
-const VISIBLE_TILES = {x: 17, y: 13};
+import MonsterMoveMessage from './Network/MonsterMoveMessage';
 
 export default class Protocol
 {
     /**
      * @param {Kernel} kernel
-     * @param {MessageQueue} messages
+     * @param {IncomeQueue} incomeMessages
      * @param {Broadcaster} broadcaster
      * @param {Logger} logger
      */
-    constructor(kernel, messages, broadcaster, logger)
+    constructor(kernel, incomeMessages, broadcaster, logger)
     {
         Assert.instanceOf(kernel, Kernel);
-        Assert.instanceOf(messages, MessageQueue);
+        Assert.instanceOf(incomeMessages, IncomeMessageQueue);
         Assert.instanceOf(broadcaster, Broadcaster);
 
         this._kernel = kernel;
-        this._messages = messages;
+        this._incomeMessages = incomeMessages;
         this._broadcaster = broadcaster;
         this._logger = logger;
     }
@@ -51,7 +48,7 @@ export default class Protocol
      */
     parseMessages()
     {
-        let messages = this._messages.flushMessages();
+        let messages = this._incomeMessages.flushMessages();
 
         for (let message of messages) {
             let packet = message.getPacket();
@@ -86,12 +83,55 @@ export default class Protocol
             this._broadcaster.sendToOtherConnectedClients(closedConnection, (connection) => {
                 return new CharactersMessage(
                     this._kernel.getArea()
-                        .visiblePlayersFor(connection.playerId(), VISIBLE_TILES.x, VISIBLE_TILES.y)
+                        .visiblePlayersFor(connection.playerId()),
+                    this._kernel.getArea()
+                        .visibleMonstersFor(connection.playerId())
                 )
             });
         }
 
     }
+
+    /**
+     * @param {Monster} monster
+     */
+    monsterSpawn(monster)
+    {
+        let area = this._kernel.getArea();
+        let players = area.visiblePlayersFrom(monster.position);
+
+        this._broadcaster.sendToPlayers(players, (connection) => {
+            let messages = [];
+            messages.push(new CharactersMessage(
+                area.visiblePlayersFor(connection.playerId()),
+                area.visibleMonstersFor(connection.playerId())
+            ));
+            messages.push(new TileMessage(area.tile(monster.position)));
+
+            return new BatchMessage(messages);
+        });
+    }
+
+    /**
+     * @param {Monster} monster
+     * @param {Position} fromPosition
+     */
+    monsterMove(monster, fromPosition)
+    {
+        let area = this._kernel.getArea();
+        let players = area.visiblePlayersFrom(monster.position);
+
+        this._broadcaster.sendToPlayers(players, (connection) => {
+
+            let messages = [];
+            messages.push(new TileMessage(area.tile(fromPosition)));
+            messages.push(new MonsterMoveMessage(monster, fromPosition));
+            messages.push(new TileMessage(area.tile(monster.position)));
+
+            return new BatchMessage(messages);
+        });
+    }
+
     /**
      * @param {object} packet
      * @param {Connection} connection
@@ -107,17 +147,22 @@ export default class Protocol
         connection.setPlayerId(player.id());
 
         messagesBatch.push(new LoginMessage(player));
-        messagesBatch.push(new AreaMessage(area.name(), VISIBLE_TILES.x, VISIBLE_TILES.y));
+        messagesBatch.push(new AreaMessage(area.name, Area.visibleX, Area.visibleY));
         messagesBatch.push(new TilesMessage(
-            area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y),
-            area.visiblePlayersFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y)
+            area.visibleTilesFor(player.id())
+        ));
+
+        messagesBatch.push(new CharactersMessage(
+            area.visiblePlayersFor(player.id()),
+            area.visibleMonstersFor(player.id())
         ));
 
         connection.send(new BatchMessage(messagesBatch));
 
-        this._broadcaster.sendToPlayersInRange(area, player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y, (playerConnection) => {
+        this._broadcaster.sendToPlayersInRange(area, player.id(), (playerConnection) => {
             return new CharactersMessage(
-                area.visiblePlayersFor(playerConnection.playerId(), VISIBLE_TILES.x, VISIBLE_TILES.y)
+                area.visiblePlayersFor(playerConnection.playerId()),
+                area.visibleMonstersFor(playerConnection.playerId())
             )
         });
     }
@@ -156,15 +201,23 @@ export default class Protocol
         let messages = [];
         messages.push(new MoveMessage(player));
         messages.push(new TilesMessage(
-            area.visibleTilesFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y),
-            area.visiblePlayersFor(player.id(), VISIBLE_TILES.x, VISIBLE_TILES.y)
+            area.visibleTilesFor(player.id())
+        ));
+        messages.push(new CharactersMessage(
+            area.visiblePlayersFor(player.id()),
+            area.visibleMonstersFor(player.id())
         ));
         currentConnection.send(new BatchMessage(messages));
         // we need to send visible characters also because player may enter to map part where
         // players already stands
 
-        this._broadcaster.sendToPlayersInRange(area, player.id(), VISIBLE_TILES.x + 2, VISIBLE_TILES.y + 2, () => {
-            return new CharacterMoveMessage(player, fromPosition);
+        this._broadcaster.sendToPlayersInRange(area, player.id(), () => {
+            let messages = [];
+            messages.push(new CharacterMoveMessage(player, fromPosition));
+            messages.push(new TileMessage(area.tile(fromPosition)));
+            messages.push(new TileMessage(area.tile(toPosition)));
+
+            return new BatchMessage(messages);
         });
     }
 
@@ -180,8 +233,6 @@ export default class Protocol
         this._broadcaster.sendToPlayersInRange(
             area,
             currentConnection.playerId(),
-            VISIBLE_TILES.x + 2,
-            VISIBLE_TILES.y + 2,
             () => {
                 return new CharacterSayMessage(currentConnection.playerId(), packet.data.message)
             }

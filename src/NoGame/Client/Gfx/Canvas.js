@@ -167,7 +167,7 @@ export default class Canvas
 
         let tileSize = this.calculateTileSize();
 
-        this._context.fillStyle = '#FF0000';
+        this._context.fillStyle = '#10E052';
 
         this._context.fillRect(
             tileSize.getWidth() * (tileX - this._hiddenTiles),
@@ -210,23 +210,25 @@ export default class Canvas
 
     /**
      * @param {string} nick
+     * @param {string} color
      * @param {int} tileX
      * @param {int} tileY
      * @param {Size} offset
      */
-    drawCharacter(nick, tileX, tileY, offset)
+    drawCharacter(nick, color, tileX, tileY, offset)
     {
         if (!this._canDraw()) {
             return ;
         }
 
         Assert.string(nick);
+        Assert.string(color);
         Assert.integer(tileX);
         Assert.integer(tileY);
 
         let tileSize = this.calculateTileSize();
 
-        this._context.fillStyle = '#44BBE3';
+        this._context.fillStyle = color;
 
         this._context.fillRect(
             tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth(),

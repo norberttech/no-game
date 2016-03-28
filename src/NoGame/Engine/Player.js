@@ -1,9 +1,9 @@
 'use strict';
 
+import UUID from 'uuid';
 import Assert from 'assert-js'
 import Position from './Map/Area/Position';
-import PlayerSpeed from './../Common/PlayerSpeed';
-import UUID from 'uuid';
+import MoveSpeed from './../Common/MoveSpeed';
 
 export default class Player
 {
@@ -96,7 +96,7 @@ export default class Player
             throw `Can't move that far`;
         }
 
-        this._moveEnds = new Date().getTime() + PlayerSpeed.calculateMoveTime(distance, moveSpeedModifier);
+        this._moveEnds = new Date().getTime() + MoveSpeed.calculateMoveTime(distance, moveSpeedModifier);
         this._currentPosition = newPosition;
     }
 }

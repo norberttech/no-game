@@ -12,7 +12,7 @@ const BASE_MOVE_SPEED_MODIFIER = 100;
  */
 const BASE_MOVE_TIME = 500;
 
-export default class PlayerSpeed
+export default class MoveSpeed
 {
     /**
      * @param {number} distance
