@@ -22,6 +22,7 @@ import CharactersMessage from './Network/CharactersMessage';
 import CharacterMoveMessage from './Network/CharacterMoveMessage';
 import CharacterSayMessage from './Network/CharacterSayMessage';
 import MonsterMoveMessage from './Network/MonsterMoveMessage';
+import MonsterAttackMessage from './Network/MonsterAttackMessage';
 
 export default class Protocol
 {
@@ -122,13 +123,34 @@ export default class Protocol
         let players = area.visiblePlayersFrom(monster.position);
 
         this._broadcaster.sendToPlayers(players, (connection) => {
-
             let messages = [];
             messages.push(new TileMessage(area.tile(fromPosition)));
             messages.push(new MonsterMoveMessage(monster, fromPosition));
             messages.push(new TileMessage(area.tile(monster.position)));
 
             return new BatchMessage(messages);
+        });
+    }
+
+    /**
+     * @param {Monster} monster
+     * @param {Player} player
+     */
+    monsterStartAttack(monster, player)
+    {
+        this._broadcaster.sendToPlayer(player, (connection) => {
+            return new MonsterAttackMessage(monster, true);
+        });
+    }
+
+    /**
+     * @param {Monster} monster
+     * @param {Player} player
+     */
+    monsterStopAttack(monster, player)
+    {
+        this._broadcaster.sendToPlayer(player, (connection) => {
+            return new MonsterAttackMessage(monster, false);
         });
     }
 
@@ -177,7 +199,7 @@ export default class Protocol
         let area = this._kernel.getArea();
         let toPosition = new Position(packet.data.x, packet.data.y);
         let player = area.player(currentConnection.playerId());
-        let fromPosition = player.currentPosition();
+        let fromPosition = player.position;
 
         if (player.isMoving()) {
             this._logger.error({msg: 'still moving', player: player});
@@ -185,7 +207,7 @@ export default class Protocol
             return;
         }
 
-        if (player.currentPosition().isEqualTo(toPosition)) {
+        if (player.position.isEqualTo(toPosition)) {
             this._logger.error({msg: 'already on position', player: player});
             currentConnection.send(new MoveMessage(player));
             return ;

@@ -74,30 +74,15 @@ export default class Protocol
             case ServerMessages.CHARACTERS:
                 let characters = [];
                 for (let characterData of message.data.characters) {
-                    switch (characterData.type) {
-                        case 1:
-                            characters.push(
-                                new Character(
-                                    characterData.id,
-                                    characterData.name,
-                                    characterData.position.x,
-                                    characterData.position.y,
-                                    characterData.type
-                                )
-                            );
-                            break;
-                        case 2:
-                            characters.push(
-                                new Character(
-                                    characterData.id,
-                                    characterData.name,
-                                    characterData.position.x,
-                                    characterData.position.y,
-                                    characterData.type
-                                )
-                            );
-                            break;
-                    }
+                    characters.push(
+                        new Character(
+                            characterData.id,
+                            characterData.name,
+                            characterData.position.x,
+                            characterData.position.y,
+                            characterData.type
+                        )
+                    );
                 }
 
                 this._kernel.setCharacters(characters);
@@ -124,6 +109,13 @@ export default class Protocol
                         message.data.to.y,
                         message.data.moveTime + LATENCY_DELAY
                     );
+                }
+                break;
+            case ServerMessages.MONSTER_ATTACK:
+                if (message.data.attacking === true) {
+                    this._kernel.player().attackedBy(message.data.id);
+                } else {
+                    this._kernel.player().removeAttacker(message.data.id);
                 }
                 break;
             case ServerMessages.CHARACTER_SAY:

@@ -52,6 +52,25 @@ export default class Broadcaster
     }
 
     /**
+     * @param {Player} player
+     * @param {function} messageFactory
+     */
+    sendToPlayer(player, messageFactory)
+    {
+        Assert.instanceOf(player, Player);
+        Assert.isFunction(messageFactory);
+
+        for (let connection of this._connections.values()) {
+            if (connection.playerId() === player.id()) {
+                connection.send(messageFactory(connection));
+                return ;
+            }
+        }
+
+        throw `Connection for player ${player.id()} was not found.`;
+    }
+
+    /**
      * Send message only to players visible by player with id playerId
      *
      * @param {Area} area;

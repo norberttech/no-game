@@ -105,6 +105,7 @@ export default class Canvas
 
         let tileSize = this.calculateTileSize();
 
+        this._context.beginPath();
         this._context.lineWidth = 2;
         this._context.strokeStyle = color;
         this._context.rect(
@@ -114,6 +115,7 @@ export default class Canvas
             tileSize.getHeight()
         );
         this._context.stroke();
+        this._context.closePath();
     }
 
     /**

@@ -10,7 +10,8 @@ const ServerMessages = {
     CHARACTERS: 'characters',
     CHARACTER_MOVE: 'character_move',
     CHARACTER_SAY: 'character_say',
-    MONSTER_MOVE: 'monster_move'
+    MONSTER_MOVE: 'monster_move',
+    MONSTER_ATTACK: 'monster_attack',
 };
 
 export default ServerMessages;

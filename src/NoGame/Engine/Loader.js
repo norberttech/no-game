@@ -49,7 +49,7 @@ export default class Loader
             x++;
         }
 
-        area.addSpawn(new Spawn("rat", 1, 10000, new Position(40, 12), 3));
+        area.addSpawn(new Spawn("rat", 3, 10000, new Position(40, 12), 5));
 
         kernel.setArea(area);
 

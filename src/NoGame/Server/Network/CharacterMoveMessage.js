@@ -29,8 +29,8 @@ export default class CharacterMoveMessage extends Message
                 y: fromPosition.y()
             },
             to: {
-                x: player.currentPosition().x(),
-                y: player.currentPosition().y()
+                x: player.position.x(),
+                y: player.position.y()
             }
         };
     }

@@ -6,6 +6,9 @@ import Position from './Area/Position';
 import Calculator from './../../Common/Area/Calculator';
 import Range from './../../Common/Area/Range';
 import Utils from './../../Common/Utils';
+import PathFinder from './../../Common/PathFinder';
+import Grid from './../../Common/PathFinder/Grid';
+
 import Player from './../Player';
 import Spawn from './../Spawn';
 import MonsterFactory from './../MonsterFactory';
@@ -39,6 +42,7 @@ export default class Area
         this._spawns = new Map();
         this._monsters = new Map();
         this._spawnPosition = new Position(0, 0);
+        this._pathFinder = new PathFinder();
     }
 
     /**
@@ -75,7 +79,6 @@ export default class Area
 
         return this._tiles.get(position.toString());
     }
-
 
     /**
      * @param {Tile} newTile
@@ -156,43 +159,81 @@ export default class Area
 
     /**
      * @param {function} onMonsterMove
+     * @param {function} onMonsterStopAttack
      */
-    moveMonsters(onMonsterMove)
+    moveMonsters(onMonsterMove, onMonsterStopAttack)
     {
         Assert.isFunction(onMonsterMove);
 
         for (let monsterId of this._monsters.keys()) {
             let monster = this._monster(monsterId);
-            let move = false;
-            var range = Calculator.visibleTilesRange(
-                monster.position.x(),
-                monster.position.y(),
-                VISIBLE_TILES.x,
-                VISIBLE_TILES.y
-            );
-
-            for (let tile of this.tilesRange(range)) {
-                if (tile.players.length > 0) {
-                    move = true;
-                    continue ;
-                }
+            if (monster.isMoving || !monster.isAttacking) {
+                continue ;
             }
 
-            if (move) {
-                let newPosition = Position.randomNextTo(monster.position);
+            let player = this._characters.get(monster.attackedPlayerId);
 
-                if (!this._canWalkOn(newPosition) || monster.isMoving) {
+            if (!this.isPlayerVisibleFrom(monster.attackedPlayerId, monster.position)) {
+                monster.stopAttacking();
+                onMonsterStopAttack(monster, player);
+                player.removeAttackingMonster(monsterId);
+                continue ;
+            }
+
+            if (monster.position.calculateDistanceTo(player.position) <= 1) {
+                continue ;
+            }
+
+            let path = this.findPath(monster.position, player.position);
+
+            path.shift();
+
+            if (!path.length) {
+                continue ;
+            }
+
+            let newPosition = path[0];
+
+            let oldTile = this._tiles.get(monster.position.toString());
+            let newTile = this._tiles.get(newPosition.toString());
+
+            oldTile.monsterLeave();
+            monster.move(newPosition, newTile.moveSpeedModifier());
+            newTile.monsterWalkOn(monsterId);
+            onMonsterMove(monster, oldTile.position());
+        }
+    }
+
+    /**
+     * @param {function} onAttack
+     */
+    monstersAttack(onAttack)
+    {
+        for (let monsterId of this._monsters.keys()) {
+            let monster = this._monster(monsterId);
+
+            if (monster.isAttacking) {
+                continue ;
+            }
+
+            let players = this.visiblePlayersFrom(monster.position);
+
+            if (players.length === 0) {
+                continue ;
+            }
+
+            for (let player of players) {
+                let path = this.findPath(monster.position, player.position);
+
+                if (!path.length) {
                     continue ;
                 }
 
-                let oldTile = this._tiles.get(monster.position.toString());
-                let newTile = this._tiles.get(newPosition.toString());
+                monster.attack(players[0].id());
+                onAttack(monster, players[0]);
+                players[0].attackedBy(monsterId);
 
-                oldTile.monsterLeave();
-                monster.move(newPosition, newTile.moveSpeedModifier());
-                newTile.monsterWalkOn(monsterId);
-
-                onMonsterMove(monster, oldTile.position());
+                break;
             }
         }
     }
@@ -207,8 +248,26 @@ export default class Area
 
         let player = this._characters.get(playerId);
         var range = Calculator.visibleTilesRange(
-            player.currentPosition().x(),
-            player.currentPosition().y(),
+            player.position.x(),
+            player.position.y(),
+            VISIBLE_TILES.x,
+            VISIBLE_TILES.y
+        );
+
+        return this.tilesRange(range);
+    }
+
+    /**
+     * @param {Position} position
+     * @returns {Tile[]}
+     */
+    visibleTilesFrom(position)
+    {
+        Assert.instanceOf(position, Position);
+
+        var range = Calculator.visibleTilesRange(
+            position.x(),
+            position.y(),
             VISIBLE_TILES.x,
             VISIBLE_TILES.y
         );
@@ -227,8 +286,8 @@ export default class Area
         let characters = [];
         let player = this._characters.get(playerId);
         var range = Calculator.visibleTilesRange(
-            player.currentPosition().x(),
-            player.currentPosition().y(),
+            player.position.x(),
+            player.position.y(),
             VISIBLE_TILES.x,
             VISIBLE_TILES.y
         );
@@ -244,6 +303,34 @@ export default class Area
         }
 
         return characters;
+    }
+
+    /**
+     * @param {string} playerId
+     * @param {Position} position
+     * @returns {boolean}
+     */
+    isPlayerVisibleFrom(playerId, position)
+    {
+        Assert.string(playerId);
+        Assert.instanceOf(position, Position);
+
+        var range = Calculator.visibleTilesRange(
+            position.x(),
+            position.y(),
+            VISIBLE_TILES.x,
+            VISIBLE_TILES.y
+        );
+
+        for (let tile of this.tilesRange(range)) {
+            for (let characterId of tile.players) {
+                if (characterId === playerId) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -282,8 +369,8 @@ export default class Area
         let monsters = [];
         let player = this._characters.get(playerId);
         var range = Calculator.visibleTilesRange(
-            player.currentPosition().x(),
-            player.currentPosition().y(),
+            player.position.x(),
+            player.position.y(),
             VISIBLE_TILES.x,
             VISIBLE_TILES.y
         );
@@ -323,7 +410,7 @@ export default class Area
         newPlayer.setStartingPosition(this._spawnPosition);
 
         this._characters.set(newPlayer.id(), newPlayer);
-        this._tiles.get(newPlayer.currentPosition().toString()).playerWalkOn(newPlayer.id());
+        this._tiles.get(newPlayer.position.toString()).playerWalkOn(newPlayer.id());
     }
 
     /**
@@ -334,7 +421,14 @@ export default class Area
         this._playerExists(playerId);
 
         let player = this._characters.get(playerId);
-        let tile = this._tiles.get(player.currentPosition().toString());
+        let tile = this._tiles.get(player.position.toString());
+
+        for (let monsterId of player.attackedByMonsters) {
+            let monster = this._monster(monsterId);
+
+            monster.stopAttacking();
+            player.removeAttackingMonster(monsterId);
+        }
 
         tile.playerLeave(playerId);
         this._characters.delete(playerId);
@@ -351,7 +445,7 @@ export default class Area
         this._isTileWalkable(newPosition);
 
         let player = this._characters.get(playerId);
-        let oldTile = this._tiles.get(player.currentPosition().toString());
+        let oldTile = this._tiles.get(player.position.toString());
         let newTile = this._tiles.get(newPosition.toString());
 
         oldTile.playerLeave(playerId);
@@ -368,6 +462,56 @@ export default class Area
         this._playerExists(playerId);
 
         return this._characters.get(playerId);
+    }
+
+    /**
+     * @param {Position} fromPosition
+     * @param {Position} toPosition
+     * @returns {Position[]}
+     */
+    findPath(fromPosition, toPosition)
+    {
+        let grid = new Grid(VISIBLE_TILES.x, VISIBLE_TILES.y);
+        let centerPosition = {
+            x: (VISIBLE_TILES.x - 1) / 2,
+            y: (VISIBLE_TILES.y - 1) / 2
+        };
+
+        for (let tile of this.visibleTilesFrom(fromPosition)) {
+
+            let walkable = tile.canWalkOn();
+
+            if (tile.position().isEqualTo(toPosition)) {
+                walkable = true;
+            }
+
+            if (tile.position().isEqualTo(fromPosition)) {
+                walkable = true;
+            }
+
+            grid.addTile(
+                tile.position().x() - fromPosition.x() + centerPosition.x,
+                tile.position().y() - fromPosition.y() + centerPosition.y,
+                walkable
+            );
+        }
+
+        try {
+            let path = this._pathFinder.findPath(
+                centerPosition.x,
+                centerPosition.y,
+                centerPosition.x - (fromPosition.x() - toPosition.x()),
+                centerPosition.y - (fromPosition.y() - toPosition.y()),
+                grid
+            );
+
+            return path.map(function(pathNode) {
+                return new Position(
+                    fromPosition.x() - (centerPosition.x - pathNode.x),
+                    fromPosition.y() - (centerPosition.y - pathNode.y)
+                )
+            });
+        } catch(error) { return []}
     }
 
     /**

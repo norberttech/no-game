@@ -109,6 +109,15 @@ export default class PlayerUI
     }
 
     /**
+     * @param {string} characterId
+     * @returns {boolean}
+     */
+    isAttackedBy(characterId)
+    {
+        return this._player.isAttackedBy(characterId);
+    }
+
+    /**
      * @param {int} distance
      * @returns {int}
      * @private

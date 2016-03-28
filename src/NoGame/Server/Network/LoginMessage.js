@@ -21,8 +21,8 @@ export default class LoginMessage extends Message
             id: player.id(),
             name: player.name(),
             position: {
-                x: player.currentPosition().x(),
-                y: player.currentPosition().y()
+                x: player.position.x(),
+                y: player.position.y()
             }
         };
     }

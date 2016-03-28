@@ -9,7 +9,8 @@ export default class PathFinder
     constructor()
     {
         this._finder = new PF.AStarFinder({
-            allowDiagonal: false
+            allowDiagonal: false,
+            diagonalMovement: false
         });
     }
 

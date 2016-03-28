@@ -24,6 +24,39 @@ export default class Player
         this._positon = new Position(x, y);
         this._moveEnds = new Date().getTime();
         this._moveTime = 0;
+        this._attackedBy = new Map();
+    }
+
+    /**
+     * @returns {string}
+     */
+    id()
+    {
+        return this._id;
+    }
+
+    /**
+     * @returns {string}
+     */
+    name()
+    {
+        return this._name;
+    }
+
+    /**
+     * @returns {Position}
+     */
+    getCurrentPosition()
+    {
+        return this._positon;
+    }
+
+    /**
+     * @returns {Position}
+     */
+    getMovingFromPosition()
+    {
+        return this._moveFrom;
     }
 
     /**
@@ -93,34 +126,29 @@ export default class Player
     }
 
     /**
-     * @returns {string}
+     * @param {string} characterId
      */
-    id()
+    attackedBy(characterId)
     {
-        return this._id;
+        this._attackedBy.set(characterId, true);
     }
 
     /**
-     * @returns {string}
+     * @param {string} characterId
+     * @returns {boolean}
      */
-    name()
+    isAttackedBy(characterId)
     {
-        return this._name;
+        return this._attackedBy.has(characterId);
     }
 
     /**
-     * @returns {Position}
+     * @param {string} characterId
      */
-    getCurrentPosition()
+    removeAttacker(characterId)
     {
-        return this._positon;
-    }
-
-    /**
-     * @returns {Position}
-     */
-    getMovingFromPosition()
-    {
-        return this._moveFrom;
+        if (this.isAttackedBy(characterId)) {
+            this._attackedBy.delete(characterId);
+        }
     }
 }

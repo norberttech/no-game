@@ -2,6 +2,7 @@
 
 import UUID from 'uuid';
 import Assert from 'assert-js'
+import Player from './Player';
 import Position from './Map/Area/Position';
 import MoveSpeed from './../Common/MoveSpeed';
 
@@ -31,6 +32,7 @@ export default class Monster
         this._moveEnds = 0;
         this._spriteId = spriteId;
         this._spawwnId = spawnId;
+        this._attackedPlayerId = null;
     }
 
     /**
@@ -103,6 +105,41 @@ export default class Monster
     get moveEnds()
     {
         return this._moveEnds;
+    }
+
+    /**
+     * @param {string} playerId
+     */
+    attack(playerId)
+    {
+        Assert.string(playerId);
+
+        this._attackedPlayerId = playerId;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isAttacking()
+    {
+        return this._attackedPlayerId !== null;
+    }
+
+    /**
+     * @returns {string}
+     */
+    get attackedPlayerId()
+    {
+        if (this._attackedPlayerId === null) {
+            throw `Monster ${this.name} is not attacking anybody.`;
+        }
+
+        return this._attackedPlayerId;
+    }
+
+    stopAttacking()
+    {
+        this._attackedPlayerId = null;
     }
 
     /**

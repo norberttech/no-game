@@ -29,8 +29,8 @@ export default class CharactersMessage extends Message
                     type: 1,
                     name: player.name(),
                     position: {
-                        x: player.currentPosition().x(),
-                        y: player.currentPosition().y()
+                        x: player.position.x(),
+                        y: player.position.y()
                     }
                 }
             )

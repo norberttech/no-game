@@ -82,12 +82,21 @@ export default class Server
             this._spawnTimer = 0;
         }
 
-        if (this._monsterThinkTimer > 3) {
-            this._kernel.moveMonsters((monster, oldPosition) => {
-                this._protocol.monsterMove(monster, oldPosition);
-            });
+        if (this._monsterThinkTimer > 1) {
+            this._kernel.moveMonsters(
+                (monster, oldPosition) => {
+                    this._protocol.monsterMove(monster, oldPosition);
+                },
+                (monster, player) => {
+                    this._protocol.monsterStopAttack(monster, player);
+                }
+            );
             this._monsterThinkTimer = 0;
         }
+
+        this._kernel.monstersAttack((monster, player) => {
+            this._protocol.monsterStartAttack(monster, player);
+        });
     }
 
     /**

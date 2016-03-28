@@ -77,11 +77,26 @@ export default class Kernel
         this._area.spawnMonsters(this._monsterFactory, onMonsterSpawn);
     }
 
-    moveMonsters(onMonsterMove)
+    /**
+     * @param {function} onMonsterMove
+     * @param {function} onMonsterStopAttacking
+     */
+    moveMonsters(onMonsterMove, onMonsterStopAttack)
     {
         Assert.isFunction(onMonsterMove);
+        Assert.isFunction(onMonsterStopAttack);
 
-        this._area.moveMonsters(onMonsterMove)
+        this._area.moveMonsters(onMonsterMove, onMonsterStopAttack)
+    }
+
+    /**
+     * @param {function} onMonsterAttack
+     */
+    monstersAttack(onMonsterAttack)
+    {
+        Assert.isFunction(onMonsterAttack);
+
+        this._area.monstersAttack(onMonsterAttack);
     }
 
     /**

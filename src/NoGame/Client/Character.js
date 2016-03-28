@@ -116,7 +116,6 @@ export default class Character
         }
     }
 
-
     /**
      * @returns {Position}
      */

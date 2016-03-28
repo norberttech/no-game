@@ -18,6 +18,13 @@ export default class Size
     }
 
     /**
+     * @returns {boolean}
+     */
+    get isPositive()
+    {
+        return this._width > 0 || this._height > 0;
+    }
+    /**
      * @returns {int}
      */
     getWidth()
@@ -42,5 +49,16 @@ export default class Size
         Assert.instanceOf(size, Size);
 
         return new Size(this._width + size.getWidth(), this._height + size.getHeight());
+    }
+
+    /**
+     * @param {Size} size
+     * @returns {Size}
+     */
+    subtract(size)
+    {
+        Assert.instanceOf(size, Size);
+
+        return new Size(this._width - size.getWidth(), this._height - size.getHeight());
     }
 }
