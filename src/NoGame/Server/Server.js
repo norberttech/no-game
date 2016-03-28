@@ -3,7 +3,7 @@
 import ws from 'ws';
 import Broadcaster from './Broadcaster';
 import Connection from './Network/Connection';
-import MessageQueue from './MessageQueue';
+import IncomeMessageQueue from './MessageQueue/IncomeQueue';
 import CharactersMessage from './Network/CharactersMessage';
 import Assert from 'assert-js';
 import Kernel from './../Engine/Kernel';
@@ -23,10 +23,13 @@ export default class Server
         Assert.instanceOf(logger, Logger);
 
         this._broadcaster = new Broadcaster();
-        this._messageQueue = new MessageQueue();
-        this._protocol = new Protocol(kernel, this._messageQueue, this._broadcaster, logger);
+        this._incomeMessageQueue = new IncomeMessageQueue();
+        this._kernel = kernel;
+        this._protocol = new Protocol(kernel, this._incomeMessageQueue, this._broadcaster, logger);
         this._logger = logger;
         this._gameLoop = new GameLoop(1000 / 45, this.update.bind(this));
+        this._spawnTimer = 0;
+        this._monsterThinkTimer = 0;
     }
 
     /**
@@ -60,15 +63,31 @@ export default class Server
      */
     onMessage(rawMessage, currentConnection)
     {
-        this._messageQueue.addMessage(rawMessage, currentConnection);
+        this._incomeMessageQueue.addMessage(rawMessage, currentConnection);
     }
 
     /**
      * Game main loop
      */
-    update()
+    update(delta)
     {
+        this._spawnTimer += delta;
+        this._monsterThinkTimer += delta;
         this._protocol.parseMessages();
+
+        if (this._spawnTimer > 5) {
+            this._kernel.spawnMonsters((monster) => {
+                this._protocol.monsterSpawn(monster);
+            });
+            this._spawnTimer = 0;
+        }
+
+        if (this._monsterThinkTimer > 3) {
+            this._kernel.moveMonsters((monster, oldPosition) => {
+                this._protocol.monsterMove(monster, oldPosition);
+            });
+            this._monsterThinkTimer = 0;
+        }
     }
 
     /**

@@ -11,15 +11,17 @@ export default class Character
      * @param {int} x
      * @param {int} y
      */
-    constructor(id, name, x, y)
+    constructor(id, name, x, y, type)
     {
         Assert.integer(x);
         Assert.integer(y);
         Assert.string(id);
         Assert.string(name);
+        Assert.integer(type);
 
         this._id = id;
         this._name = name;
+        this._type = type;
         this._moves = [];
         this._moveFrom = new Position(x, y);
         this._position = new Position(x, y);
@@ -33,6 +35,14 @@ export default class Character
     id()
     {
         return this._id;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get type()
+    {
+        return this._type
     }
 
     /**

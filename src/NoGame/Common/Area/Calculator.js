@@ -1,6 +1,7 @@
 'use strict';
 
 import Assert from 'assert-js';
+import Range from './Range';
 
 export default class Calculator
 {
@@ -9,7 +10,7 @@ export default class Calculator
      * @param {int} centerY
      * @param {int} tilesX
      * @param {int} tilesY
-     * @returns {{x: {start: int, end: int}, y: {start: int, end: int}}}
+     * @returns {Range}
      */
     static visibleTilesRange(centerX, centerY, tilesX, tilesY)
     {
@@ -18,16 +19,12 @@ export default class Calculator
         Assert.oddNumber(tilesX);
         Assert.oddNumber(tilesY);
 
-        return {
-            x: {
-                start: centerX - ((tilesX - 1) / 2),
-                end: centerX - Math.round(tilesX / 2) + tilesX
-            },
-            y: {
-                start: centerY - ((tilesY - 1) / 2),
-                end: centerY - Math.round(tilesY / 2) + tilesY
-            }
-        };
+        return new Range(
+            centerX - ((tilesX - 1) / 2),
+            centerX - Math.round(tilesX / 2) + tilesX,
+            centerY - ((tilesY - 1) / 2),
+            centerY - Math.round(tilesY / 2) + tilesY
+        );
     }
 
     /**

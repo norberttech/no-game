@@ -3,7 +3,7 @@
 import Assert from 'assert-js';
 import Connection from './../Network/Connection';
 
-export default class Message
+export default class IncomeMessage
 {
     /**
      * @param {object} packet

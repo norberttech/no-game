@@ -20,7 +20,7 @@ export default class CharacterUI
 
         this._character = character;
         this._player = player;
-        this._messages = [];
+        this._incomeMessages = [];
     }
 
     /**
@@ -29,6 +29,22 @@ export default class CharacterUI
     getId()
     {
         return this._character.id();
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isMonster()
+    {
+        return this._character.type === 2;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isPlayer()
+    {
+        return this._character.type === 1;
     }
 
     /**
@@ -121,14 +137,14 @@ export default class CharacterUI
     {
         if (text.length > 40) {
             for (let textPart of text.match(/.{1,40}/g)) {
-                this._messages.unshift(new MessageUI(textPart));
+                this._incomeMessages.unshift(new MessageUI(textPart));
             }
         } else {
-            this._messages.unshift(new MessageUI(text));
+            this._incomeMessages.unshift(new MessageUI(text));
         }
 
-        if (this._messages.length > 6) {
-            this._messages.pop();
+        if (this._incomeMessages.length > 6) {
+            this._incomeMessages.pop();
         }
     }
 
@@ -139,7 +155,7 @@ export default class CharacterUI
     {
         let visibleMessages = [];
 
-        for (let message of this._messages) {
+        for (let message of this._incomeMessages) {
             if (message.isVisible()) {
                 visibleMessages.push(message);
             }

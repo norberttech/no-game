@@ -74,17 +74,35 @@ export default class Protocol
             case ServerMessages.CHARACTERS:
                 let characters = [];
                 for (let characterData of message.data.characters) {
-                    characters.push(
-                        new Character(
-                            characterData.id,
-                            characterData.name,
-                            characterData.position.x,
-                            characterData.position.y
-                        )
-                    );
+                    switch (characterData.type) {
+                        case 1:
+                            characters.push(
+                                new Character(
+                                    characterData.id,
+                                    characterData.name,
+                                    characterData.position.x,
+                                    characterData.position.y,
+                                    characterData.type
+                                )
+                            );
+                            break;
+                        case 2:
+                            characters.push(
+                                new Character(
+                                    characterData.id,
+                                    characterData.name,
+                                    characterData.position.x,
+                                    characterData.position.y,
+                                    characterData.type
+                                )
+                            );
+                            break;
+                    }
                 }
+
                 this._kernel.setCharacters(characters);
                 break;
+            case ServerMessages.MONSTER_MOVE:
             case ServerMessages.CHARACTER_MOVE:
                 if (this._kernel.hasCharacter(message.data.id)) {
                     this._kernel.characterMove(
@@ -126,20 +144,19 @@ export default class Protocol
                         tileData.moveSpeedModifier
                     );
                 });
-                for (let characterData of message.data.characters) {
-                    if (!this._kernel.hasCharacter(characterData.id)) {
-                        this._kernel.addCharacter(
-                            new Character(
-                                characterData.id,
-                                characterData.name,
-                                characterData.position.x,
-                                characterData.position.y
-                            )
-                        );
-                    }
-                }
 
                 this._kernel.area().setTiles(tiles);
+                break;
+            case ServerMessages.TILE:
+                let tile = new Tile(
+                        message.data.x,
+                        message.data.y,
+                        message.data.canWalkOn,
+                        message.data.stack,
+                        message.data.moveSpeedModifier
+                );
+
+                this._kernel.area().setTile(tile);
                 break;
             case ServerMessages.BATCH_MESSAGE:
                 let rawMessages = message.data.messages;

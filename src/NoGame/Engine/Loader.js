@@ -6,6 +6,8 @@ import Logger from './../Common/Logger';
 import Tile from './Map/Area/Tile';
 import Item from './Map/Area/Item';
 import Position from './Map/Area/Position';
+import MonsterFactory from './MonsterFactory';
+import Spawn from './Spawn';
 import fs from 'fs';
 
 export default class Loader
@@ -14,10 +16,10 @@ export default class Loader
      * @param {Kernel} kernel
      * @param {Logger} logger
      */
-    static loadAreas(kernel, logger)
+    static loadMapArea(kernel, logger)
     {
         logger.info('Loading tesaria.json...');
-        var areaData = JSON.parse(fs.readFileSync(__dirname + '/../Engine/Resources/Map/tesaria.json', 'utf8'));
+        let areaData = JSON.parse(fs.readFileSync(__dirname + '/../Engine/Resources/Map/tesaria.json', 'utf8'));
 
         let area = new Area("Tesaria", areaData.width, areaData.height);
 
@@ -47,8 +49,24 @@ export default class Loader
             x++;
         }
 
+        area.addSpawn(new Spawn("rat", 1, 10000, new Position(40, 12), 3));
+
         kernel.setArea(area);
 
         logger.info('tesaria.json loaded!');
+    }
+
+    static loadMonsterFactory(kernel, logger)
+    {
+        logger.info('Loading monster factory...');
+
+        let monsterFactory = new MonsterFactory();
+
+        logger.info('Loading "rat".');
+        monsterFactory.addTemplate("rat", 1001, 32);
+
+        logger.info("Monster factory loaded!");
+
+        kernel.setMonsterFactory(monsterFactory);
     }
 }

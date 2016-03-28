@@ -182,7 +182,9 @@ export default class Engine
             let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
             let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
 
-            this._canvas.drawCharacter(character.getName(), relativeX, relativeY, offset);
+            let color = character.isPlayer ? '#44BBE3' : '#FA020F';
+
+            this._canvas.drawCharacter(character.getName(), color, relativeX, relativeY, offset);
 
             let messageIndex = 0;
             for (let message of character.getMessages()) {
