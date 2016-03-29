@@ -96,6 +96,22 @@ export default class CharacterUI
     }
 
     /**
+     * @returns {int}
+     */
+    get health()
+    {
+        return this._character.health;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get maxHealth()
+    {
+        return this._character.maxHealth;
+    }
+
+    /**
      * @param {Size} tileSize
      * @return {Size}
      */

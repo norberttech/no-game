@@ -47,6 +47,8 @@ export default class Protocol
                     new Player(
                         message.data.id,
                         message.data.name,
+                        message.data.health,
+                        message.data.maxHealth,
                         message.data.position.x,
                         message.data.position.y
                     )
@@ -80,6 +82,8 @@ export default class Protocol
                             characterData.name,
                             characterData.position.x,
                             characterData.position.y,
+                            characterData.health,
+                            characterData.maxHealth,
                             characterData.type
                         )
                     );

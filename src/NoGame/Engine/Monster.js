@@ -27,7 +27,7 @@ export default class Monster
         this._id = UUID.v4();
         this._name = name;
         this._health = health;
-        this._maximumHealth = health;
+        this._maxHealth = health;
         this._position = spawnPosition;
         this._moveEnds = 0;
         this._spriteId = spriteId;
@@ -94,9 +94,9 @@ export default class Monster
     /**
      * @returns {int}
      */
-    get maximumHealth()
+    get maxHealth()
     {
-        return this._maximumHealth;
+        return this._maxHealth;
     }
 
     /**

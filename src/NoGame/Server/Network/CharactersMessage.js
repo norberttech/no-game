@@ -28,6 +28,8 @@ export default class CharactersMessage extends Message
                     id: player.id(),
                     type: 1,
                     name: player.name(),
+                    health: player.health,
+                    maxHealth: player.maxHealth,
                     position: {
                         x: player.position.x(),
                         y: player.position.y()
@@ -42,6 +44,8 @@ export default class CharactersMessage extends Message
                     id: monster.id,
                     type: 2,
                     name: monster.name,
+                    health: monster.health,
+                    maxHealth: monster.maxHealth,
                     position: {
                         x: monster.position.x(),
                         y: monster.position.y()

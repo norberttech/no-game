@@ -161,7 +161,7 @@ export default class Protocol
      */
     _handleLogin(packet, connection)
     {
-        let player = new Player(packet.data.username);
+        let player = new Player(packet.data.username, 100, 100);
         this._kernel.login(player);
         let area = this._kernel.getArea();
         let messagesBatch = [];

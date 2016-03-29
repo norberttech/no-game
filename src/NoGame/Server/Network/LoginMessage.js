@@ -20,6 +20,8 @@ export default class LoginMessage extends Message
         this._data = {
             id: player.id(),
             name: player.name(),
+            health: player.health,
+            maxHealth: player.maxHealth,
             position: {
                 x: player.position.x(),
                 y: player.position.y()

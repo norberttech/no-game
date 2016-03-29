@@ -195,6 +195,14 @@ export default class Engine
                 );
             }
 
+            this._canvas.drawHealthBar(
+                character.health,
+                character.maxHealth,
+                relativeX,
+                relativeY,
+                offset
+            );
+
             let messageIndex = 0;
             for (let message of character.getMessages()) {
                 this._canvas.drawCharacterMessage(message.getText(), messageIndex, relativeX, relativeY, offset);
@@ -212,6 +220,13 @@ export default class Engine
 
         this._canvas.drawPlayer(
             this._player.getName(),
+            centerSquarePosition.x,
+            centerSquarePosition.y
+        );
+
+        this._canvas.drawHealthBar(
+            this._player.health,
+            this._player.maxHealth,
             centerSquarePosition.x,
             centerSquarePosition.y
         );

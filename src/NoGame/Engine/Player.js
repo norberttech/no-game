@@ -9,15 +9,19 @@ export default class Player
 {
     /**
      * @param {string} name
-     * @param {number} health
+     * @param {int} health
+     * @param {int} maxHealth
      */
-    constructor(name, health = 100)
+    constructor(name, health = 100, maxHealth = 100)
     {
         Assert.string(name);
         Assert.notEmpty(name);
         Assert.greaterThan(0, health);
+        Assert.greaterThan(0, maxHealth);
 
         this._id = UUID.v4();
+        this._health = health;
+        this._maxHealth = maxHealth;
         this._position = null;
         this._moveEnds = 0;
         this._name = name;
@@ -38,6 +42,22 @@ export default class Player
     id()
     {
         return this._id;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get health()
+    {
+        return this._health;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get maxHealth()
+    {
+        return this._maxHealth;
     }
 
     /**

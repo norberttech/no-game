@@ -184,8 +184,65 @@ export default class Canvas
             "#FFFFFF",
             "#000000",
             tileSize.getWidth() * (tileX - this._hiddenTiles) + this._calculateTextTileOffset(nick, NICK_FONT, tileSize),
-            tileSize.getHeight() * (tileY - this._hiddenTiles) - 8
+            tileSize.getHeight() * (tileY - this._hiddenTiles) - 22
         );
+    }
+
+    /**
+     * @param {int} health
+     * @param {int} maxHealth
+     * @param {int} tileX
+     * @param {int} tileY
+     * @param {Size} offset
+     */
+    drawHealthBar(health, maxHealth, tileX, tileY, offset = new Size(0, 0))
+    {
+        let percentage = health / maxHealth;
+        let tileSize = this.calculateTileSize();
+        let color = '#1BE340';
+
+        if (percentage * 100 < 75) {
+            color = '#F2E122';
+        }
+        if (percentage * 100 < 50) {
+            color = '#E89117';
+        }
+        if (percentage * 100 < 35) {
+            color = '#F5350A';
+        }
+
+        this._context.beginPath();
+        this._context.fillStyle = '#000000';
+        this._context.fillRect(
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() ,
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 15,
+            tileSize.getWidth(),
+            10
+        );
+        this._context.closePath();
+
+
+        this._context.beginPath();
+        this._context.fillStyle = color;
+        this._context.fillRect(
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() ,
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 15,
+            tileSize.getWidth() * percentage,
+            10
+        );
+        this._context.closePath();
+
+        this._context.beginPath();
+        this._context.lineWidth = 1;
+        this._context.strokeStyle = '#000000';
+        this._context.rect(
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth(),
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 15,
+            tileSize.getWidth() * percentage + 1,
+            10
+        );
+        this._context.stroke();
+        this._context.closePath();
     }
 
     /**
@@ -206,7 +263,7 @@ export default class Canvas
             "#c5bf13",
             "#000000",
             tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(text, MESSAGE_FONT, tileSize),
-            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 30 + topOffset
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 40 + topOffset
         );
     }
 
@@ -239,7 +296,6 @@ export default class Canvas
             tileSize.getHeight()
         );
 
-
         if (tileY < (this._visibleTiles.y - this._hiddenTiles)
             && tileX < (this._visibleTiles.x - this._hiddenTiles)
             && tileX > 0) {
@@ -249,7 +305,7 @@ export default class Canvas
                 "#FFFFFF",
                 "#000000",
                 tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(nick, NICK_FONT, tileSize),
-                tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 8
+                tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 22
             );
         }
 

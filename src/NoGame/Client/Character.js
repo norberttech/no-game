@@ -10,8 +10,11 @@ export default class Character
      * @param {string} name
      * @param {int} x
      * @param {int} y
+     * @param {int} health
+     * @param {int} maxHealth
+     * @param {int} type
      */
-    constructor(id, name, x, y, type)
+    constructor(id, name, x, y, health, maxHealth, type)
     {
         Assert.integer(x);
         Assert.integer(y);
@@ -27,6 +30,8 @@ export default class Character
         this._position = new Position(x, y);
         this._moveTime = 0;
         this._moveEnds = new Date().getTime();
+        this._health = health;
+        this._maxHealth = maxHealth;
     }
 
     /**
@@ -43,6 +48,22 @@ export default class Character
     get type()
     {
         return this._type
+    }
+
+    /**
+     * @returns {int}
+     */
+    get health()
+    {
+        return this._health;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get maxHealth()
+    {
+        return this._maxHealth;
     }
 
     /**

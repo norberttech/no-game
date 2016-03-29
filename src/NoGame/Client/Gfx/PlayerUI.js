@@ -68,6 +68,22 @@ export default class PlayerUI
     }
 
     /**
+     * @returns {int}
+     */
+    get health()
+    {
+        return this._player.health;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get maxHealth()
+    {
+        return this._player.maxHealth;
+    }
+
+    /**
      * @returns {string}
      */
     getName()

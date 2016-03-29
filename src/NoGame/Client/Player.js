@@ -8,18 +8,24 @@ export default class Player
     /**
      * @param {string} id
      * @param {string} name
+     * @param {int} health
+     * @param {int} maxHealth
      * @param {int} x
      * @param {int} y
      */
-    constructor(id, name, x, y)
+    constructor(id, name, health, maxHealth, x, y)
     {
-        Assert.integer(x);
-        Assert.integer(y);
         Assert.string(id);
         Assert.string(name);
+        Assert.greaterThan(0, health);
+        Assert.greaterThan(0, maxHealth);
+        Assert.integer(x);
+        Assert.integer(y);
 
         this._id = id;
         this._name = name;
+        this._health = health;
+        this._maxHealth = maxHealth;
         this._moveFrom = new Position(x, y);
         this._positon = new Position(x, y);
         this._moveEnds = new Date().getTime();
@@ -41,6 +47,22 @@ export default class Player
     name()
     {
         return this._name;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get health()
+    {
+        return this._health;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get maxHealth()
+    {
+        return this._maxHealth;
     }
 
     /**
