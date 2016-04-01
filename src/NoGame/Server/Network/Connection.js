@@ -33,6 +33,11 @@ export default class Connection
         return this._id;
     }
 
+    removePlayery()
+    {
+        this._playerId = null;
+    }
+
     /**
      * @param {string} id
      */

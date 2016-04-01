@@ -49,7 +49,7 @@ export default class Loader
             x++;
         }
 
-        area.addSpawn(new Spawn("rat", 3, 10000, new Position(15, 12), 5));
+        area.addSpawn(new Spawn("rat", 1, 10000, new Position(30, 50), 25));
 
         kernel.setArea(area);
 
@@ -63,7 +63,7 @@ export default class Loader
         let monsterFactory = new MonsterFactory();
 
         logger.info('Loading "rat".');
-        monsterFactory.addTemplate("rat", 1001, 32);
+        monsterFactory.addTemplate("rat", 1001, 32, 5, 3000, 5);
 
         logger.info("Monster factory loaded!");
 

@@ -11,14 +11,20 @@ export default class Monster
     /**
      * @param {string} name
      * @param {int} health
+     * @param attackPower
+     * @param {int} attackDelay
+     * @param {int} defence
      * @param {int} spriteId
      * @param {Position} spawnPosition
      * @param {string} spawnId
      */
-    constructor(name, health, spriteId, spawnPosition, spawnId)
+    constructor(name, health, attackPower, attackDelay, defence, spriteId, spawnPosition, spawnId)
     {
         Assert.string(name);
         Assert.notEmpty(name);
+        Assert.integer(attackPower);
+        Assert.integer(attackDelay);
+        Assert.integer(defence);
         Assert.greaterThan(0, health);
         Assert.integer(spriteId);
         Assert.instanceOf(spawnPosition, Position);
@@ -28,11 +34,15 @@ export default class Monster
         this._name = name;
         this._health = health;
         this._maxHealth = health;
+        this._attackPower = attackPower;
+        this._defence = defence;
         this._position = spawnPosition;
         this._moveEnds = 0;
         this._spriteId = spriteId;
         this._spawwnId = spawnId;
         this._attackedPlayerId = null;
+        this._attackDelay = attackDelay;
+        this._lastAttack = 0;
     }
 
     /**
@@ -100,11 +110,73 @@ export default class Monster
     }
 
     /**
+     * @returns {boolean}
+     */
+    get isDead()
+    {
+        return this._health === 0;
+    }
+
+    /**
      * @returns {int}
      */
     get moveEnds()
     {
         return this._moveEnds;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isExhausted()
+    {
+        return (new Date().getTime() < this._lastAttack + this._attackDelay);
+    }
+
+    /**
+     * @returns {int}
+     */
+    get defence()
+    {
+        return this._defence;
+    }
+
+    /**
+     * @param {Player} player
+     * @param {function} [onDamage]
+     */
+    meleeDamage(player, onDamage = () => {})
+    {
+        Assert.instanceOf(player, Player);
+
+        if (this._attackedPlayerId !== player.id()) {
+            throw `Player ${player.id()} can't be damaged, it wasn't attacked by monster ${this._id}`;
+        }
+
+        if (player.position.calculateDistanceTo(this._position) > 1) {
+            throw `Player ${player.id()} can't be damaged, it is too far from monster ${this._id}`;
+        }
+
+        if (player.defence < this._attackPower) {
+            player.damage(this._attackPower - player.defence);
+            onDamage(player, this._attackPower - player.defence);
+        }
+
+        this._lastAttack = new Date().getTime();
+    }
+
+    /**
+     * @param {int} damage
+     */
+    damage(damage)
+    {
+        Assert.greaterThan(0, damage);
+
+        this._health = this._health - damage;
+
+        if (this._health < 0) {
+            this._health = 0;
+        }
     }
 
     /**

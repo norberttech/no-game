@@ -8,14 +8,14 @@
     "test": "jasmine JASMINE_CONFIG_PATH=spec/support/jasmine.json",
     "client:build": "node_modules/.bin/webpack --config webpack.client.build.js --progress --color --display-modules",
     "client:dev": "node webpack.client.dev.js",
-    "server:build": "node_modules/.bin/babel src --out-dir bin/server --ignore src/NoGame/Client && cp -r src/NoGame/Engine/Resources/Map bin/server/NoGame/Engine/Resources",
+    "server:build": "node_modules/.bin/babel src --out-dir bin/server --ignore src/NoGame/Client && cp -r src/NoGame/Engine/Resources/Map bin/server/NoGame/Engine/Resources/Map",
     "server:run": "node bin/server/NoGame/Server/bootstrap.js",
     "server:dev": "babel-node src/NoGame/Server/bootstrap.js --ignore src/NoGame/Client"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "assert-js": "^0.2",
+    "assert-js": "^0.4",
     "bufferutil": "^1.2.1",
     "bunyan": "^1.7.0",
     "faye-websocket": "^0.10.0",

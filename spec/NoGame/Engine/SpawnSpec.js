@@ -4,7 +4,7 @@ import Position from '../../../src/NoGame/Engine/Map/Area/Position';
 
 describe("Spawn", () => {
     let monsterFactory = new MonsterFactory();
-    monsterFactory.addTemplate("rat", 1, 100);
+    monsterFactory.addTemplate("rat", 1, 100, 5, 500, 5);
 
     it("it knows when its full", () => {
         let spawn = new Spawn("rat", 1, 1000, new Position(20, 20), 10);

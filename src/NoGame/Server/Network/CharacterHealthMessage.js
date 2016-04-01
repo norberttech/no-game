@@ -7,7 +7,7 @@ import ServerMessages from './../../Common/Network/ServerMessages';
 export default class CharacterHealthMessage extends Message
 {
     /**
-     * @param {int} characterId
+     * @param {string} characterId
      * @param {int} oldValue
      * @param {int} newValue
      */

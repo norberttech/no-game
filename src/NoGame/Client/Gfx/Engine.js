@@ -33,9 +33,10 @@ export default class Engine
         this._mouse = mouse;
         this._tiles = null;
         this._player = null;
-        this._characters = new CharactersUI();
+        this._players = new CharactersUI();
         this._visibleTiles = null;
         this._hiddenTiles = 1;
+        this._draw = false;
     }
 
     /**
@@ -79,7 +80,7 @@ export default class Engine
     {
         Assert.containsOnly(characters, Character);
 
-        this._characters.updateCharacters(characters, this._player);
+        this._players.updateCharacters(characters, this._player);
     }
 
     /**
@@ -96,7 +97,7 @@ export default class Engine
      */
     characterSay(characterId, text)
     {
-        this._characters.say(characterId, text);
+        this._players.say(characterId, text);
     }
 
     /**
@@ -109,19 +110,33 @@ export default class Engine
         this._tiles = tiles;
     }
 
+    startDrawing()
+    {
+        this._draw = true;
+        this.draw();
+    }
+
+    stopDrawing()
+    {
+        this._draw = false;
+        this._canvas.clear();
+    }
+
     draw()
     {
-        this._canvas.clear();
-        if (this._spriteMap.isLoaded() && null !== this._visibleTiles) {
-            if (null !== this._player && null !== this._tiles) {
-                this._drawVisibleArea();
-                this._drawVisibleCharacters();
-                this._drawPlayer();
-                this._drawMousePointer();
+        if (this._draw) {
+            if (this._spriteMap.isLoaded() && null !== this._visibleTiles) {
+                if (null !== this._player && null !== this._tiles) {
+                    this._canvas.clear();
+                    this._drawVisibleArea();
+                    this._drawVisibleCharacters();
+                    this._drawPlayer();
+                    this._drawMousePointer();
+                }
             }
-        }
 
-        this._animationLoop(this.draw.bind(this));
+            this._animationLoop(this.draw.bind(this));
+        }
     }
 
     /**
@@ -136,6 +151,20 @@ export default class Engine
         return new Position(
             Math.floor(x / tileSize.getWidth()) + this._hiddenTiles,
             Math.floor(y / tileSize.getHeight()) + this._hiddenTiles
+        );
+    }
+
+    /**
+     * @returns {Position}
+     */
+    getMouseAbsolutePosition()
+    {
+        let relPosition = this.getMouseRelativePosition();
+        let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
+
+        return new Position(
+            this._player.getX() - (centerSquarePosition.x - relPosition.getX()),
+            this._player.getY() - (centerSquarePosition.y - relPosition.getY())
         );
     }
 
@@ -175,7 +204,7 @@ export default class Engine
     _drawVisibleCharacters()
     {
         let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
-        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
+        let visibleCharacters = this._players.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
 
         for (let character of visibleCharacters) {
             let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
@@ -186,7 +215,7 @@ export default class Engine
 
             this._canvas.drawCharacter(character.getName(), color, relativeX, relativeY, offset);
 
-            if (this._player.isAttackedBy(character.getId())) {
+            if (this._player.isAttacking(character.getId())) {
                 this._canvas.drawPointer(
                     "#FF0000",
                     relativeX,

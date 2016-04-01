@@ -5,24 +5,20 @@ import Assert from 'assert-js';
 /**
  * @type {number}
  */
-const BASE_MOVE_SPEED_MODIFIER = 100;
-
-/**
- * @type {number}
- */
 const BASE_MOVE_TIME = 500;
 
 export default class MoveSpeed
 {
     /**
      * @param {number} distance
-     * @param {int} moveSpeedModifier
+     * @param {int} [moveSpeedModifier]
      * @returns {number}
      */
-    static calculateMoveTime(distance, moveSpeedModifier)
+    static calculateMoveTime(distance, moveSpeedModifier = 0)
     {
-        let modifier = BASE_MOVE_SPEED_MODIFIER + moveSpeedModifier;
+        Assert.number(distance);
+        Assert.integer(moveSpeedModifier);
 
-        return ((distance * BASE_MOVE_TIME * 100) - modifier) / 100;
+        return ((distance * BASE_MOVE_TIME * 100) - moveSpeedModifier) / 100;
     }
 }

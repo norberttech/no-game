@@ -97,6 +97,21 @@ export default class Server
         this._kernel.monstersAttack((monster, player) => {
             this._protocol.monsterStartAttack(monster, player);
         });
+
+        this._kernel.performMeleeDamage(
+            (player, damage) => {
+                this._protocol.playerLossHealth(player, damage);
+            },
+            (monster, damage) => {
+                this._protocol.monsterLossHealth(monster, damage);
+            },
+            (player) => {
+                this._protocol.die(player);
+            },
+            (monster, player) => {
+                this._protocol.monsterDied(monster, player);
+            }
+        );
     }
 
     /**

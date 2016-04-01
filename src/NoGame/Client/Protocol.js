@@ -15,6 +15,7 @@ export default class Protocol
     {
         this._kernel = kernel;
         this._onLogin = null;
+        this._onLogout = null;
         this._onCharacterSay = null;
     }
 
@@ -31,6 +32,16 @@ export default class Protocol
     /**
      * @param {function} callback
      */
+    onLogout(callback)
+    {
+        Assert.isFunction(callback);
+
+        this._onLogout = callback;
+    }
+
+    /**
+     * @param {function} callback
+     */
     onCharacterSay(callback)
     {
         Assert.isFunction(callback);
@@ -42,7 +53,6 @@ export default class Protocol
     {
         switch (message.name) {
             case ServerMessages.LOGIN:
-                this._kernel.draw();
                 this._kernel.login(
                     new Player(
                         message.data.id,
@@ -56,7 +66,15 @@ export default class Protocol
                 this._isLoggedIn = true;
 
                 if (this._onLogin !== null) {
-                    this._onLogin(this);
+                    this._onLogin();
+                }
+
+                break;
+            case ServerMessages.LOGOUT:
+                this._kernel.logout();
+
+                if (this._onLogout !== null) {
+                    this._onLogout(message.data.reason);
                 }
 
                 break;
@@ -91,6 +109,16 @@ export default class Protocol
 
                 this._kernel.setCharacters(characters);
                 break;
+            case ServerMessages.CHARACTER_HEALTH:
+                if (message.data.id === this._kernel.player().id()) {
+                    this._kernel.player().changeHealth(message.data.newValue);
+                } else {
+                    this._kernel.character(message.data.id).changeHealth(message.data.newValue);
+                }
+                break;
+            case ServerMessages.CHARACTER_DIED:
+                    this._kernel.killCharacter(message.data.id);
+                break;
             case ServerMessages.MONSTER_MOVE:
             case ServerMessages.CHARACTER_MOVE:
                 if (this._kernel.hasCharacter(message.data.id)) {
@@ -105,7 +133,10 @@ export default class Protocol
                         message.data.id,
                         message.data.name,
                         message.data.from.x,
-                        message.data.from.y
+                        message.data.from.y,
+                        message.data.health,
+                        message.data.maxHealth,
+                        message.data.type
                     ));
                     this._kernel.characterMove(
                         message.data.id,

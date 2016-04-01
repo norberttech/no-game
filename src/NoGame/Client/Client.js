@@ -12,6 +12,7 @@ import Keys from './UserInterface/Keys';
 import MoveSpeed from './../Common/MoveSpeed';
 
 import LoginMessage from './Network/LoginMessage';
+import AttackMonsterMessage from './Network/AttackMonsterMessage';
 import MoveMessage from './Network/MoveMessage';
 import SayMessage from './Network/SayMessage';
 
@@ -64,7 +65,7 @@ export default class Client
 
         if (this._isLoggedIn) {
             this._connection.send(new SayMessage(message));
-            this._kernel.getGfx().playerSay(message);
+            this._kernel.gfx.playerSay(message);
         }
     }
 
@@ -90,13 +91,24 @@ export default class Client
     }
 
     /**
-     * @param {function} callback - gets {Client} as a argument
+     * @param {function} callback
      */
     onLogin(callback)
     {
         this._protocol.onLogin(() => {
             this._isLoggedIn = true;
             callback();
+        });
+    }
+
+    /**
+     * @param {function} callback - gets {string} reason as a argument
+     */
+    onLogout(callback)
+    {
+        this._protocol.onLogout((reason) => {
+            this._isLoggedIn = false;
+            callback(reason);
         });
     }
 
@@ -137,8 +149,18 @@ export default class Client
 
     _onMouseClick()
     {
+        let mouseAbsolutePosition = this._kernel.gfx.getMouseAbsolutePosition();
+
+        for (let character of this._kernel.characters) {
+            if (character.getCurrentPosition().isEqual(mouseAbsolutePosition) && character.isMonster) {
+                    this._kernel.player().attack(character.id());
+                    this._connection.send(new AttackMonsterMessage(character.id()));
+                return ;
+            }
+        }
+
         this._kernel.clearWalkPath();
-        this._kernel.setWalkPath(this._kernel.getGfx().getMouseRelativePosition());
+        this._kernel.setWalkPath(this._kernel.gfx.getMouseRelativePosition());
     }
 
     /**

@@ -1,14 +1,7 @@
 import Player from '../../../src/NoGame/Engine/Player';
 import Position from '../../../src/NoGame/Engine/Map/Area/Position';
+import Utils from '../../../src/NoGame/Common/Utils';
 
-function sleep(milliseconds) {
-    var start = new Date().getTime();
-    for (var i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - start) > milliseconds){
-            break;
-        }
-    }
-}
 
 describe("Player", () => {
     it ("it has uuid", () => {
@@ -35,7 +28,7 @@ describe("Player", () => {
             .toThrow("Can't move that far");
     });
 
-    it ("moves to a different position", () => {
+    it ("moves to a different position with delay between moves", () => {
         let player = new Player("yaboomaster", 100);
 
         player.setStartingPosition(new Position(1, 1));
@@ -43,10 +36,18 @@ describe("Player", () => {
         player.move(new Position(1,2), 0);
         player.move(new Position(2,2), 0); // should not move here because is moving already
         expect(player.isMoving()).toBe(true);
-        expect(player.currentPosition().isEqualTo(new Position(1,2))).toBe(true);
+        expect(player.position.isEqualTo(new Position(1,2))).toBe(true);
 
-        sleep(600); // wait to finish move
+        Utils.sleep(600); // wait to finish move
 
         expect(player.isMoving()).toBe(false);
+    });
+
+    it ("can't have negative health", () => {
+        let player = new Player("yaboomaster", 100);
+
+        player.damage(200);
+
+        expect(player.health).toBe(0);
     });
 });

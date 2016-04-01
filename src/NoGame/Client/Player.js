@@ -31,6 +31,7 @@ export default class Player
         this._moveEnds = new Date().getTime();
         this._moveTime = 0;
         this._attackedBy = new Map();
+        this._targetId = null;
     }
 
     /**
@@ -63,6 +64,42 @@ export default class Player
     get maxHealth()
     {
         return this._maxHealth;
+    }
+
+    /**
+     * @param {string} characterId
+     */
+    attack(characterId)
+    {
+        Assert.string(characterId);
+
+        this._targetId = characterId;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isAttacking()
+    {
+        return this._targetId !== null;
+    }
+
+    /**
+     * @returns {null|string}
+     */
+    get targetId()
+    {
+        return this._targetId;
+    }
+
+    /**
+     * @param {int} newValue
+     */
+    changeHealth(newValue)
+    {
+        Assert.integer(newValue);
+
+        this._health = newValue;
     }
 
     /**

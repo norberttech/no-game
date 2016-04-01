@@ -51,11 +51,29 @@ export default class Character
     }
 
     /**
+     * @returns {boolean}
+     */
+    get isMonster()
+    {
+        return this._type === 2;
+    }
+
+    /**
      * @returns {int}
      */
     get health()
     {
         return this._health;
+    }
+
+    /**
+     * @param {int} newHealth
+     */
+    changeHealth(newHealth)
+    {
+        Assert.integer(newHealth);
+
+        this._health = newHealth;
     }
 
     /**

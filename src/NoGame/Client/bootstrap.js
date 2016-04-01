@@ -61,4 +61,10 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
             ui.resizeUI();
         }, 100);
     });
+
+    client.onLogout((reason) => {
+        ui.hideCanvas();
+        ui.showLoginScreen();
+        ui.addErrorMessage(reason);
+    });
 });

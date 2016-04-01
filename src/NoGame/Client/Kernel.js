@@ -26,8 +26,13 @@ export default class Kernel
         this._gfxEngine = gfxEngine;
         this._pathFinder = pathFinder;
         this._version = '1.0.0-DEV';
+        this._resetState();
+    }
+
+    _resetState()
+    {
         this._player = null;
-        this._characters = [];
+        this._players = new Map();
         this._area = null;
         this._walkPath = null;
     }
@@ -40,7 +45,7 @@ export default class Kernel
     /**
      * @returns {Engine}
      */
-    getGfx()
+    get gfx()
     {
         return this._gfxEngine;
     }
@@ -57,9 +62,22 @@ export default class Kernel
         this._gfxEngine.setVisibleTiles(x, y);
     }
 
-    draw()
+    /**
+     * @param {Player} player
+     */
+    login(player)
     {
-        this._gfxEngine.draw();
+        Assert.instanceOf(player, Player);
+
+        this._player = player;
+        this._gfxEngine.setPlayer(player);
+        this._gfxEngine.startDrawing();
+    }
+
+    logout()
+    {
+        this._gfxEngine.stopDrawing();
+        this._resetState();
     }
 
     /**
@@ -146,8 +164,21 @@ export default class Kernel
     {
         Assert.containsOnly(characters, Character);
 
-        this._characters = characters;
-        this._gfxEngine.setCharacters(characters);
+        this._players.clear();
+
+        characters.map((character) => {
+            this._players.set(character.id(), character);
+        });
+
+        this._gfxEngine.setCharacters(Array.from(this._players.values()));
+    }
+
+    /**
+     * @returns {Character[]}
+     */
+    get characters()
+    {
+        return Array.from(this._players.values());
     }
 
     /**
@@ -157,8 +188,9 @@ export default class Kernel
     {
         Assert.instanceOf(character, Character);
 
-        this._characters.push(character);
-        this._gfxEngine.setCharacters(this._characters);
+        this._players.set(character.id(), character);
+
+        this._gfxEngine.setCharacters(Array.from(this._players.values()));
     }
 
     /**
@@ -169,13 +201,18 @@ export default class Kernel
     {
         Assert.string(characterId);
 
-        for (let character of this._characters) {
-            if (character.id() === characterId) {
-                return true;
-            }
-        }
+        return this._players.has(characterId);
+    }
 
-        return false;
+    /**
+     * @param {string} characterId
+     */
+    killCharacter(characterId)
+    {
+        Assert.string(characterId);
+
+        this._players.delete(characterId);
+        this._gfxEngine.setCharacters(Array.from(this._players.values()));
     }
 
     /**
@@ -186,13 +223,11 @@ export default class Kernel
     {
         Assert.string(characterId);
 
-        for (let character of this._characters) {
-            if (character.id() === characterId) {
-                return character;
-            }
+        if (!this.hasCharacter(characterId)) {
+            throw `Unknown character with id "${characterId}"`;
         }
 
-        throw `Unknown character with id "${characterId}"`;
+        return this._players.get(characterId);
     }
 
     /**
@@ -209,17 +244,6 @@ export default class Kernel
         Assert.integer(moveTime);
 
         character.startMovingTo(x, y, moveTime);
-    }
-
-    /**
-     * @param {Player} player
-     */
-    login(player)
-    {
-        Assert.instanceOf(player, Player);
-
-        this._player = player;
-        this._gfxEngine.setPlayer(player);
     }
 
     /**

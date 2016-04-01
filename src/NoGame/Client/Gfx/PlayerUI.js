@@ -128,6 +128,19 @@ export default class PlayerUI
      * @param {string} characterId
      * @returns {boolean}
      */
+    isAttacking(characterId)
+    {
+        if (!this._player.isAttacking) {
+            return false;
+        }
+
+        return this._player.targetId === characterId;
+    }
+
+    /**
+     * @param {string} characterId
+     * @returns {boolean}
+     */
     isAttackedBy(characterId)
     {
         return this._player.isAttackedBy(characterId);

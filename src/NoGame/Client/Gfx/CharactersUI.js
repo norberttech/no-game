@@ -10,7 +10,7 @@ export default class CharactersUI
 {
     constructor()
     {
-        this._characters = [];
+        this._players = [];
     }
 
     /**
@@ -22,7 +22,7 @@ export default class CharactersUI
         Assert.containsOnly(characters, Character);
         Assert.instanceOf(player, PlayerUI);
 
-        this._characters = characters.map((character) => {
+        this._players = characters.map((character) => {
             return new CharacterUI(character, player);
         });
     }
@@ -36,7 +36,7 @@ export default class CharactersUI
     {
         let visibleCharacters = [];
 
-        for (let character of this._characters) {
+        for (let character of this._players) {
             let relativeX = character.getRelativeX(visibleX, visibleY);
             let relativeY = character.getRelativeY(visibleX, visibleY);
 
@@ -54,7 +54,7 @@ export default class CharactersUI
      */
     say(characterId, text)
     {
-        for (let character of this._characters) {
+        for (let character of this._players) {
             if (character.getId() === characterId) {
                 character.say(text);
                 return ;

@@ -14,11 +14,14 @@ import Position from './../Engine/Map/Area/Position';
 import ClientMessages from './../Common/Network/ClientMessages'
 import BatchMessage from './Network/BatchMessage';
 import LoginMessage from './Network/LoginMessage';
+import LogoutMessage from './Network/LogoutMessage';
 import AreaMessage from './Network/AreaMessage';
 import TileMessage from './Network/TileMessage';
 import TilesMessage from './Network/TilesMessage';
 import MoveMessage from './Network/MoveMessage';
 import CharactersMessage from './Network/CharactersMessage';
+import CharacterDiedMessage from './Network/CharacterDiedMessage';
+import CharacterHealthMessage from './Network/CharacterHealthMessage';
 import CharacterMoveMessage from './Network/CharacterMoveMessage';
 import CharacterSayMessage from './Network/CharacterSayMessage';
 import MonsterMoveMessage from './Network/MonsterMoveMessage';
@@ -64,11 +67,31 @@ export default class Protocol
                 case ClientMessages.MESSAGE:
                     this._handleMessage(packet, message.getConnection());
                     break;
+                case ClientMessages.ATTACK_MONSTER:
+                    this._handleAttackMonster(packet, message.getConnection());
+                    break;
                 default:
                     this._logger.error({msg: "Unhandled message", message: message});
                     break;
             }
         }
+    }
+
+    /**
+     * @param {Player} player
+     */
+    die(player)
+    {
+        Assert.instanceOf(player, Player);
+
+        this._broadcaster.sendToPlayer(player, (connection) => {
+            return new LogoutMessage("You died.");
+        });
+
+        let connection = this._broadcaster.getConnection(player.id());
+
+        this.logout(connection);
+        connection.removePlayery();
     }
 
     /**
@@ -90,7 +113,6 @@ export default class Protocol
                 )
             });
         }
-
     }
 
     /**
@@ -155,6 +177,45 @@ export default class Protocol
     }
 
     /**
+     * @param {Player} player
+     * @param {int} damage
+     */
+    playerLossHealth(player, damage)
+    {
+        let players = this._kernel.getArea().visiblePlayersFrom(player.position);
+
+        this._broadcaster.sendToPlayers(players, (connection) => {
+            return new CharacterHealthMessage(player.id(), player.health + damage, player.health);
+        });
+    }
+
+    /**
+     * @param {Monster} monster
+     * @param {int} damage
+     */
+    monsterLossHealth(monster, damage)
+    {
+        let players = this._kernel.getArea().visiblePlayersFrom(monster.position);
+
+        this._broadcaster.sendToPlayers(players, (connection) => {
+            return new CharacterHealthMessage(monster.id, monster.health + damage, monster.health);
+        });
+    }
+
+    /**
+     * @param {Monster} monster
+     * @param {Player} killer
+     */
+    monsterDied(monster, killer)
+    {
+        let players = this._kernel.getArea().visiblePlayersFrom(monster.position);
+
+        this._broadcaster.sendToPlayers(players, (connection) => {
+            return new CharacterDiedMessage(monster.id, killer.id());
+        });
+    }
+
+    /**
      * @param {object} packet
      * @param {Connection} connection
      * @private
@@ -173,7 +234,6 @@ export default class Protocol
         messagesBatch.push(new TilesMessage(
             area.visibleTilesFor(player.id())
         ));
-
         messagesBatch.push(new CharactersMessage(
             area.visiblePlayersFor(player.id()),
             area.visibleMonstersFor(player.id())
@@ -198,23 +258,11 @@ export default class Protocol
     {
         let area = this._kernel.getArea();
         let toPosition = new Position(packet.data.x, packet.data.y);
-        let player = area.player(currentConnection.playerId());
+        let player = area.getPlayer(currentConnection.playerId());
         let fromPosition = player.position;
 
-        if (player.isMoving()) {
-            this._logger.error({msg: 'still moving', player: player});
-            currentConnection.send(new MoveMessage(player));
-            return;
-        }
-
-        if (player.position.isEqualTo(toPosition)) {
-            this._logger.error({msg: 'already on position', player: player});
-            currentConnection.send(new MoveMessage(player));
-            return ;
-        }
-
         try {
-            area.movePlayerTo(currentConnection.playerId(), toPosition);
+            this._kernel.movePlayer(currentConnection.playerId(), toPosition);
         } catch (error) {
             currentConnection.send(new MoveMessage(player));
             return ;
@@ -259,5 +307,15 @@ export default class Protocol
                 return new CharacterSayMessage(currentConnection.playerId(), packet.data.message)
             }
         );
+    }
+
+    /**
+     * @param {object} packet
+     * @param {Connection} currentConnection
+     * @private
+     */
+    _handleAttackMonster(packet, currentConnection)
+    {
+        this._kernel.playerAttack(currentConnection.playerId(), packet.data.id);
     }
 }

@@ -74,6 +74,7 @@ export default class UserInterface
 
             if (userName.value.length) {
                 callback(userName.value);
+                userName.value = '';
             }
         });
     }

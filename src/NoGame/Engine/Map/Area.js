@@ -11,7 +11,7 @@ import Grid from './../../Common/PathFinder/Grid';
 
 import Player from './../Player';
 import Spawn from './../Spawn';
-import MonsterFactory from './../MonsterFactory';
+import Monster from './../Monster';
 
 /**
  * Client displays x: 15 and y: 11 but it keeps 2 tiles hidden.
@@ -38,7 +38,7 @@ export default class Area
         this._sizeX = sizeX;
         this._sizeY = sizeY;
         this._tiles = new Map();
-        this._characters = new Map();
+        this._players = new Map();
         this._spawns = new Map();
         this._monsters = new Map();
         this._spawnPosition = new Position(0, 0);
@@ -70,209 +70,34 @@ export default class Area
     }
 
     /**
-     * @param {Position} position
-     * @returns {Tile}
+     * @param {Position} newSpawnPosition
      */
-    tile(position)
+    changeSpawnPosition(newSpawnPosition)
     {
-        Assert.instanceOf(position, Position);
+        Assert.instanceOf(newSpawnPosition, Position);
 
-        return this._tiles.get(position.toString());
+        this._spawnPosition = newSpawnPosition;
     }
 
     /**
-     * @param {Tile} newTile
+     * @returns {Player[]}
      */
-    addTile(newTile)
+    get players()
     {
-        Assert.instanceOf(newTile, Tile);
-
-        if (this._tiles.has(newTile.position().toString())) {
-            throw `Area "${this._name}" already have a tile on position ${newTile.position().toString()}`;
-        }
-
-        this._validatePositionBoundaries(newTile);
-
-        this._tiles.set(newTile.position().toString(), newTile);
-    }
-
-    /**
-     * @param {Range} range
-     */
-    tilesRange(range)
-    {
-        Assert.instanceOf(range, Range);
-
-        let tiles = [];
-
-        for (let x = range.startX; x <= range.endX; x++) {
-            for (let y = range.startY; y <= range.endY; y++) {
-                let tile = this._tiles.get(Position.toStringFromNative(x, y));
-
-                if (tile !== undefined) {
-                    tiles.push(tile);
-                }
-            }
-        }
-
-        return tiles;
-    }
-
-    /**
-     * @param {Spawn} spawn
-     */
-    addSpawn(spawn)
-    {
-        Assert.instanceOf(spawn, Spawn);
-
-        this._spawns.set(spawn.id, spawn);
-    }
-
-    /**
-     * @param {MonsterFactory} factory
-     * @param {function} onMonsterSpawn
-     */
-    spawnMonsters(factory, onMonsterSpawn)
-    {
-        for (let spawn of this._spawns.values()) {
-            let spawnAttempt = 0;
-            while (spawnAttempt < 10) {
-                let position = spawn.randomPosition;
-
-                try {
-                    this._tileExists(position);
-                    this._isTileWalkable(position);
-
-                    let monster = spawn.spawnMonster(factory, position, spawn.id);
-                    let tile = this._tiles.get(position.toString());
-
-                    tile.monsterWalkOn(monster.id);
-                    this._monsters.set(monster.id, spawn.id);
-                    onMonsterSpawn(monster);
-                    break;
-                } catch (error) {}
-
-                spawnAttempt++;
-            }
-        }
-    }
-
-    /**
-     * @param {function} onMonsterMove
-     * @param {function} onMonsterStopAttack
-     */
-    moveMonsters(onMonsterMove, onMonsterStopAttack)
-    {
-        Assert.isFunction(onMonsterMove);
-
-        for (let monsterId of this._monsters.keys()) {
-            let monster = this._monster(monsterId);
-            if (monster.isMoving || !monster.isAttacking) {
-                continue ;
-            }
-
-            let player = this._characters.get(monster.attackedPlayerId);
-
-            if (!this.isPlayerVisibleFrom(monster.attackedPlayerId, monster.position)) {
-                monster.stopAttacking();
-                onMonsterStopAttack(monster, player);
-                player.removeAttackingMonster(monsterId);
-                continue ;
-            }
-
-            if (monster.position.calculateDistanceTo(player.position) <= 1) {
-                continue ;
-            }
-
-            let path = this.findPath(monster.position, player.position);
-
-            path.shift();
-
-            if (!path.length) {
-                continue ;
-            }
-
-            let newPosition = path[0];
-
-            let oldTile = this._tiles.get(monster.position.toString());
-            let newTile = this._tiles.get(newPosition.toString());
-
-            oldTile.monsterLeave();
-            monster.move(newPosition, newTile.moveSpeedModifier());
-            newTile.monsterWalkOn(monsterId);
-            onMonsterMove(monster, oldTile.position());
-        }
-    }
-
-    /**
-     * @param {function} onAttack
-     */
-    monstersAttack(onAttack)
-    {
-        for (let monsterId of this._monsters.keys()) {
-            let monster = this._monster(monsterId);
-
-            if (monster.isAttacking) {
-                continue ;
-            }
-
-            let players = this.visiblePlayersFrom(monster.position);
-
-            if (players.length === 0) {
-                continue ;
-            }
-
-            for (let player of players) {
-                let path = this.findPath(monster.position, player.position);
-
-                if (!path.length) {
-                    continue ;
-                }
-
-                monster.attack(players[0].id());
-                onAttack(monster, players[0]);
-                players[0].attackedBy(monsterId);
-
-                break;
-            }
-        }
+        return Array.from(this._players.values());
     }
 
     /**
      * @param {string} playerId
-     * @returns {Tile[]}
+     * @returns {Player}
      */
-    visibleTilesFor(playerId)
+    getPlayer(playerId)
     {
-        this._playerExists(playerId);
+        if (!this._players.has(playerId)) {
+            throw `Player with id ${playerId} does not exists.`;
+        }
 
-        let player = this._characters.get(playerId);
-        var range = Calculator.visibleTilesRange(
-            player.position.x(),
-            player.position.y(),
-            VISIBLE_TILES.x,
-            VISIBLE_TILES.y
-        );
-
-        return this.tilesRange(range);
-    }
-
-    /**
-     * @param {Position} position
-     * @returns {Tile[]}
-     */
-    visibleTilesFrom(position)
-    {
-        Assert.instanceOf(position, Position);
-
-        var range = Calculator.visibleTilesRange(
-            position.x(),
-            position.y(),
-            VISIBLE_TILES.x,
-            VISIBLE_TILES.y
-        );
-
-        return this.tilesRange(range);
+        return this._players.get(playerId);
     }
 
     /**
@@ -284,7 +109,7 @@ export default class Area
         this._playerExists(playerId);
 
         let characters = [];
-        let player = this._characters.get(playerId);
+        let player = this._players.get(playerId);
         var range = Calculator.visibleTilesRange(
             player.position.x(),
             player.position.y(),
@@ -298,7 +123,7 @@ export default class Area
                     continue;
                 }
 
-                characters.push(this._characters.get(characterId));
+                characters.push(this._players.get(characterId));
             }
         }
 
@@ -350,12 +175,218 @@ export default class Area
         );
 
         for (let tile of this.tilesRange(range)) {
-            for (let characterId of tile.players) {
-                characters.push(this._characters.get(characterId));
+            for (let playerId of tile.players) {
+                characters.push(this._players.get(playerId));
             }
         }
 
         return characters;
+    }
+
+
+    /**
+     * @param {Player} newPlayer
+     */
+    loginPlayer(newPlayer)
+    {
+        Assert.instanceOf(newPlayer, Player);
+
+        if (this._players.has(newPlayer.id()) === true) {
+            throw `Player with id "${newPlayer.id()}" is already present in area "${this._name}"`;
+        }
+
+        newPlayer.setStartingPosition(this._spawnPosition);
+
+        this._players.set(newPlayer.id(), newPlayer);
+        this._tiles.get(newPlayer.position.toString()).playerWalkOn(newPlayer.id());
+    }
+
+    /**
+     * @param {string} playerId
+     */
+    logoutPlayer(playerId)
+    {
+        this._playerExists(playerId);
+
+        let player = this._players.get(playerId);
+        let tile = this._tiles.get(player.position.toString());
+
+        for (let monsterId of player.attackedByMonsters) {
+            let monster = this.getMonster(monsterId);
+
+            monster.stopAttacking();
+            player.removeAttackingMonster(monsterId);
+        }
+
+        tile.playerLeave(playerId);
+        this._players.delete(playerId);
+    }
+
+    /**
+     * @param {Position} position
+     * @returns {Tile}
+     */
+    tile(position)
+    {
+        Assert.instanceOf(position, Position);
+
+        if (!this._tiles.has(position.toString())) {
+            throw `There is no tile on position ${position.toString()}`;
+        }
+
+        return this._tiles.get(position.toString());
+    }
+
+    /**
+     * @param {Tile} newTile
+     */
+    addTile(newTile)
+    {
+        Assert.instanceOf(newTile, Tile);
+
+        if (this._tiles.has(newTile.position().toString())) {
+            throw `Area "${this._name}" already have a tile on position ${newTile.position().toString()}`;
+        }
+
+        this._validatePositionBoundaries(newTile);
+
+        this._tiles.set(newTile.position().toString(), newTile);
+    }
+
+    /**
+     * @param {Range} range
+     */
+    tilesRange(range)
+    {
+        Assert.instanceOf(range, Range);
+
+        let tiles = [];
+
+        for (let x = range.startX; x <= range.endX; x++) {
+            for (let y = range.startY; y <= range.endY; y++) {
+                let tile = this._tiles.get(Position.toStringFromNative(x, y));
+
+                if (tile !== undefined) {
+                    tiles.push(tile);
+                }
+            }
+        }
+
+        return tiles;
+    }
+
+    /**
+     * @param {string} playerId
+     * @returns {Tile[]}
+     */
+    visibleTilesFor(playerId)
+    {
+        this._playerExists(playerId);
+
+        let player = this._players.get(playerId);
+        var range = Calculator.visibleTilesRange(
+            player.position.x(),
+            player.position.y(),
+            VISIBLE_TILES.x,
+            VISIBLE_TILES.y
+        );
+
+        return this.tilesRange(range);
+    }
+
+    /**
+     * @param {Position} position
+     * @returns {Tile[]}
+     */
+    visibleTilesFrom(position)
+    {
+        Assert.instanceOf(position, Position);
+
+        var range = Calculator.visibleTilesRange(
+            position.x(),
+            position.y(),
+            VISIBLE_TILES.x,
+            VISIBLE_TILES.y
+        );
+
+        return this.tilesRange(range);
+    }
+
+    /**
+     * @param {Spawn} spawn
+     */
+    addSpawn(spawn)
+    {
+        Assert.instanceOf(spawn, Spawn);
+
+        this._spawns.set(spawn.id, spawn);
+    }
+
+    /**
+     * @returns {Spawn[]}
+     */
+    get spawns()
+    {
+        return Array.from(this._spawns.values());
+    }
+
+    /**
+     * @returns {Monster[]}
+     */
+    get monsters()
+    {
+        let monsters = [];
+        for (let monsterId of this._monsters.keys()) {
+            monsters.push(this.getMonster(monsterId));
+        }
+
+        return monsters;
+    }
+
+    /**
+     * @param {string} monsterId
+     * @returns {Monster}
+     */
+    getMonster(monsterId)
+    {
+        let spawnId = this._monsters.get(monsterId);
+
+        return this._spawns.get(spawnId).getMonster(monsterId);
+    }
+
+    /**
+     * @param {Monster} monster
+     */
+    addMonster(monster)
+    {
+        Assert.instanceOf(monster, Monster);
+
+        this._monsters.set(monster.id, monster.spawnId);
+    }
+
+    /**
+     * @param {string} monsterId
+     */
+    removeMonster(monsterId)
+    {
+        let monster = this.getMonster(monsterId);
+
+        let tile = this._tiles.get(monster.position.toString());
+        tile.monsterLeave();
+
+        for (let player of this._players.values()) {
+            if (player.isAttackingMonster(monster.id)) {
+                player.stopAttack();
+            }
+
+            if (player.isAttackedBy(monster.id)) {
+                player.removeAttackingMonster(monster.id);
+            }
+        }
+
+        this._monsters.delete(monsterId);
+
+        this._spawns.get(monster.spawnId).removeMonster(monsterId);
     }
 
     /**
@@ -367,7 +398,7 @@ export default class Area
         this._playerExists(playerId);
 
         let monsters = [];
-        let player = this._characters.get(playerId);
+        let player = this._players.get(playerId);
         var range = Calculator.visibleTilesRange(
             player.position.x(),
             player.position.y(),
@@ -380,88 +411,10 @@ export default class Area
                 continue ;
             }
 
-            monsters.push(this._monster(tile.monster));
+            monsters.push(this.getMonster(tile.monster));
         }
 
         return monsters;
-    }
-
-    /**
-     * @param {Position} newSpawnPosition
-     */
-    changeSpawnPosition(newSpawnPosition)
-    {
-        Assert.instanceOf(newSpawnPosition, Position);
-
-        this._spawnPosition = newSpawnPosition;
-    }
-
-    /**
-     * @param {Player} newPlayer
-     */
-    loginPlayer(newPlayer)
-    {
-        Assert.instanceOf(newPlayer, Player);
-
-        if (this._characters.has(newPlayer.id()) === true) {
-            throw `Player with id "${newPlayer.id()}" is already present in area "${this._name}"`;
-        }
-
-        newPlayer.setStartingPosition(this._spawnPosition);
-
-        this._characters.set(newPlayer.id(), newPlayer);
-        this._tiles.get(newPlayer.position.toString()).playerWalkOn(newPlayer.id());
-    }
-
-    /**
-     * @param {string} playerId
-     */
-    logoutPlayer(playerId)
-    {
-        this._playerExists(playerId);
-
-        let player = this._characters.get(playerId);
-        let tile = this._tiles.get(player.position.toString());
-
-        for (let monsterId of player.attackedByMonsters) {
-            let monster = this._monster(monsterId);
-
-            monster.stopAttacking();
-            player.removeAttackingMonster(monsterId);
-        }
-
-        tile.playerLeave(playerId);
-        this._characters.delete(playerId);
-    }
-
-    /**
-     * @param {string} playerId
-     * @param {Position} newPosition
-     */
-    movePlayerTo(playerId, newPosition)
-    {
-        this._playerExists(playerId);
-        this._tileExists(newPosition);
-        this._isTileWalkable(newPosition);
-
-        let player = this._characters.get(playerId);
-        let oldTile = this._tiles.get(player.position.toString());
-        let newTile = this._tiles.get(newPosition.toString());
-
-        oldTile.playerLeave(playerId);
-        player.move(newPosition, newTile.moveSpeedModifier());
-        newTile.playerWalkOn(playerId);
-    }
-
-    /**
-     * @param {string} playerId
-     * @returns {Player}
-     */
-    player(playerId)
-    {
-        this._playerExists(playerId);
-
-        return this._characters.get(playerId);
     }
 
     /**
@@ -527,18 +480,6 @@ export default class Area
 
     /**
      * @param {Position} newPosition
-     * @returns {boolean}
-     * @private
-     */
-    _canWalkOn(newPosition)
-    {
-        Assert.instanceOf(newPosition, Position);
-
-        return this._tiles.get(newPosition.toString()).canWalkOn();
-    }
-
-    /**
-     * @param {Position} newPosition
      * @private
      */
     _tileExists(newPosition)
@@ -556,21 +497,9 @@ export default class Area
     {
         Assert.string(playerId);
 
-        if (!this._characters.has(playerId)) {
+        if (!this._players.has(playerId)) {
             throw `There is no player with id "${playerId}" in area "${this._name}"`;
         }
-    }
-
-    /**
-     * @param {string} monsterId
-     * @returns {Monster}
-     * @private
-     */
-    _monster(monsterId)
-    {
-        let spawnId = this._monsters.get(monsterId);
-
-        return this._spawns.get(spawnId).getMonster(monsterId);
     }
 
     /**

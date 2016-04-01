@@ -80,19 +80,6 @@ describe("Area", () => {
         expect(area.visiblePlayersFor(player1.id(), 15, 11)).toEqual([player2]);
     });
 
-    it ("throws error when visible tiles sizes are not odd", () => {
-        let area = new Area("test area", 100, 100);
-        let player = new Player("yaboo1", 100);
-
-        area.addTile(new Tile(new Position(0, 0), new Item(1)));
-        area.loginPlayer(player);
-
-        expect(() => {area.visibleTilesFor(player.id(), 6, 7);})
-            .toThrow(`Expected odd number but got "int[6]".`);
-        expect(() => {area.visibleTilesFor(player.id(), 15, 4);})
-            .toThrow(`Expected odd number but got "int[4]".`);
-    });
-
     it ("returns tiles visible by player", () => {
         let area = new Area("test area", 100, 100);
         let player = new Player("yaboo1", 100);
@@ -106,11 +93,11 @@ describe("Area", () => {
 
         let tiles = area.visibleTilesFor(player.id(), 15, 11);
 
-        expect(tiles.length).toBe(165);
-        expect(tiles[0].position().x()).toBe(43);
-        expect(tiles[0].position().y()).toBe(45);
+        expect(tiles.length).toBe(221);
+        expect(tiles[0].position().x()).toBe(42);
+        expect(tiles[0].position().y()).toBe(44);
 
-        expect(tiles[164].position().x()).toBe(57);
-        expect(tiles[164].position().y()).toBe(55);
+        expect(tiles[164].position().x()).toBe(54);
+        expect(tiles[164].position().y()).toBe(52);
     });
 });

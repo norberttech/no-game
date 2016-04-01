@@ -23,6 +23,23 @@ export default class Broadcaster
     }
 
     /**
+     * @param {string} playerId
+     * @returns {Connection}
+     */
+    getConnection(playerId)
+    {
+        Assert.string(playerId);
+
+        for (let connection of this._connections.values()) {
+            if (connection.hasPlayerId() && connection.playerId() === playerId) {
+                return connection;
+            }
+        }
+
+        throw `Can't find connection for player with id ${playerId}`;
+    }
+
+    /**
      * @param {string} id
      */
     removeConnection(id)

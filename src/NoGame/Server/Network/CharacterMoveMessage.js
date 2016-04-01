@@ -24,6 +24,9 @@ export default class CharacterMoveMessage extends Message
             id: player.id(),
             name: player.name(),
             moveTime: player.moveEnds() - new Date(),
+            type: 1,
+            health: player.health,
+            maxHealth: player.maxHealth,
             from: {
                 x: fromPosition.x(),
                 y: fromPosition.y()

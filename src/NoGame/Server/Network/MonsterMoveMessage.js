@@ -24,6 +24,9 @@ export default class MonsterMoveMessage extends Message
             id: monster.id,
             name: monster.name,
             moveTime: monster.moveEnds - new Date(),
+            type: 2,
+            health: monster.health,
+            maxHealth: monster.maxHealth,
             from: {
                 x: fromPosition.x(),
                 y: fromPosition.y()

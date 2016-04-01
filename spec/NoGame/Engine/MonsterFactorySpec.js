@@ -4,9 +4,9 @@ import Position from '../../../src/NoGame/Engine/Map/Area/Position';
 describe("Monster Factory", () => {
     it("it creates monster from template", () => {
         let factory = new MonsterFactory();
-        factory.addTemplate('rat', 1, 100);
+        factory.addTemplate('rat', 1, 100, 5, 500, 5);
 
-        let monster = factory.create('rat', new Position(0, 0));
+        let monster = factory.create('rat', new Position(0, 0), "123123123");
 
         expect(monster.health).toBe(100);
         expect(monster.spriteId).toBe(1);
@@ -16,7 +16,7 @@ describe("Monster Factory", () => {
     it("throws exception when there is no template for a monster", () => {
         let factory = new MonsterFactory();
 
-        expect(() => {factory.create("rat", new Position(1, 1));})
-            .toThrow(`Monster "rat" does not have valid template.`);
+        expect(() => {factory.create("bobok", new Position(1, 1), "123123123");})
+            .toThrow(`Monster "bobok" does not have valid template.`);
     });
 });

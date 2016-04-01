@@ -94,9 +94,8 @@ export default class Spawn
     /**
      * @param {MonsterFactory} factory
      * @param {Position} position
-     * @param {string} spawnId
      */
-    spawnMonster(factory, position, spawnId)
+    spawnMonster(factory, position)
     {
         Assert.instanceOf(position, Position);
 
@@ -108,7 +107,7 @@ export default class Spawn
             throw `Spawn ${this._id} for "${this._monsterName}" is not ready for new monster yet.`;
         }
 
-        let monster = factory.create(this._monsterName, position, spawnId);
+        let monster = factory.create(this._monsterName, position, this._id);
 
         this._monsters.set(monster.id, monster);
         this._lastSpawnDate = new Date().getTime();
@@ -128,5 +127,20 @@ export default class Spawn
         }
 
         return this._monsters.get(monsterId);
+    }
+
+    /**
+     * @param {string} monsterId
+     */
+    removeMonster(monsterId)
+    {
+        Assert.string(monsterId);
+
+        if (!this._monsters.has(monsterId)) {
+            throw `Spawn ${this._id} does not have monster with id "${monsterId}", it can't be removed.`;
+        }
+
+        this._monsters.delete(monsterId);
+        this._lastSpawnDate = new Date().getTime();
     }
 }
