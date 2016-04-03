@@ -10,12 +10,37 @@ import SpriteMap from './Gfx/SpriteMap';
 import SpriteFile from './Gfx/SpriteFile';
 import KeyBoard from './UserInterface/KeyBoard';
 import Mouse from './UserInterface/Mouse';
+import ProtocolFactory from './ProtocolFactory';
+
+window.location.getParameter = function(name) {
+    let url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)", "i");
+    let results = regex.exec(url);
+
+    if (!results) {
+        return null;
+    }
+
+    if (!results[2]) {
+        return '';
+    }
+
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+};
+
+window.location.hasParameter = function(name) {
+    return this.getParameter(name) !== null;
+};
 
 window.document.addEventListener("DOMContentLoaded", (event) => {
     let spriteMap = new SpriteMap();
     spriteMap.add(new SpriteFile("grounds", "assets/sprites/grounds.png", 1));
     let mouse = new Mouse();
     let keyboard = new KeyBoard();
+    let protocolFactory = new ProtocolFactory(
+        window.location.hasParameter('test')
+    );
 
     let gfx = new Engine(
         new Canvas(window.document.getElementById('game-canvas')),
@@ -24,47 +49,53 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
         mouse
     );
     let pathFinder = new PathFinder();
-    let client = new Client(window.Settings.host, new Kernel(gfx, pathFinder), keyboard, mouse);
+    let client = new Client(
+        window.Settings.host,
+        new Kernel(gfx, pathFinder),
+        keyboard,
+        mouse,
+        protocolFactory
+    );
     let ui = new UserInterface(window.document, keyboard, mouse);
 
     ui.bindWindowResize();
     ui.bindArrows();
     ui.bindMouse();
 
-    ui.onSay((message) => {
-        client.say(message);
-    });
-
-    client.onCharacterSay((characterName, message) => {
-        ui.chat().addMessage(new Date(), characterName, message);
-    });
-
-    client.connect((client) => {
+    client.connect().then((connectedClient) => {
         ui.showLoginScreen();
-    });
 
-    client.onDisconnect((client) => {
-        ui.showLoginScreen();
-        ui.hideCanvas();
-        ui.addErrorMessage("Disconnected from server.");
-    });
+        ui.onSay((message) => {
+            connectedClient.protocol.say(message);
+        });
 
-    ui.onLoginSubmit((username) => {
-        ui.hideLoginScreen();
-        ui.showCanvas();
-        client.login(username);
-        ui.chat().setCurrentUsername(username);
-    });
+        ui.onLoginSubmit((username) => {
+            ui.hideLoginScreen();
+            ui.showCanvas();
+            connectedClient.protocol.login(username);
+            ui.chat().setCurrentUsername(username);
+        });
 
-    client.onLogin(() => {
-        setTimeout(() => {
-            ui.resizeUI();
-        }, 100);
-    });
+        connectedClient.protocol.onCharacterSay((characterName, message) => {
+            ui.chat().addMessage(new Date(), characterName, message);
+        });
 
-    client.onLogout((reason) => {
-        ui.hideCanvas();
-        ui.showLoginScreen();
-        ui.addErrorMessage(reason);
+        connectedClient.onLogin(() => {
+            setTimeout(() => {
+                ui.resizeUI();
+            }, 100);
+        });
+
+        connectedClient.onLogout((reason) => {
+            ui.hideCanvas();
+            ui.showLoginScreen();
+            ui.addErrorMessage(reason);
+        });
+
+        connectedClient.onDisconnect((client) => {
+            ui.showLoginScreen();
+            ui.hideCanvas();
+            ui.addErrorMessage("Disconnected from server.");
+        });
     });
 });
