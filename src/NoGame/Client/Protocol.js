@@ -37,13 +37,11 @@ export default class Protocol
     }
 
     /**
-     * @param {function} callback
+     * @returns {Connection}
      */
-    onLogin(callback)
+    get connection()
     {
-        Assert.isFunction(callback);
-
-        this._onLogin = callback;
+        return this._connection;
     }
 
     /**
@@ -105,26 +103,6 @@ export default class Protocol
         } else {
             this._kernel.clearWalkPath();
         }
-    }
-
-    /**
-     * @param {function} callback
-     */
-    onLogout(callback)
-    {
-        Assert.isFunction(callback);
-
-        this._onLogout = callback;
-    }
-
-    /**
-     * @param {function} callback
-     */
-    onCharacterSay(callback)
-    {
-        Assert.isFunction(callback);
-
-        this._onCharacterSay = callback;
     }
 
     /**
@@ -280,5 +258,35 @@ export default class Protocol
                 console.log(message);
                 break;
         }
+    }
+
+    /**
+     * @param {function} callback
+     */
+    onLogin(callback)
+    {
+        Assert.isFunction(callback);
+
+        this._onLogin = callback;
+    }
+
+    /**
+     * @param {function} callback
+     */
+    onLogout(callback)
+    {
+        Assert.isFunction(callback);
+
+        this._onLogout = callback;
+    }
+
+    /**
+     * @param {function} callback
+     */
+    onCharacterSay(callback)
+    {
+        Assert.isFunction(callback);
+
+        this._onCharacterSay = callback;
     }
 }

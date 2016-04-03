@@ -5,25 +5,31 @@ import Message from '../../Common/Network/Message';
 
 export default class Connection
 {
-    /**
-     * @param {WebSocket} socket
-     */
-    constructor(socket)
+    constructor()
     {
-        Assert.instanceOf(socket, WebSocket);
-        this._socket = socket;
         this._index = 0;
+        this._socket = null;
     }
 
     /**
-     * @param {function} callback
+     * @param {string} serverAddress
+     * @param {function} onOpen
+     * @param {function} onMessage
      */
-    bindOnMessage(callback)
+    open(serverAddress, onOpen, onMessage)
     {
-        Assert.isFunction(callback);
+        Assert.string(serverAddress);
+        Assert.isFunction(onOpen);
+        Assert.isFunction(onMessage)
+
+        this._socket = new WebSocket(serverAddress, "ws");
+
+        this._socket.onopen = () => {
+            onOpen(this)
+        };
 
         this._socket.onmessage = (message) => {
-            callback(message, this)
+            onMessage(message, this)
         };
     }
 
@@ -32,22 +38,14 @@ export default class Connection
      */
     bindOnClose(callback)
     {
+        if (this._socket === null) {
+            throw `Socket not connected`;
+        }
+
         Assert.isFunction(callback);
 
         this._socket.onclose = () => {
-            callback(this)
-        };
-    }
-
-    /**
-     * @param {function} callback
-     */
-    bindOnOpen(callback)
-    {
-        Assert.isFunction(callback);
-
-        this._socket.onopen = () => {
-            callback(this)
+            callback()
         };
     }
 
@@ -57,6 +55,9 @@ export default class Connection
      */
     send(message, callback = () => {})
     {
+        if (this._socket === null) {
+            throw `Socket not connected`;
+        }
 
         Assert.instanceOf(message, Message);
         Assert.isFunction(callback);

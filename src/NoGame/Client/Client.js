@@ -9,6 +9,7 @@ import Connection from './Network/Connection';
 import KeyBoard from './UserInterface/KeyBoard';
 import Mouse from './UserInterface/Mouse';
 import Keys from './UserInterface/Keys';
+import ProtocolFactory from './ProtocolFactory';
 
 export default class Client
 {
@@ -17,13 +18,15 @@ export default class Client
      * @param {Kernel} kernel
      * @param {KeyBoard} keyboard
      * @param {Mouse} mouse
+     * @param {ProtocolFactory} protocolFactory
      */
-    constructor(serverAddress, kernel, keyboard, mouse)
+    constructor(serverAddress, kernel, keyboard, mouse, protocolFactory)
     {
         Assert.string(serverAddress);
         Assert.instanceOf(kernel, Kernel);
         Assert.instanceOf(keyboard, KeyBoard);
         Assert.instanceOf(mouse, Mouse);
+        Assert.instanceOf(protocolFactory, ProtocolFactory);
 
         this._kernel = kernel;
         this._mouse = mouse;
@@ -31,6 +34,10 @@ export default class Client
         this._isLoggedIn = false;
         this._keyboard = keyboard;
         this._protocol = null;
+        this._protocolFactory = protocolFactory;
+
+        this._kernel.boot();
+
         setInterval(this._gameLoop.bind(this), 1000 / 60);
         mouse.onClick(this._onMouseClick.bind(this));
     }
@@ -53,19 +60,15 @@ export default class Client
     connect()
     {
         return new Promise((resolve, reject) => {
-            this._connection = new Connection(new WebSocket(
+            this._protocol = this._protocolFactory.create(this._kernel);
+
+            this._protocol.connection.open(
                 this._serverAddress,
-                "ws"
-            ));
-
-            this._connection.bindOnOpen((connection) => {
-                this._kernel.boot();
-                resolve(this);
-            });
-
-            this._connection.bindOnMessage(this._onMessage.bind(this));
-
-            this._protocol = new Protocol(this._kernel, this._connection);
+                () => {
+                    resolve(this);
+                },
+                this._onMessage.bind(this)
+            );
         });
     }
 
@@ -98,7 +101,7 @@ export default class Client
     {
         Assert.isFunction(callback);
 
-        this._connection.bindOnClose((connection) => {
+        this._protocol.connection.bindOnClose(() => {
             callback(this);
             this._isLoggedIn = false;
         });
