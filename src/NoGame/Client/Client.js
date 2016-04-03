@@ -10,8 +10,6 @@ import KeyBoard from './UserInterface/KeyBoard';
 import Mouse from './UserInterface/Mouse';
 import Keys from './UserInterface/Keys';
 
-const LATENCY_DELAY = 50;
-
 export default class Client
 {
     /**
