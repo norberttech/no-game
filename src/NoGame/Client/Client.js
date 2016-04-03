@@ -9,12 +9,6 @@ import Connection from './Network/Connection';
 import KeyBoard from './UserInterface/KeyBoard';
 import Mouse from './UserInterface/Mouse';
 import Keys from './UserInterface/Keys';
-import MoveSpeed from './../Common/MoveSpeed';
-
-import LoginMessage from './Network/LoginMessage';
-import AttackMonsterMessage from './Network/AttackMonsterMessage';
-import MoveMessage from './Network/MoveMessage';
-import SayMessage from './Network/SayMessage';
 
 const LATENCY_DELAY = 50;
 
@@ -36,58 +30,45 @@ export default class Client
         this._kernel = kernel;
         this._mouse = mouse;
         this._serverAddress = serverAddress;
-        this._isConnected = false;
         this._isLoggedIn = false;
         this._keyboard = keyboard;
-        this._protocol = new Protocol(this._kernel);
+        this._protocol = null;
         setInterval(this._gameLoop.bind(this), 1000 / 60);
         mouse.onClick(this._onMouseClick.bind(this));
     }
 
     /**
-     * @param {string} username
+     * @returns {Protocol}
      */
-    login(username)
+    get protocol()
     {
-        Assert.string(username);
-
-        if (this._isConnected) {
-            this._connection.send(new LoginMessage(username));
+        if (this._protocol === null) {
+            throw `Client not connected, protocol was not created.`;
         }
+
+        return this._protocol;
     }
 
     /**
-     * @param {string} message
+     * @returns {Promise}
      */
-    say(message)
+    connect()
     {
-        Assert.string(message);
+        return new Promise((resolve, reject) => {
+            this._connection = new Connection(new WebSocket(
+                this._serverAddress,
+                "ws"
+            ));
 
-        if (this._isLoggedIn) {
-            this._connection.send(new SayMessage(message));
-            this._kernel.gfx.playerSay(message);
-        }
-    }
+            this._connection.bindOnOpen((connection) => {
+                this._kernel.boot();
+                resolve(this);
+            });
 
-    /**
-     * @param {function} onConnect
-     */
-    connect(onConnect)
-    {
-        Assert.isFunction(onConnect);
+            this._connection.bindOnMessage(this._onMessage.bind(this));
 
-        this._connection = new Connection(new WebSocket(
-            this._serverAddress,
-            "ws"
-        ));
-
-        this._connection.bindOnOpen((connection) => {
-            this._kernel.boot();
-            onConnect(this);
-            this._isConnected = true;
+            this._protocol = new Protocol(this._kernel, this._connection);
         });
-
-        this._connection.bindOnMessage(this._onMessage.bind(this));
     }
 
     /**
@@ -121,17 +102,8 @@ export default class Client
 
         this._connection.bindOnClose((connection) => {
             callback(this);
-            this._isConnected = false;
             this._isLoggedIn = false;
         });
-    }
-
-    /**
-     * @param {function} callback
-     */
-    onCharacterSay(callback)
-    {
-        this._protocol.onCharacterSay(callback);
     }
 
     /**
@@ -153,8 +125,7 @@ export default class Client
 
         for (let character of this._kernel.characters) {
             if (character.getCurrentPosition().isEqual(mouseAbsolutePosition) && character.isMonster) {
-                    this._kernel.player().attack(character.id());
-                    this._connection.send(new AttackMonsterMessage(character.id()));
+                this._protocol.attack(character.id());
                 return ;
             }
         }
@@ -195,7 +166,7 @@ export default class Client
         }
 
         if (this._kernel.hasWalkPath()) {
-            if (this._player().isMoving()) {
+            if (this._kernel.player().isMoving()) {
                 return ;
             }
 
@@ -213,27 +184,7 @@ export default class Client
             return ;
         }
 
-        if (this._kernel.canMoveTo(position.getX(), position.getY())) {
-
-            if (this._player().isMoving()) {
-                return ;
-            }
-
-            this._connection.send(new MoveMessage(position.getX(), position.getY()));
-
-            let moveTime = MoveSpeed.calculateMoveTime(
-                1,
-                this._kernel.area().tile(position.getX(), position.getY()).moveSpeedModifier()
-            );
-
-            // add extra 50ms to handle latency - need to find better way for that
-            moveTime += LATENCY_DELAY;
-
-            this._kernel.move(position.getX(), position.getY(), moveTime);
-
-        } else {
-            this._kernel.clearWalkPath();
-        }
+        this._protocol.move(position);
     }
 
 
@@ -243,15 +194,6 @@ export default class Client
      */
     _playerPosition()
     {
-        return this._player().getCurrentPosition();
-    }
-
-    /**
-     * @returns {Player}
-     * @private
-     */
-    _player()
-    {
-        return this._kernel.player();
+        return this._kernel.player().getCurrentPosition();
     }
 }

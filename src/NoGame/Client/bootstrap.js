@@ -31,40 +31,40 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
     ui.bindArrows();
     ui.bindMouse();
 
-    ui.onSay((message) => {
-        client.say(message);
-    });
-
-    client.onCharacterSay((characterName, message) => {
-        ui.chat().addMessage(new Date(), characterName, message);
-    });
-
-    client.connect((client) => {
+    client.connect().then((client) => {
         ui.showLoginScreen();
+
+        ui.onSay((message) => {
+            client.protocol.say(message);
+        });
+
+        ui.onLoginSubmit((username) => {
+            ui.hideLoginScreen();
+            ui.showCanvas();
+            client.protocol.login(username);
+            ui.chat().setCurrentUsername(username);
+        });
+
+        client.protocol.onCharacterSay((characterName, message) => {
+            ui.chat().addMessage(new Date(), characterName, message);
+        });
+
+        client.onLogin(() => {
+            setTimeout(() => {
+                ui.resizeUI();
+            }, 100);
+        });
+
+        client.onLogout((reason) => {
+            ui.hideCanvas();
+            ui.showLoginScreen();
+            ui.addErrorMessage(reason);
+        });
     });
 
     client.onDisconnect((client) => {
         ui.showLoginScreen();
         ui.hideCanvas();
         ui.addErrorMessage("Disconnected from server.");
-    });
-
-    ui.onLoginSubmit((username) => {
-        ui.hideLoginScreen();
-        ui.showCanvas();
-        client.login(username);
-        ui.chat().setCurrentUsername(username);
-    });
-
-    client.onLogin(() => {
-        setTimeout(() => {
-            ui.resizeUI();
-        }, 100);
-    });
-
-    client.onLogout((reason) => {
-        ui.hideCanvas();
-        ui.showLoginScreen();
-        ui.addErrorMessage(reason);
     });
 });
