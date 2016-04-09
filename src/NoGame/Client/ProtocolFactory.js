@@ -3,19 +3,18 @@
 import Assert from 'assert-js';
 import Protocol from './Protocol';
 import Connection from './Network/Connection';
-import ProtocolStub from './Stub/ProtocolStub';
 import ConnectionStub from './Stub/ConnectionStub';
 
 export default class ProtocolFactory
 {
     /**
-     * @param {boolean} [stub]
+     * @param {boolean} [stubConnection]
      */
-    constructor(stub = false)
+    constructor(stubConnection = false)
     {
-        Assert.boolean(stub);
+        Assert.boolean(stubConnection);
 
-        this._stub = stub;
+        this._stubConnection = stubConnection;
     }
 
     /**
@@ -24,13 +23,9 @@ export default class ProtocolFactory
      */
     create(kernel)
     {
-        let connection = (this._stub)
+        let connection = (this._stubConnection)
             ? new ConnectionStub()
             : new Connection();
-
-        if (this._stub) {
-            return new ProtocolStub(kernel, connection);
-        }
 
         return new Protocol(kernel, connection);
     }
