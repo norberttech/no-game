@@ -152,21 +152,20 @@ export default class Protocol
                 }
                 break;
             case ServerMessages.CHARACTERS:
+                let characters = [];
                 for (let characterData of message.data.characters) {
-                    if (!this._kernel.hasCharacter(characterData.id)) {
-                        let character = new Character(
-                                characterData.id,
-                                characterData.name,
-                                characterData.position.x,
-                                characterData.position.y,
-                                characterData.health,
-                                characterData.maxHealth,
-                                characterData.type
-                            );
-
-                        this._kernel.addCharacter(character);
-                    }
+                    characters.push( new Character(
+                            characterData.id,
+                            characterData.name,
+                            characterData.position.x,
+                            characterData.position.y,
+                            characterData.health,
+                            characterData.maxHealth,
+                            characterData.type
+                    ));
                 }
+
+                this._kernel.updateCharacters(characters);
                 break;
             case ServerMessages.CHARACTER_HEALTH:
                 if (message.data.id === this._kernel.player().id()) {
@@ -176,9 +175,6 @@ export default class Protocol
                 }
                 break;
             case ServerMessages.CHARACTER_DIED:
-                    this._kernel.killCharacter(message.data.id);
-                break;
-            case ServerMessages.CHARACTER_LOGOUT:
                     this._kernel.removeCharacter(message.data.id);
                 break;
             case ServerMessages.MONSTER_MOVE:
