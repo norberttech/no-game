@@ -24,6 +24,23 @@ export default class Size
     {
         return this._width > 0 || this._height > 0;
     }
+
+    /**
+     * @returns {int}
+     */
+    get width()
+    {
+        return this._width;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get height()
+    {
+        return this._height;
+    }
+
     /**
      * @returns {int}
      */

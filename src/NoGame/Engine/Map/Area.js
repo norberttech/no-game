@@ -38,7 +38,7 @@ export default class Area
         this._sizeX = sizeX;
         this._sizeY = sizeY;
         this._tiles = new Map();
-        this._players = new Map();
+        this._characters = new Map();
         this._spawns = new Map();
         this._monsters = new Map();
         this._spawnPosition = new Position(0, 0);
@@ -84,7 +84,7 @@ export default class Area
      */
     get players()
     {
-        return Array.from(this._players.values());
+        return Array.from(this._characters.values());
     }
 
     /**
@@ -93,11 +93,11 @@ export default class Area
      */
     getPlayer(playerId)
     {
-        if (!this._players.has(playerId)) {
+        if (!this._characters.has(playerId)) {
             throw `Player with id ${playerId} does not exists.`;
         }
 
-        return this._players.get(playerId);
+        return this._characters.get(playerId);
     }
 
     /**
@@ -109,7 +109,7 @@ export default class Area
         this._playerExists(playerId);
 
         let characters = [];
-        let player = this._players.get(playerId);
+        let player = this._characters.get(playerId);
         var range = Calculator.visibleTilesRange(
             player.position.x(),
             player.position.y(),
@@ -123,7 +123,7 @@ export default class Area
                     continue;
                 }
 
-                characters.push(this._players.get(characterId));
+                characters.push(this._characters.get(characterId));
             }
         }
 
@@ -176,7 +176,7 @@ export default class Area
 
         for (let tile of this.tilesRange(range)) {
             for (let playerId of tile.players) {
-                characters.push(this._players.get(playerId));
+                characters.push(this._characters.get(playerId));
             }
         }
 
@@ -191,13 +191,13 @@ export default class Area
     {
         Assert.instanceOf(newPlayer, Player);
 
-        if (this._players.has(newPlayer.id()) === true) {
+        if (this._characters.has(newPlayer.id()) === true) {
             throw `Player with id "${newPlayer.id()}" is already present in area "${this._name}"`;
         }
 
         newPlayer.setStartingPosition(this._spawnPosition);
 
-        this._players.set(newPlayer.id(), newPlayer);
+        this._characters.set(newPlayer.id(), newPlayer);
         this._tiles.get(newPlayer.position.toString()).playerWalkOn(newPlayer.id());
     }
 
@@ -208,7 +208,7 @@ export default class Area
     {
         this._playerExists(playerId);
 
-        let player = this._players.get(playerId);
+        let player = this._characters.get(playerId);
         let tile = this._tiles.get(player.position.toString());
 
         for (let monsterId of player.attackedByMonsters) {
@@ -219,7 +219,7 @@ export default class Area
         }
 
         tile.playerLeave(playerId);
-        this._players.delete(playerId);
+        this._characters.delete(playerId);
     }
 
     /**
@@ -283,7 +283,7 @@ export default class Area
     {
         this._playerExists(playerId);
 
-        let player = this._players.get(playerId);
+        let player = this._characters.get(playerId);
         var range = Calculator.visibleTilesRange(
             player.position.x(),
             player.position.y(),
@@ -374,7 +374,7 @@ export default class Area
         let tile = this._tiles.get(monster.position.toString());
         tile.monsterLeave();
 
-        for (let player of this._players.values()) {
+        for (let player of this._characters.values()) {
             if (player.isAttackingMonster(monster.id)) {
                 player.stopAttack();
             }
@@ -398,7 +398,7 @@ export default class Area
         this._playerExists(playerId);
 
         let monsters = [];
-        let player = this._players.get(playerId);
+        let player = this._characters.get(playerId);
         var range = Calculator.visibleTilesRange(
             player.position.x(),
             player.position.y(),
@@ -497,7 +497,7 @@ export default class Area
     {
         Assert.string(playerId);
 
-        if (!this._players.has(playerId)) {
+        if (!this._characters.has(playerId)) {
             throw `There is no player with id "${playerId}" in area "${this._name}"`;
         }
     }
