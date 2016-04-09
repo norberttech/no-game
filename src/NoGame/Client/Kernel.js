@@ -160,15 +160,23 @@ export default class Kernel
     /**
      * @param {Character[]} characters
      */
-    setCharacters(characters)
+    updateCharacters(characters)
     {
-        Assert.containsOnly(characters, Character);
+        Assert.containsOnly(characters, Character);;
 
-        this._characters.clear();
+        let newCharacters = new Map();
+        for (let character of characters) {
+            newCharacters.set(character.id(), character);
+            if (!this._characters.has(character.id())) {
+                this.addCharacter(character);
+            }
+        }
 
-        characters.map((character) => {
-            this._characters.set(character.id(), character);
-        });
+        for (let oldCharacter of this._characters.values()) {
+            if (!newCharacters.has(oldCharacter.id())) {
+                this._characters.delete(oldCharacter.id());
+            }
+        }
 
         this._gfxEngine.setCharacters(Array.from(this._characters.values()));
     }
@@ -214,17 +222,6 @@ export default class Kernel
         Assert.string(characterId);
 
         return this._characters.has(characterId);
-    }
-
-    /**
-     * @param {string} characterId
-     */
-    killCharacter(characterId)
-    {
-        Assert.string(characterId);
-
-        this._characters.delete(characterId);
-        this._gfxEngine.setCharacters(Array.from(this._characters.values()));
     }
 
     /**
