@@ -132,7 +132,6 @@ export default class Engine
                     this._drawVisibleCharacters();
                     this._drawPlayer();
                     this._drawMousePointer();
-                    this._drawDebugInfo();
                 }
             }
 
@@ -282,31 +281,5 @@ export default class Engine
             position.getY(),
             animationOffset
         );
-    }
-
-    _drawDebugInfo()
-    {
-        let offset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
-        this._canvas.debugText(
-            `${this._player.getX()}:${this._player.getY()}    ${offset.width}:${offset.height}`,
-            20,
-            20
-        );
-
-        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
-
-        let x = 0;
-        for (let character of visibleCharacters) {
-            x++;
-            let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
-            let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
-            let cOffset = offset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
-
-            this._canvas.debugText(
-                `${character.getX()}:${character.getY()} ${relativeX}:${relativeY} ${cOffset.width}:${cOffset.height}`,
-                20,
-                20 + x * 20
-            );
-        }
     }
 }
