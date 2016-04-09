@@ -33,7 +33,7 @@ export default class Engine
         this._mouse = mouse;
         this._tiles = null;
         this._player = null;
-        this._players = new CharactersUI();
+        this._characters = new CharactersUI();
         this._visibleTiles = null;
         this._hiddenTiles = 1;
         this._draw = false;
@@ -80,7 +80,7 @@ export default class Engine
     {
         Assert.containsOnly(characters, Character);
 
-        this._players.updateCharacters(characters, this._player);
+        this._characters.updateCharacters(characters, this._player);
     }
 
     /**
@@ -97,7 +97,7 @@ export default class Engine
      */
     characterSay(characterId, text)
     {
-        this._players.say(characterId, text);
+        this._characters.say(characterId, text);
     }
 
     /**
@@ -132,6 +132,7 @@ export default class Engine
                     this._drawVisibleCharacters();
                     this._drawPlayer();
                     this._drawMousePointer();
+                    this._drawDebugInfo();
                 }
             }
 
@@ -204,7 +205,7 @@ export default class Engine
     _drawVisibleCharacters()
     {
         let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
-        let visibleCharacters = this._players.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
+        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
 
         for (let character of visibleCharacters) {
             let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
@@ -281,5 +282,31 @@ export default class Engine
             position.getY(),
             animationOffset
         );
+    }
+
+    _drawDebugInfo()
+    {
+        let offset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+        this._canvas.debugText(
+            `${this._player.getX()}:${this._player.getY()}    ${offset.width}:${offset.height}`,
+            20,
+            20
+        );
+
+        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
+
+        let x = 0;
+        for (let character of visibleCharacters) {
+            x++;
+            let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
+            let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
+            let cOffset = offset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
+
+            this._canvas.debugText(
+                `${character.getX()}:${character.getY()} ${relativeX}:${relativeY} ${cOffset.width}:${cOffset.height}`,
+                20,
+                20 + x * 20
+            );
+        }
     }
 }

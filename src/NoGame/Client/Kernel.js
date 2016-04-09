@@ -32,7 +32,7 @@ export default class Kernel
     _resetState()
     {
         this._player = null;
-        this._players = new Map();
+        this._characters = new Map();
         this._area = null;
         this._walkPath = null;
     }
@@ -164,13 +164,13 @@ export default class Kernel
     {
         Assert.containsOnly(characters, Character);
 
-        this._players.clear();
+        this._characters.clear();
 
         characters.map((character) => {
-            this._players.set(character.id(), character);
+            this._characters.set(character.id(), character);
         });
 
-        this._gfxEngine.setCharacters(Array.from(this._players.values()));
+        this._gfxEngine.setCharacters(Array.from(this._characters.values()));
     }
 
     /**
@@ -178,7 +178,7 @@ export default class Kernel
      */
     get characters()
     {
-        return Array.from(this._players.values());
+        return Array.from(this._characters.values());
     }
 
     /**
@@ -188,9 +188,21 @@ export default class Kernel
     {
         Assert.instanceOf(character, Character);
 
-        this._players.set(character.id(), character);
+        this._characters.set(character.id(), character);
 
-        this._gfxEngine.setCharacters(Array.from(this._players.values()));
+        this._gfxEngine.setCharacters(Array.from(this._characters.values()));
+    }
+
+    /**
+     * @param {string} characterId
+     */
+    removeCharacter(characterId)
+    {
+        Assert.string(characterId);
+
+        this._characters.delete(characterId);
+
+        this._gfxEngine.setCharacters(Array.from(this._characters.values()));
     }
 
     /**
@@ -201,7 +213,7 @@ export default class Kernel
     {
         Assert.string(characterId);
 
-        return this._players.has(characterId);
+        return this._characters.has(characterId);
     }
 
     /**
@@ -211,8 +223,8 @@ export default class Kernel
     {
         Assert.string(characterId);
 
-        this._players.delete(characterId);
-        this._gfxEngine.setCharacters(Array.from(this._players.values()));
+        this._characters.delete(characterId);
+        this._gfxEngine.setCharacters(Array.from(this._characters.values()));
     }
 
     /**
@@ -227,7 +239,7 @@ export default class Kernel
             throw `Unknown character with id "${characterId}"`;
         }
 
-        return this._players.get(characterId);
+        return this._characters.get(characterId);
     }
 
     /**

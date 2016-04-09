@@ -20,6 +20,7 @@ import TileMessage from './Network/TileMessage';
 import TilesMessage from './Network/TilesMessage';
 import MoveMessage from './Network/MoveMessage';
 import CharactersMessage from './Network/CharactersMessage';
+import CharacterLogout from './Network/CharacterLogoutMessage';
 import CharacterDiedMessage from './Network/CharacterDiedMessage';
 import CharacterHealthMessage from './Network/CharacterHealthMessage';
 import CharacterMoveMessage from './Network/CharacterMoveMessage';
@@ -105,12 +106,7 @@ export default class Protocol
 
             // update other players characters list
             this._broadcaster.sendToOtherConnectedClients(closedConnection, (connection) => {
-                return new CharactersMessage(
-                    this._kernel.getArea()
-                        .visiblePlayersFor(connection.playerId()),
-                    this._kernel.getArea()
-                        .visibleMonstersFor(connection.playerId())
-                )
+                return new CharacterLogout(closedConnection.playerId());
             });
         }
     }

@@ -10,12 +10,13 @@ const ServerMessages = {
     MOVE: 'move',
     HEALTH: 'health',
     CHARACTERS: 'characters',
+    CHARACTER_LOGOUT: 'character_logout',
     CHARACTER_MOVE: 'character_move',
     CHARACTER_SAY: 'character_say',
     CHARACTER_HEALTH: 'character_health',
     CHARACTER_DIED: 'character_died',
     MONSTER_MOVE: 'monster_move',
-    MONSTER_ATTACK: 'monster_attack',
+    MONSTER_ATTACK: 'monster_attack'
 };
 
 export default ServerMessages;

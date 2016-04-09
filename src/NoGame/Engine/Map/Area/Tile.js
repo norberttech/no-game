@@ -24,7 +24,7 @@ export default class Tile
         this._ground = ground;
         this._stack = stack;
         this._moveSpeedModifier = 0;
-        this._players = new Map();
+        this._characters = new Map();
         this._monster = null;
     }
 
@@ -41,7 +41,7 @@ export default class Tile
             return false;
         }
 
-        if (this._players.size > 0) {
+        if (this._characters.size > 0) {
             return false;
         }
 
@@ -92,7 +92,7 @@ export default class Tile
     {
         Assert.string(playerId);
 
-        this._players.set(playerId, playerId);
+        this._characters.set(playerId, playerId);
     }
 
     /**
@@ -102,7 +102,7 @@ export default class Tile
     {
         Assert.string(playerId);
 
-        this._players.delete(playerId);
+        this._characters.delete(playerId);
     }
 
     /**
@@ -110,7 +110,7 @@ export default class Tile
      */
     get players()
     {
-        return Array.from(this._players.values());
+        return Array.from(this._characters.values());
     }
 
     /**

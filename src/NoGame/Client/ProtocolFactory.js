@@ -27,6 +27,12 @@ export default class ProtocolFactory
             ? new ConnectionStub()
             : new Connection();
 
-        return new Protocol(kernel, connection);
+        let protocol = new Protocol(kernel, connection);
+
+        if (this._stubConnection) {
+            connection.setProtocol(protocol);
+        }
+
+        return protocol;
     }
 }

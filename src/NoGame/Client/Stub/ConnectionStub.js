@@ -2,6 +2,7 @@
 
 import Assert from 'assert-js';
 import Message from '../../Common/Network/Message';
+import Position from './../Position';
 import Connection from './../Network/Connection';
 import ServerMessages from './../../Common/Network/ServerMessages';
 import Calculator from './../../Common/Area/Calculator';
@@ -16,6 +17,12 @@ export default class ConnectionStub extends Connection
     {
         super();
         this._onMessage = null;
+        this._protocol = null;
+    }
+
+    setProtocol(protocol)
+    {
+        this._protocol = protocol;
     }
 
     /**
