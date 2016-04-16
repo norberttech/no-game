@@ -21,12 +21,12 @@ export default class Item
     /**
      * @returns {boolean}
      */
-    isBlocking()
+    get isBlocking()
     {
         return this._blocking;
     }
 
-    spriteId()
+    get spriteId()
     {
         return this._spriteId;
     }

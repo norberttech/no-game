@@ -93,7 +93,7 @@ export default class Protocol
 
             let moveTime = MoveSpeed.calculateMoveTime(
                 1,
-                this._kernel.area.tile(position.x, position.y).moveSpeedModifier()
+                this._kernel.area.tile(position.x, position.y).moveSpeedModifier
             );
 
             // add extra 50ms to handle latency - need to find better way for that
@@ -217,7 +217,7 @@ export default class Protocol
                     this._onCharacterSay(character.name, message.data.message);
                 }
 
-                this._kernel.getGfx().characterSay(character.id, message.data.message);
+                this._kernel.gfx.characterSay(character.id, message.data.message);
                 break;
             case ServerMessages.TILES:
                 let tiles = message.data.tiles.map((tileData) => {

@@ -233,7 +233,7 @@ export default class Engine
             );
 
             let messageIndex = 0;
-            for (let message of character.getMessages()) {
+            for (let message of character.messages) {
                 this._canvas.drawCharacterMessage(message.getText(), messageIndex, relativeX, relativeY, offset);
                 messageIndex++;
             }
@@ -261,7 +261,7 @@ export default class Engine
         );
 
         let messageIndex = 0;
-        for (let message of this._player.getMessages()) {
+        for (let message of this._player.messages) {
             this._canvas.drawCharacterMessage(message.getText(), messageIndex, centerSquarePosition.x, centerSquarePosition.y);
             messageIndex++;
         }

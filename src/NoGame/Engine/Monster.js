@@ -149,12 +149,12 @@ export default class Monster
     {
         Assert.instanceOf(player, Player);
 
-        if (this._attackedPlayerId !== player.id()) {
-            throw `Player ${player.id()} can't be damaged, it wasn't attacked by monster ${this._id}`;
+        if (this._attackedPlayerId !== player.id) {
+            throw `Player ${player.id} can't be damaged, it wasn't attacked by monster ${this._id}`;
         }
 
         if (player.position.calculateDistanceTo(this._position) > 1) {
-            throw `Player ${player.id()} can't be damaged, it is too far from monster ${this._id}`;
+            throw `Player ${player.id} can't be damaged, it is too far from monster ${this._id}`;
         }
 
         if (player.defence < this._attackPower) {

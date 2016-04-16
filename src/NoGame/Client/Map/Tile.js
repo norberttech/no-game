@@ -29,7 +29,7 @@ export default class Tile
     /**
      * @returns {int}
      */
-    x()
+    get x()
     {
         return this._x;
     }
@@ -37,7 +37,7 @@ export default class Tile
     /**
      * @returns {int}
      */
-    y()
+    get y()
     {
         return this._y;
     }
@@ -53,7 +53,7 @@ export default class Tile
     /**
      * @returns {boolean}
      */
-    canWalkOn()
+    get canWalkOn()
     {
         return this._canWalkOn;
     }
@@ -69,7 +69,7 @@ export default class Tile
     /**
      * @returns {int}
      */
-    moveSpeedModifier()
+    get moveSpeedModifier()
     {
         return this._moveSpeedModifier;
     }

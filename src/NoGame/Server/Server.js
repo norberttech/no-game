@@ -121,6 +121,6 @@ export default class Server
     {
         this._protocol.logout(closedConnection);
 
-        this._broadcaster.removeConnection(closedConnection.id());
+        this._broadcaster.removeConnection(closedConnection.id);
     }
 }

@@ -19,15 +19,15 @@ export default class TileMessage extends Message
 
         this._name = ServerMessages.TILE;
         this._data = {
-            x: tile.position().x(),
-            y: tile.position().y(),
-            canWalkOn: tile.canWalkOn(),
+            x: tile.position.x,
+            y: tile.position.y,
+            canWalkOn: tile.canWalkOn,
             stack: [
-                tile.ground().spriteId()
+                tile.ground.spriteId
             ],
             monster: tile.monster,
             players: tile.players,
-            moveSpeedModifier: tile.moveSpeedModifier()
+            moveSpeedModifier: tile.moveSpeedModifier
         };
     }
 }

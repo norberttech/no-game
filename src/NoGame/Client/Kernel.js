@@ -154,9 +154,9 @@ export default class Kernel
 
         for (let tile of this._area.tiles().values()) {
             grid.addTile(
-                tile.x() - this._player.position.x + centerPosition.x,
-                tile.y() - this._player.position.y + centerPosition.y,
-                tile.canWalkOn()
+                tile.x - this._player.position.x + centerPosition.x,
+                tile.y - this._player.position.y + centerPosition.y,
+                tile.canWalkOn
             );
         }
 

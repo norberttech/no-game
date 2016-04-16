@@ -18,9 +18,9 @@ export default class MoveMessage extends Message
 
         this._name = ServerMessages.MOVE;
         this._data = {
-            x: player.position.x(),
-            y: player.position.y(),
-            moveTime: player.moveEnds() - new Date()
+            x: player.position.x,
+            y: player.position.y,
+            moveTime: player.moveEnds - new Date()
         };
     }
 }

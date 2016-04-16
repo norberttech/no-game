@@ -21,15 +21,15 @@ export default class TilesMessage extends Message
         this._data = {
             tiles: tiles.map((tile) => {
                 return {
-                    x: tile.position().x(),
-                    y: tile.position().y(),
-                    canWalkOn: tile.canWalkOn(),
+                    x: tile.position.x,
+                    y: tile.position.y,
+                    canWalkOn: tile.canWalkOn,
                     stack: [
-                        tile.ground().spriteId()
+                        tile.ground.spriteId
                     ],
                     monster: tile.monster,
                     players: tile.players,
-                    moveSpeedModifier: tile.moveSpeedModifier()
+                    moveSpeedModifier: tile.moveSpeedModifier
                 }
             })
         };

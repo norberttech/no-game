@@ -19,7 +19,7 @@ export default class Broadcaster
     {
         Assert.instanceOf(connection, Connection);
 
-        this._connections.set(connection.id(), connection);
+        this._connections.set(connection.id, connection);
     }
 
     /**
@@ -31,7 +31,7 @@ export default class Broadcaster
         Assert.string(playerId);
 
         for (let connection of this._connections.values()) {
-            if (connection.hasPlayerId() && connection.playerId() === playerId) {
+            if (connection.hasPlayerId && connection.playerId === playerId) {
                 return connection;
             }
         }
@@ -60,7 +60,7 @@ export default class Broadcaster
 
         for (let player of players) {
             for (let connection of this._connections.values()) {
-                if (connection.playerId() === player.id()) {
+                if (connection.playerId === player.id) {
                     connection.send(messageFactory(connection));
                     break;
                 }
@@ -78,13 +78,13 @@ export default class Broadcaster
         Assert.isFunction(messageFactory);
 
         for (let connection of this._connections.values()) {
-            if (connection.playerId() === player.id()) {
+            if (connection.playerId === player.id) {
                 connection.send(messageFactory(connection));
                 return ;
             }
         }
 
-        throw `Connection for player ${player.id()} was not found.`;
+        throw `Connection for player ${player.id} was not found.`;
     }
 
     /**
@@ -99,16 +99,16 @@ export default class Broadcaster
         let visiblePlayers = area.visiblePlayersFor(playerId);
 
         for (let connection of this._connections.values()) {
-            if (!connection.hasPlayerId()) {
+            if (!connection.hasPlayerId) {
                 continue;
             }
 
-            if (connection.playerId() === playerId) {
+            if (connection.playerId === playerId) {
                 continue;
             }
 
             for (let player of visiblePlayers) {
-                if (connection.playerId() === player.id()) {
+                if (connection.playerId === player.id) {
                     connection.send(messageFactory(connection));
                 }
             }
@@ -124,11 +124,11 @@ export default class Broadcaster
     sendToOtherConnectedClients(currentConnection, messageFactory)
     {
         for (let connection of this._connections.values()) {
-            if (connection.id() === currentConnection.id()) {
+            if (connection.id === currentConnection.id) {
                 continue;
             }
 
-            if (!connection.hasPlayerId()) {
+            if (!connection.hasPlayerId) {
                 continue;
             }
 
@@ -144,7 +144,7 @@ export default class Broadcaster
     sendToAllConnectedClients(messageFactory)
     {
         for (let connection of this._connections.values()) {
-            if (!connection.hasPlayerId()) {
+            if (!connection.hasPlayerId) {
                 continue;
             }
 

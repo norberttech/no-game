@@ -38,17 +38,17 @@ export default class Player
     /**
      * @returns {string}
      */
-    name()
+    get id()
     {
-        return this._name;
+        return this._id;
     }
 
     /**
      * @returns {string}
      */
-    id()
+    get name()
     {
-        return this._id;
+        return this._name;
     }
 
     /**
@@ -73,6 +73,98 @@ export default class Player
     get isDead()
     {
         return this._health === 0;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isMoving()
+    {
+        return (new Date().getTime() < this._moveEnds);
+    }
+
+    /**
+     * @returns {int}
+     */
+    get moveEnds()
+    {
+        return this._moveEnds;
+    }
+
+    /**
+     * @returns {Position}
+     */
+    get position()
+    {
+        return this._position;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isAttacking()
+    {
+        return this._attackedMonster !== null;
+    }
+
+    /**
+     * @returns {null|string}
+     */
+    get attackedMonster()
+    {
+        return this._attackedMonster
+    }
+
+    /**
+     * @returns {string[]}
+     */
+    get attackedByMonsters()
+    {
+        return Array.from(this._attackedBy.values());
+    }
+
+    /**
+     * @returns {int}
+     */
+    get defence()
+    {
+        return BASE_DEFENCE;
+    }
+
+    get attackPower()
+    {
+        return BASE_ATTACK_POWER;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isExhausted()
+    {
+        return (new Date().getTime() < this._lastAttack + BASE_ATTACK_DELAY);
+    }
+
+    /**
+     * @param {Position} newPosition
+     * @param {number} moveSpeedModifier
+     */
+    move(newPosition, moveSpeedModifier = 0)
+    {
+        if (this.isMoving) {
+            return ;
+        }
+
+        Assert.instanceOf(newPosition, Position);
+        Assert.integer(moveSpeedModifier);
+
+        let distance = this._position.calculateDistanceTo(newPosition);
+
+        if (distance >= 2) {
+            throw `Can't move that far`;
+        }
+
+        this._moveEnds = new Date().getTime() + MoveSpeed.calculateMoveTime(distance, moveSpeedModifier);
+        this._position = newPosition;
     }
 
     /**
@@ -104,53 +196,6 @@ export default class Player
     }
 
     /**
-     * @returns {boolean}
-     */
-    isMoving()
-    {
-        return (new Date().getTime() < this._moveEnds);
-    }
-
-    /**
-     * @returns {int}
-     */
-    moveEnds()
-    {
-        return this._moveEnds;
-    }
-
-    /**
-     * @returns {Position}
-     */
-    get position()
-    {
-        return this._position;
-    }
-
-    /**
-     * @param {Position} newPosition
-     * @param {number} moveSpeedModifier
-     */
-    move(newPosition, moveSpeedModifier = 0)
-    {
-        if (this.isMoving()) {
-            return ;
-        }
-
-        Assert.instanceOf(newPosition, Position);
-        Assert.integer(moveSpeedModifier);
-
-        let distance = this._position.calculateDistanceTo(newPosition);
-
-        if (distance >= 2) {
-            throw `Can't move that far`;
-        }
-
-        this._moveEnds = new Date().getTime() + MoveSpeed.calculateMoveTime(distance, moveSpeedModifier);
-        this._position = newPosition;
-    }
-
-    /**
      * @param {string} monsterId
      */
     attackMonster(monsterId)
@@ -166,14 +211,6 @@ export default class Player
     }
 
     /**
-     * @returns {boolean}
-     */
-    get isAttacking()
-    {
-        return this._attackedMonster !== null;
-    }
-
-    /**
      * @param {string} monsterId
      * @returns {boolean}
      */
@@ -182,14 +219,6 @@ export default class Player
         Assert.string(monsterId);
 
         return this._attackedMonster === monsterId;
-    }
-
-    /**
-     * @returns {null|string}
-     */
-    get attackedMonster()
-    {
-        return this._attackedMonster
     }
 
     /**
@@ -221,35 +250,6 @@ export default class Player
         Assert.string(monsterId);
 
         this._attackedBy.delete(monsterId);
-    }
-
-    /**
-     * @returns {string[]}
-     */
-    get attackedByMonsters()
-    {
-        return Array.from(this._attackedBy.values());
-    }
-
-    /**
-     * @returns {int}
-     */
-    get defence()
-    {
-        return BASE_DEFENCE;
-    }
-
-    get attackPower()
-    {
-        return BASE_ATTACK_POWER;
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    get isExhausted()
-    {
-        return (new Date().getTime() < this._lastAttack + BASE_ATTACK_DELAY);
     }
 
     /**

@@ -167,7 +167,7 @@ export default class CharacterUI
     /**
      * @return {MessageUI[]}
      */
-    getMessages()
+    get messages()
     {
         let visibleMessages = [];
 

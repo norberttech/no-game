@@ -21,19 +21,19 @@ export default class CharacterMoveMessage extends Message
 
         this._name = ServerMessages.CHARACTER_MOVE;
         this._data = {
-            id: player.id(),
-            name: player.name(),
-            moveTime: player.moveEnds() - new Date(),
+            id: player.id,
+            name: player.name,
+            moveTime: player.moveEnds - new Date(),
             type: 1,
             health: player.health,
             maxHealth: player.maxHealth,
             from: {
-                x: fromPosition.x(),
-                y: fromPosition.y()
+                x: fromPosition.x,
+                y: fromPosition.y
             },
             to: {
-                x: player.position.x(),
-                y: player.position.y()
+                x: player.position.x,
+                y: player.position.y
             }
         };
     }

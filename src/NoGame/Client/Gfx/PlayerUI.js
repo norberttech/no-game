@@ -112,7 +112,7 @@ export default class PlayerUI
     /**
      * @return {MessageUI[]}
      */
-    getMessages()
+    get messages()
     {
         let visibleMessages = [];
 
