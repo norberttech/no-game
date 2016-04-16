@@ -6,6 +6,11 @@ import Position from './Position';
 
 export default class Path
 {
+    /**
+     * @param {Array} path
+     * @param {Position} playerPosition
+     * @param {Position} centerPosition
+     */
     constructor(path, playerPosition, centerPosition)
     {
         Assert.array(path);
@@ -16,8 +21,8 @@ export default class Path
 
         for (let relativePosition of path) {
             let position = new Position(
-                relativePosition.x - centerPosition.getX() + playerPosition.getX(),
-                relativePosition.y - centerPosition.getY() + playerPosition.getY()
+                relativePosition.x - centerPosition.x + playerPosition.x,
+                relativePosition.y - centerPosition.y + playerPosition.y
             );
 
             // skip player current position
@@ -32,7 +37,7 @@ export default class Path
     /**
      * @returns {Array}
      */
-    getPositions()
+    get positions()
     {
         return this._positions;
     }
@@ -40,7 +45,7 @@ export default class Path
     /**
      * @returns {Position}
      */
-    getNextPosition()
+    get nextPosition()
     {
         return this._positions.shift();
     }
@@ -48,7 +53,7 @@ export default class Path
     /**
      * @returns {boolean}
      */
-    hasNextPosition()
+    get hasNextPosition()
     {
         return this._positions.length > 0;
     }

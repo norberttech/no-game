@@ -20,7 +20,7 @@ export default class Position
     /**
      * @returns {int}
      */
-    getX()
+    get x()
     {
         return this._x;
     }
@@ -28,7 +28,7 @@ export default class Position
     /**
      * @returns {int}
      */
-    getY()
+    get y()
     {
         return this._y;
     }

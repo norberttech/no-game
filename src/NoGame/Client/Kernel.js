@@ -29,17 +29,16 @@ export default class Kernel
         this._resetState();
     }
 
-    _resetState()
+    /**
+     * @returns {null|Area}
+     */
+    get area()
     {
-        this._player = null;
-        this._characters = new Map();
-        this._area = null;
-        this._walkPath = null;
-    }
+        if (this._area === null) {
+            throw `Area is not available in kernel yet.`;
+        }
 
-    boot()
-    {
-        this._gfxEngine.loadSprites();
+        return this._area;
     }
 
     /**
@@ -48,6 +47,51 @@ export default class Kernel
     get gfx()
     {
         return this._gfxEngine;
+    }
+
+    /**
+     * @returns {Player}
+     */
+    get player()
+    {
+        if (null === this._player) {
+            throw `Player needs to login first.`;
+        }
+
+        return this._player;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get hasWalkPath()
+    {
+        if (this._walkPath !==null && !this._walkPath.hasNextPosition) {
+            this._walkPath = null;
+        }
+
+        return (this._walkPath !== null);
+    }
+
+    /**
+     * @returns {Position}
+     */
+    get nextWalkPathPosition()
+    {
+        return this._walkPath.nextPosition;
+    }
+
+    /**
+     * @returns {Character[]}
+     */
+    get characters()
+    {
+        return Array.from(this._characters.values());
+    }
+
+    boot()
+    {
+        this._gfxEngine.loadSprites();
     }
 
     /**
@@ -81,18 +125,6 @@ export default class Kernel
     }
 
     /**
-     * @returns {Player}
-     */
-    player()
-    {
-        if (null === this._player) {
-            throw `Player needs to login first.`;
-        }
-
-        return this._player;
-    }
-
-    /**
      * @param {int} x
      * @param {int} y
      * @param {int} moveTime
@@ -103,32 +135,12 @@ export default class Kernel
         Assert.integer(y);
         Assert.integer(moveTime);
 
-        this.player().startMovingTo(x, y, moveTime);
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    hasWalkPath()
-    {
-        if (this._walkPath !==null && !this._walkPath.hasNextPosition()) {
-            this._walkPath = null;
-        }
-
-        return (this._walkPath !== null);
+        this.player.startMovingTo(x, y, moveTime);
     }
 
     clearWalkPath()
     {
         this._walkPath = null;
-    }
-
-    /**
-     * @returns {Position}
-     */
-    getNextWalkPathPosition()
-    {
-        return this._walkPath.getNextPosition();
     }
 
     /**
@@ -142,16 +154,16 @@ export default class Kernel
 
         for (let tile of this._area.tiles().values()) {
             grid.addTile(
-                tile.x() - this._player.getCurrentPosition().getX() + centerPosition.x,
-                tile.y() - this._player.getCurrentPosition().getY() + centerPosition.y,
-                tile.canWalkOn()
+                tile.x - this._player.position.x + centerPosition.x,
+                tile.y - this._player.position.y + centerPosition.y,
+                tile.canWalkOn
             );
         }
 
         try {
-            let path = this._pathFinder.findPath(centerPosition.x, centerPosition.y, position.getX(), position.getY(), grid);
+            let path = this._pathFinder.findPath(centerPosition.x, centerPosition.y, position.x, position.y, grid);
 
-            this._walkPath = new Path(path, this._player.getCurrentPosition(), new Position(centerPosition.x, centerPosition.y));
+            this._walkPath = new Path(path, this._player.position, new Position(centerPosition.x, centerPosition.y));
         } catch (e) {
             return ;
         }
@@ -166,27 +178,19 @@ export default class Kernel
 
         let newCharacters = new Map();
         for (let character of characters) {
-            newCharacters.set(character.id(), character);
-            if (!this._characters.has(character.id())) {
+            newCharacters.set(character.id, character);
+            if (!this._characters.has(character.id)) {
                 this.addCharacter(character);
             }
         }
 
         for (let oldCharacter of this._characters.values()) {
-            if (!newCharacters.has(oldCharacter.id())) {
-                this._characters.delete(oldCharacter.id());
+            if (!newCharacters.has(oldCharacter.id)) {
+                this._characters.delete(oldCharacter.id);
             }
         }
 
         this._gfxEngine.setCharacters(Array.from(this._characters.values()));
-    }
-
-    /**
-     * @returns {Character[]}
-     */
-    get characters()
-    {
-        return Array.from(this._characters.values());
     }
 
     /**
@@ -196,7 +200,7 @@ export default class Kernel
     {
         Assert.instanceOf(character, Character);
 
-        this._characters.set(character.id(), character);
+        this._characters.set(character.id, character);
 
         this._gfxEngine.setCharacters(Array.from(this._characters.values()));
     }
@@ -228,7 +232,7 @@ export default class Kernel
      * @param {string} characterId
      * @return {Character}
      */
-    character(characterId)
+    getCharacter(characterId)
     {
         Assert.string(characterId);
 
@@ -247,7 +251,7 @@ export default class Kernel
      */
     characterMove(id, x, y, moveTime)
     {
-        let character = this.character(id);
+        let character = this.getCharacter(id);
         Assert.integer(x);
         Assert.integer(y);
         Assert.integer(moveTime);
@@ -277,10 +281,13 @@ export default class Kernel
     }
 
     /**
-     * @returns {null|Area}
+     * @private
      */
-    area()
+    _resetState()
     {
-        return this._area;
+        this._player = null;
+        this._characters = new Map();
+        this._area = null;
+        this._walkPath = null;
     }
 }

@@ -125,8 +125,8 @@ export default class Client
         let mouseAbsolutePosition = this._kernel.gfx.getMouseAbsolutePosition();
 
         for (let character of this._kernel.characters) {
-            if (character.getCurrentPosition().isEqual(mouseAbsolutePosition) && character.isMonster) {
-                this._protocol.attack(character.id());
+            if (character.position.isEqual(mouseAbsolutePosition) && character.isMonster) {
+                this._protocol.attack(character.id);
                 return ;
             }
         }
@@ -166,12 +166,12 @@ export default class Client
             return ;
         }
 
-        if (this._kernel.hasWalkPath()) {
-            if (this._kernel.player().isMoving()) {
+        if (this._kernel.hasWalkPath) {
+            if (this._kernel.player.isMoving) {
                 return ;
             }
 
-            this._move(this._kernel.getNextWalkPathPosition());
+            this._move(this._kernel.nextWalkPathPosition);
         }
     }
 
@@ -195,6 +195,6 @@ export default class Client
      */
     _playerPosition()
     {
-        return this._kernel.player().getCurrentPosition();
+        return this._kernel.player.position;
     }
 }

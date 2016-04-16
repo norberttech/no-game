@@ -37,7 +37,7 @@ export default class Character
     /**
      * @returns {string}
      */
-    id()
+    get id()
     {
         return this._id;
     }
@@ -87,7 +87,7 @@ export default class Character
     /**
      * @returns {string}
      */
-    getName()
+    get name()
     {
         return this._name;
     }
@@ -95,7 +95,7 @@ export default class Character
     /**
      * @returns {boolean}
      */
-    isMoving()
+    get isMoving()
     {
         let isMoving = new Date().getTime() < this._moveEnds;
 
@@ -158,7 +158,7 @@ export default class Character
     /**
      * @returns {Position}
      */
-    getCurrentPosition()
+    get position()
     {
         return this._position;
     }
@@ -166,7 +166,7 @@ export default class Character
     /**
      * @returns {Position}
      */
-    getMovingFromPosition()
+    get movingFromPosition()
     {
         return this._moveFrom;
     }

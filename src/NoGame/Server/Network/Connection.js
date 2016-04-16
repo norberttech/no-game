@@ -28,12 +28,12 @@ export default class Connection
     /**
      * @returns {string}
      */
-    id()
+    get id()
     {
         return this._id;
     }
 
-    removePlayery()
+    removePlayer()
     {
         this._playerId = null;
     }
@@ -51,7 +51,7 @@ export default class Connection
     /**
      * @returns {null|string}
      */
-    playerId()
+    get playerId()
     {
         return this._playerId;
     }
@@ -59,7 +59,7 @@ export default class Connection
     /**
      * @returns {boolean}
      */
-    hasPlayerId()
+    get hasPlayerId()
     {
         return this._playerId !== null;
     }

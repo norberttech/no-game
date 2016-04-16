@@ -70,6 +70,34 @@ export default class Area
     }
 
     /**
+     * @returns {Player[]}
+     */
+    get players()
+    {
+        return Array.from(this._characters.values());
+    }
+
+    /**
+     * @returns {Spawn[]}
+     */
+    get spawns()
+    {
+        return Array.from(this._spawns.values());
+    }
+
+    /**
+     * @returns {Monster[]}
+     */
+    get monsters()
+    {
+        let monsters = [];
+        for (let monsterId of this._monsters.keys()) {
+            monsters.push(this.getMonster(monsterId));
+        }
+
+        return monsters;
+    }
+    /**
      * @param {Position} newSpawnPosition
      */
     changeSpawnPosition(newSpawnPosition)
@@ -77,14 +105,6 @@ export default class Area
         Assert.instanceOf(newSpawnPosition, Position);
 
         this._spawnPosition = newSpawnPosition;
-    }
-
-    /**
-     * @returns {Player[]}
-     */
-    get players()
-    {
-        return Array.from(this._characters.values());
     }
 
     /**
@@ -106,13 +126,11 @@ export default class Area
      */
     visiblePlayersFor(playerId)
     {
-        this._playerExists(playerId);
-
         let characters = [];
-        let player = this._characters.get(playerId);
+        let player = this.getPlayer(playerId);
         var range = Calculator.visibleTilesRange(
-            player.position.x(),
-            player.position.y(),
+            player.position.x,
+            player.position.y,
             VISIBLE_TILES.x,
             VISIBLE_TILES.y
         );
@@ -141,8 +159,8 @@ export default class Area
         Assert.instanceOf(position, Position);
 
         var range = Calculator.visibleTilesRange(
-            position.x(),
-            position.y(),
+            position.x,
+            position.y,
             VISIBLE_TILES.x,
             VISIBLE_TILES.y
         );
@@ -168,8 +186,8 @@ export default class Area
 
         let characters = [];
         var range = Calculator.visibleTilesRange(
-            position.x(),
-            position.y(),
+            position.x,
+            position.y,
             VISIBLE_TILES.x,
             VISIBLE_TILES.y
         );
@@ -191,14 +209,14 @@ export default class Area
     {
         Assert.instanceOf(newPlayer, Player);
 
-        if (this._characters.has(newPlayer.id()) === true) {
-            throw `Player with id "${newPlayer.id()}" is already present in area "${this._name}"`;
+        if (this._characters.has(newPlayer.id) === true) {
+            throw `Player with id "${newPlayer.id}" is already present in area "${this._name}"`;
         }
 
         newPlayer.setStartingPosition(this._spawnPosition);
 
-        this._characters.set(newPlayer.id(), newPlayer);
-        this._tiles.get(newPlayer.position.toString()).playerWalkOn(newPlayer.id());
+        this._characters.set(newPlayer.id, newPlayer);
+        this._tiles.get(newPlayer.position.toString()).playerWalkOn(newPlayer.id);
     }
 
     /**
@@ -206,9 +224,7 @@ export default class Area
      */
     logoutPlayer(playerId)
     {
-        this._playerExists(playerId);
-
-        let player = this._characters.get(playerId);
+        let player = this.getPlayer(playerId);
         let tile = this._tiles.get(player.position.toString());
 
         for (let monsterId of player.attackedByMonsters) {
@@ -244,13 +260,13 @@ export default class Area
     {
         Assert.instanceOf(newTile, Tile);
 
-        if (this._tiles.has(newTile.position().toString())) {
-            throw `Area "${this._name}" already have a tile on position ${newTile.position().toString()}`;
+        if (this._tiles.has(newTile.position.toString())) {
+            throw `Area "${this._name}" already have a tile on position ${newTile.position.toString()}`;
         }
 
         this._validatePositionBoundaries(newTile);
 
-        this._tiles.set(newTile.position().toString(), newTile);
+        this._tiles.set(newTile.position.toString(), newTile);
     }
 
     /**
@@ -281,12 +297,10 @@ export default class Area
      */
     visibleTilesFor(playerId)
     {
-        this._playerExists(playerId);
-
-        let player = this._characters.get(playerId);
+        let player = this.getPlayer(playerId);
         var range = Calculator.visibleTilesRange(
-            player.position.x(),
-            player.position.y(),
+            player.position.x,
+            player.position.y,
             VISIBLE_TILES.x,
             VISIBLE_TILES.y
         );
@@ -303,8 +317,8 @@ export default class Area
         Assert.instanceOf(position, Position);
 
         var range = Calculator.visibleTilesRange(
-            position.x(),
-            position.y(),
+            position.x,
+            position.y,
             VISIBLE_TILES.x,
             VISIBLE_TILES.y
         );
@@ -320,27 +334,6 @@ export default class Area
         Assert.instanceOf(spawn, Spawn);
 
         this._spawns.set(spawn.id, spawn);
-    }
-
-    /**
-     * @returns {Spawn[]}
-     */
-    get spawns()
-    {
-        return Array.from(this._spawns.values());
-    }
-
-    /**
-     * @returns {Monster[]}
-     */
-    get monsters()
-    {
-        let monsters = [];
-        for (let monsterId of this._monsters.keys()) {
-            monsters.push(this.getMonster(monsterId));
-        }
-
-        return monsters;
     }
 
     /**
@@ -395,13 +388,11 @@ export default class Area
      */
     visibleMonstersFor(playerId)
     {
-        this._playerExists(playerId);
-
         let monsters = [];
-        let player = this._characters.get(playerId);
+        let player = this.getPlayer(playerId);
         var range = Calculator.visibleTilesRange(
-            player.position.x(),
-            player.position.y(),
+            player.position.x,
+            player.position.y,
             VISIBLE_TILES.x,
             VISIBLE_TILES.y
         );
@@ -432,19 +423,19 @@ export default class Area
 
         for (let tile of this.visibleTilesFrom(fromPosition)) {
 
-            let walkable = tile.canWalkOn();
+            let walkable = tile.canWalkOn;
 
-            if (tile.position().isEqualTo(toPosition)) {
+            if (tile.position.isEqualTo(toPosition)) {
                 walkable = true;
             }
 
-            if (tile.position().isEqualTo(fromPosition)) {
+            if (tile.position.isEqualTo(fromPosition)) {
                 walkable = true;
             }
 
             grid.addTile(
-                tile.position().x() - fromPosition.x() + centerPosition.x,
-                tile.position().y() - fromPosition.y() + centerPosition.y,
+                tile.position.x - fromPosition.x + centerPosition.x,
+                tile.position.y - fromPosition.y + centerPosition.y,
                 walkable
             );
         }
@@ -453,53 +444,18 @@ export default class Area
             let path = this._pathFinder.findPath(
                 centerPosition.x,
                 centerPosition.y,
-                centerPosition.x - (fromPosition.x() - toPosition.x()),
-                centerPosition.y - (fromPosition.y() - toPosition.y()),
+                centerPosition.x - (fromPosition.x - toPosition.x),
+                centerPosition.y - (fromPosition.y - toPosition.y),
                 grid
             );
 
             return path.map(function(pathNode) {
                 return new Position(
-                    fromPosition.x() - (centerPosition.x - pathNode.x),
-                    fromPosition.y() - (centerPosition.y - pathNode.y)
+                    fromPosition.x - (centerPosition.x - pathNode.x),
+                    fromPosition.y - (centerPosition.y - pathNode.y)
                 )
             });
         } catch(error) { return []}
-    }
-
-    /**
-     * @param {Position} newPosition
-     * @private
-     */
-    _isTileWalkable(newPosition)
-    {
-        if (!this._tiles.get(newPosition.toString()).canWalkOn()) {
-            throw `Can't walk on tile on ${newPosition.toString()}`;
-        }
-    }
-
-    /**
-     * @param {Position} newPosition
-     * @private
-     */
-    _tileExists(newPosition)
-    {
-        if (!this._tiles.has(newPosition.toString())) {
-            throw `There is no tile on position ${newPosition.toString()}`;
-        }
-    }
-
-    /**
-     * @param {string} playerId
-     * @private
-     */
-    _playerExists(playerId)
-    {
-        Assert.string(playerId);
-
-        if (!this._characters.has(playerId)) {
-            throw `There is no player with id "${playerId}" in area "${this._name}"`;
-        }
     }
 
     /**
@@ -508,8 +464,8 @@ export default class Area
      */
     _validatePositionBoundaries(newTile)
     {
-        if (newTile.position().x() > this._sizeX || newTile.position().y() > this._sizeY) {
-            throw `Area "${this._name}" boundaries are x: ${this._sizeX}, y: ${this._sizeY}. Tile position is ${newTile.position().toString()}`;
+        if (newTile.position.x > this._sizeX || newTile.position.y > this._sizeY) {
+            throw `Area "${this._name}" boundaries are x: ${this._sizeX}, y: ${this._sizeY}. Tile position is ${newTile.position.toString()}`;
         }
     }
 }

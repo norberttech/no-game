@@ -61,7 +61,7 @@ export default class Protocol
     {
         Assert.string(characterId);
 
-        this._kernel.player().attack(characterId);
+        this._kernel.player.attack(characterId);
         this._connection.send(new AttackMonsterMessage(characterId));
     }
 
@@ -83,23 +83,23 @@ export default class Protocol
     {
         Assert.instanceOf(position, Position);
 
-        if (this._kernel.canMoveTo(position.getX(), position.getY())) {
+        if (this._kernel.canMoveTo(position.x, position.y)) {
 
-            if (this._kernel.player().isMoving()) {
+            if (this._kernel.player.isMoving) {
                 return;
             }
 
-            this._connection.send(new MoveMessage(position.getX(), position.getY()));
+            this._connection.send(new MoveMessage(position.x, position.y));
 
             let moveTime = MoveSpeed.calculateMoveTime(
                 1,
-                this._kernel.area().tile(position.getX(), position.getY()).moveSpeedModifier()
+                this._kernel.area.tile(position.x, position.y).moveSpeedModifier
             );
 
             // add extra 50ms to handle latency - need to find better way for that
             moveTime += LATENCY_DELAY;
 
-            this._kernel.move(position.getX(), position.getY(), moveTime);
+            this._kernel.move(position.x, position.y, moveTime);
         } else {
             this._kernel.clearWalkPath();
         }
@@ -146,9 +146,9 @@ export default class Protocol
                 );
                 break;
             case ServerMessages.MOVE:
-                if (!this._kernel.player().isMovingTo(message.data.x, message.data.y)) {
+                if (!this._kernel.player.isMovingTo(message.data.x, message.data.y)) {
                     this._kernel.clearWalkPath();
-                    this._kernel.player().cancelMove();
+                    this._kernel.player.cancelMove();
                 }
                 break;
             case ServerMessages.CHARACTERS:
@@ -168,10 +168,10 @@ export default class Protocol
                 this._kernel.updateCharacters(characters);
                 break;
             case ServerMessages.CHARACTER_HEALTH:
-                if (message.data.id === this._kernel.player().id()) {
-                    this._kernel.player().changeHealth(message.data.newValue);
+                if (message.data.id === this._kernel.player.id) {
+                    this._kernel.player.changeHealth(message.data.newValue);
                 } else {
-                    this._kernel.character(message.data.id).changeHealth(message.data.newValue);
+                    this._kernel.getCharacter(message.data.id).changeHealth(message.data.newValue);
                 }
                 break;
             case ServerMessages.CHARACTER_DIED:
@@ -206,18 +206,18 @@ export default class Protocol
                 break;
             case ServerMessages.MONSTER_ATTACK:
                 if (message.data.attacking === true) {
-                    this._kernel.player().attackedBy(message.data.id);
+                    this._kernel.player.attackedBy(message.data.id);
                 } else {
-                    this._kernel.player().removeAttacker(message.data.id);
+                    this._kernel.player.removeAttacker(message.data.id);
                 }
                 break;
             case ServerMessages.CHARACTER_SAY:
-                let character = this._kernel.character(message.data.id);
+                let character = this._kernel.getCharacter(message.data.id);
                 if (null !== this._onCharacterSay) {
-                    this._onCharacterSay(character.getName(), message.data.message);
+                    this._onCharacterSay(character.name, message.data.message);
                 }
 
-                this._kernel.getGfx().characterSay(character.id(), message.data.message);
+                this._kernel.gfx.characterSay(character.id, message.data.message);
                 break;
             case ServerMessages.TILES:
                 let tiles = message.data.tiles.map((tileData) => {
@@ -230,7 +230,7 @@ export default class Protocol
                     );
                 });
 
-                this._kernel.area().setTiles(tiles);
+                this._kernel.area.setTiles(tiles);
                 break;
             case ServerMessages.TILE:
                 let tile = new Tile(
@@ -241,7 +241,7 @@ export default class Protocol
                         message.data.moveSpeedModifier
                 );
 
-                this._kernel.area().setTile(tile);
+                this._kernel.area.setTile(tile);
                 break;
             case ServerMessages.BATCH_MESSAGE:
                 let rawMessages = message.data.messages;

@@ -27,13 +27,13 @@ export default class Position
         Assert.instanceOf(position, Position);
         switch (Utils.randomRange(1, 4)) {
             case 1: // left
-                return new Position(position.x() - 1, position.y());
+                return new Position(position.x - 1, position.y);
             case 2: // down
-                return new Position(position.x(), position.y() + 1);
+                return new Position(position.x, position.y + 1);
             case 3: // right
-                return new Position(position.x() + 1, position.y());
+                return new Position(position.x + 1, position.y);
             case 4: // up
-                return new Position(position.x(), position.y() - 1);
+                return new Position(position.x, position.y - 1);
         }
 
         throw `Can't generate random position next to ${position.toString()}`;
@@ -63,7 +63,7 @@ export default class Position
     /**
      * @returns {int}
      */
-    x()
+    get x()
     {
         return this._x;
     }
@@ -71,7 +71,7 @@ export default class Position
     /**
      * @returns {int}
      */
-    y()
+    get y()
     {
         return this._y;
     }
@@ -84,7 +84,7 @@ export default class Position
     {
         Assert.instanceOf(otherPosition, Position);
 
-        return otherPosition.x() === this._x && otherPosition.y() === this._y;
+        return otherPosition.x === this._x && otherPosition.y === this._y;
     }
 
     /**
@@ -95,9 +95,9 @@ export default class Position
     calculateDistanceTo(otherPosition)
     {
         let x1 = this._x;
-        let x2 = otherPosition.x();
+        let x2 = otherPosition.x;
         let y1 = this._y;
-        let y2 = otherPosition.y();
+        let y2 = otherPosition.y;
         let distance = Math.sqrt((x2 -= x1) * x2 + (y2 -= y1) * y2);
 
         return Math.round(distance * 10) / 10;

@@ -69,8 +69,8 @@ export default class Spawn
      */
     get randomPosition()
     {
-        let x = Utils.randomRange(this._centerPosition.x() - this._radius, this._centerPosition.x() + this._radius);
-        let y = Utils.randomRange(this._centerPosition.y() - this._radius, this._centerPosition.y() + this._radius);
+        let x = Utils.randomRange(this._centerPosition.x - this._radius, this._centerPosition.x + this._radius);
+        let y = Utils.randomRange(this._centerPosition.y - this._radius, this._centerPosition.y + this._radius);
 
         return new Position(x, y);
     }

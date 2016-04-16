@@ -28,12 +28,12 @@ export default class MonsterMoveMessage extends Message
             health: monster.health,
             maxHealth: monster.maxHealth,
             from: {
-                x: fromPosition.x(),
-                y: fromPosition.y()
+                x: fromPosition.x,
+                y: fromPosition.y
             },
             to: {
-                x: monster.position.x(),
-                y: monster.position.y()
+                x: monster.position.x,
+                y: monster.position.y
             }
         };
     }

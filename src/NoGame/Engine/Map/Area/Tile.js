@@ -31,9 +31,9 @@ export default class Tile
     /**
      * @returns {boolean}
      */
-    canWalkOn()
+    get canWalkOn()
     {
-        if (this._ground.isBlocking()) {
+        if (this._ground.isBlocking) {
             return false;
         }
 
@@ -46,7 +46,7 @@ export default class Tile
         }
 
         for (let item of this._stack) {
-            if (item.isBlocking()) {
+            if (item.isBlocking) {
                 return false;
             }
         }
@@ -116,7 +116,7 @@ export default class Tile
     /**
      * @returns {Item}
      */
-    ground()
+    get ground()
     {
         return this._ground;
     }
@@ -124,7 +124,7 @@ export default class Tile
     /**
      * @returns {Position}
      */
-    position()
+    get position()
     {
         return this._position;
     }
@@ -132,7 +132,7 @@ export default class Tile
     /**
      * @returns {number}
      */
-    moveSpeedModifier()
+    get moveSpeedModifier()
     {
         return this._moveSpeedModifier;
     }

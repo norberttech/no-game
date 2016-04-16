@@ -36,7 +36,7 @@ export default class SpriteFile
     /**
      * @returns {string}
      */
-    name()
+    get name()
     {
         return this._name;
     }

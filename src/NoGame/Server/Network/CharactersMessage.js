@@ -25,14 +25,14 @@ export default class CharactersMessage extends Message
         for (let player of players) {
             charactersData.push(
                 {
-                    id: player.id(),
+                    id: player.id,
                     type: 1,
-                    name: player.name(),
+                    name: player.name,
                     health: player.health,
                     maxHealth: player.maxHealth,
                     position: {
-                        x: player.position.x(),
-                        y: player.position.y()
+                        x: player.position.x,
+                        y: player.position.y
                     }
                 }
             )
@@ -47,8 +47,8 @@ export default class CharactersMessage extends Message
                     health: monster.health,
                     maxHealth: monster.maxHealth,
                     position: {
-                        x: monster.position.x(),
-                        y: monster.position.y()
+                        x: monster.position.x,
+                        y: monster.position.y
                     }
                 }
             )

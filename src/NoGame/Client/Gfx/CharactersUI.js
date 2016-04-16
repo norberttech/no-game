@@ -55,7 +55,7 @@ export default class CharactersUI
     say(characterId, text)
     {
         for (let character of this._characters) {
-            if (character.getId() === characterId) {
+            if (character.id === characterId) {
                 character.say(text);
                 return ;
             }

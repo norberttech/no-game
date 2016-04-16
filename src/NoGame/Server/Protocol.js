@@ -56,20 +56,18 @@ export default class Protocol
         let messages = this._incomeMessages.flushMessages();
 
         for (let message of messages) {
-            let packet = message.getPacket();
-
-            switch (packet.name) {
+            switch (message.packet.name) {
                 case ClientMessages.LOGIN:
-                    this._handleLogin(packet, message.getConnection());
+                    this._handleLogin(message.packet, message.connection);
                     break;
                 case ClientMessages.MOVE:
-                    this._handleMove(packet, message.getConnection());
+                    this._handleMove(message.packet, message.connection);
                     break;
                 case ClientMessages.MESSAGE:
-                    this._handleMessage(packet, message.getConnection());
+                    this._handleMessage(message.packet, message.connection);
                     break;
                 case ClientMessages.ATTACK_MONSTER:
-                    this._handleAttackMonster(packet, message.getConnection());
+                    this._handleAttackMonster(message.packet, message.connection);
                     break;
                 default:
                     this._logger.error({msg: "Unhandled message", message: message});
@@ -89,10 +87,10 @@ export default class Protocol
             return new LogoutMessage("You died.");
         });
 
-        let connection = this._broadcaster.getConnection(player.id());
+        let connection = this._broadcaster.getConnection(player.id);
 
         this.logout(connection);
-        connection.removePlayery();
+        connection.removePlayer();
     }
 
     /**
@@ -100,13 +98,13 @@ export default class Protocol
      */
     logout(closedConnection)
     {
-        if (closedConnection.hasPlayerId()) {
+        if (closedConnection.hasPlayerId) {
             // logout player
-            this._kernel.logout(closedConnection.playerId());
+            this._kernel.logout(closedConnection.playerId);
 
             // update other players characters list
             this._broadcaster.sendToOtherConnectedClients(closedConnection, (connection) => {
-                return new CharacterLogout(closedConnection.playerId());
+                return new CharacterLogout(closedConnection.playerId);
             });
         }
     }
@@ -116,14 +114,14 @@ export default class Protocol
      */
     monsterSpawn(monster)
     {
-        let area = this._kernel.getArea();
+        let area = this._kernel.area;
         let players = area.visiblePlayersFrom(monster.position);
 
         this._broadcaster.sendToPlayers(players, (connection) => {
             let messages = [];
             messages.push(new CharactersMessage(
-                area.visiblePlayersFor(connection.playerId()),
-                area.visibleMonstersFor(connection.playerId())
+                area.visiblePlayersFor(connection.playerId),
+                area.visibleMonstersFor(connection.playerId)
             ));
             messages.push(new TileMessage(area.tile(monster.position)));
 
@@ -137,7 +135,7 @@ export default class Protocol
      */
     monsterMove(monster, fromPosition)
     {
-        let area = this._kernel.getArea();
+        let area = this._kernel.area;
         let players = area.visiblePlayersFrom(monster.position);
 
         this._broadcaster.sendToPlayers(players, (connection) => {
@@ -178,10 +176,10 @@ export default class Protocol
      */
     playerLossHealth(player, damage)
     {
-        let players = this._kernel.getArea().visiblePlayersFrom(player.position);
+        let players = this._kernel.area.visiblePlayersFrom(player.position);
 
         this._broadcaster.sendToPlayers(players, (connection) => {
-            return new CharacterHealthMessage(player.id(), player.health + damage, player.health);
+            return new CharacterHealthMessage(player.id, player.health + damage, player.health);
         });
     }
 
@@ -191,7 +189,7 @@ export default class Protocol
      */
     monsterLossHealth(monster, damage)
     {
-        let players = this._kernel.getArea().visiblePlayersFrom(monster.position);
+        let players = this._kernel.area.visiblePlayersFrom(monster.position);
 
         this._broadcaster.sendToPlayers(players, (connection) => {
             return new CharacterHealthMessage(monster.id, monster.health + damage, monster.health);
@@ -204,10 +202,10 @@ export default class Protocol
      */
     monsterDied(monster, killer)
     {
-        let players = this._kernel.getArea().visiblePlayersFrom(monster.position);
+        let players = this._kernel.area.visiblePlayersFrom(monster.position);
 
         this._broadcaster.sendToPlayers(players, (connection) => {
-            return new CharacterDiedMessage(monster.id, killer.id());
+            return new CharacterDiedMessage(monster.id, killer.id);
         });
     }
 
@@ -220,27 +218,27 @@ export default class Protocol
     {
         let player = new Player(packet.data.username, 100, 100);
         this._kernel.login(player);
-        let area = this._kernel.getArea();
+        let area = this._kernel.area;
         let messagesBatch = [];
 
-        connection.setPlayerId(player.id());
+        connection.setPlayerId(player.id);
 
         messagesBatch.push(new LoginMessage(player));
         messagesBatch.push(new AreaMessage(area.name, Area.visibleX, Area.visibleY));
         messagesBatch.push(new TilesMessage(
-            area.visibleTilesFor(player.id())
+            area.visibleTilesFor(player.id)
         ));
         messagesBatch.push(new CharactersMessage(
-            area.visiblePlayersFor(player.id()),
-            area.visibleMonstersFor(player.id())
+            area.visiblePlayersFor(player.id),
+            area.visibleMonstersFor(player.id)
         ));
 
         connection.send(new BatchMessage(messagesBatch));
 
-        this._broadcaster.sendToPlayersInRange(area, player.id(), (playerConnection) => {
+        this._broadcaster.sendToPlayersInRange(area, player.id, (playerConnection) => {
             return new CharactersMessage(
-                area.visiblePlayersFor(playerConnection.playerId()),
-                area.visibleMonstersFor(playerConnection.playerId())
+                area.visiblePlayersFor(playerConnection.playerId),
+                area.visibleMonstersFor(playerConnection.playerId)
             )
         });
     }
@@ -252,13 +250,13 @@ export default class Protocol
      */
     _handleMove(packet, currentConnection)
     {
-        let area = this._kernel.getArea();
+        let area = this._kernel.area;
         let toPosition = new Position(packet.data.x, packet.data.y);
-        let player = area.getPlayer(currentConnection.playerId());
+        let player = area.getPlayer(currentConnection.playerId);
         let fromPosition = player.position;
 
         try {
-            this._kernel.movePlayer(currentConnection.playerId(), toPosition);
+            this._kernel.movePlayer(currentConnection.playerId, toPosition);
         } catch (error) {
             currentConnection.send(new MoveMessage(player));
             return ;
@@ -267,17 +265,17 @@ export default class Protocol
         let messages = [];
         messages.push(new MoveMessage(player));
         messages.push(new TilesMessage(
-            area.visibleTilesFor(player.id())
+            area.visibleTilesFor(player.id)
         ));
         messages.push(new CharactersMessage(
-            area.visiblePlayersFor(player.id()),
-            area.visibleMonstersFor(player.id())
+            area.visiblePlayersFor(player.id),
+            area.visibleMonstersFor(player.id)
         ));
         currentConnection.send(new BatchMessage(messages));
         // we need to send visible characters also because player may enter to map part where
         // players already stands
 
-        this._broadcaster.sendToPlayersInRange(area, player.id(), () => {
+        this._broadcaster.sendToPlayersInRange(area, player.id, () => {
             let messages = [];
             messages.push(new CharacterMoveMessage(player, fromPosition));
             messages.push(new TileMessage(area.tile(fromPosition)));
@@ -294,13 +292,13 @@ export default class Protocol
      */
     _handleMessage(packet, currentConnection)
     {
-        let area = this._kernel.getArea();
+        let area = this._kernel.area;
 
         this._broadcaster.sendToPlayersInRange(
             area,
-            currentConnection.playerId(),
+            currentConnection.playerId,
             () => {
-                return new CharacterSayMessage(currentConnection.playerId(), packet.data.message)
+                return new CharacterSayMessage(currentConnection.playerId, packet.data.message)
             }
         );
     }
@@ -312,6 +310,6 @@ export default class Protocol
      */
     _handleAttackMonster(packet, currentConnection)
     {
-        this._kernel.playerAttack(currentConnection.playerId(), packet.data.id);
+        this._kernel.playerAttack(currentConnection.playerId, packet.data.id);
     }
 }

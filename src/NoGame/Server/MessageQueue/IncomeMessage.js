@@ -21,7 +21,7 @@ export default class IncomeMessage
     /**
      * @returns {object}
      */
-    getPacket()
+    get packet()
     {
         return this._packet;
     }
@@ -29,7 +29,7 @@ export default class IncomeMessage
     /**
      * @returns {Connection}
      */
-    getConnection()
+    get connection()
     {
         return this._connection;
     }

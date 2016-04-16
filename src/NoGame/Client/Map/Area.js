@@ -57,7 +57,7 @@ export default class Area
             return false;
         }
 
-        return tile.canWalkOn();
+        return tile.canWalkOn;
     }
 
     /**

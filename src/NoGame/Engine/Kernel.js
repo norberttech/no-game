@@ -29,7 +29,7 @@ export default class Kernel
         Loader.loadMapArea(this, this._logger);
         Loader.loadMonsterFactory(this, this._logger);
 
-        this.getArea();
+        this.area;
 
         this._loaded = true;
     }
@@ -37,7 +37,7 @@ export default class Kernel
     /**
      * @return {Area}
      */
-    getArea()
+    get area()
     {
         if (this._area === null) {
             throw `Area not loaded`;
@@ -83,7 +83,7 @@ export default class Kernel
 
                 try {
                     let tile = this._area.tile(position);
-                    if (!tile.canWalkOn()) {
+                    if (!tile.canWalkOn) {
                         continue ;
                     }
 
@@ -141,9 +141,9 @@ export default class Kernel
             let newTile = this._area.tile(newPosition);
 
             oldTile.monsterLeave();
-            monster.move(newPosition, newTile.moveSpeedModifier());
+            monster.move(newPosition, newTile.moveSpeedModifier);
             newTile.monsterWalkOn(monster.id);
-            onMonsterMove(monster, oldTile.position());
+            onMonsterMove(monster, oldTile.position);
         }
     }
 
@@ -158,7 +158,7 @@ export default class Kernel
 
         let player = this._area.getPlayer(playerId);
 
-        if (player.isMoving()) {
+        if (player.isMoving) {
             this._logger.error({msg: 'still moving', player: player});
             return;
         }
@@ -171,13 +171,13 @@ export default class Kernel
         let oldTile = this._area.tile(player.position);
         let newTile = this._area.tile(position);
 
-        if (!newTile.canWalkOn()) {
+        if (!newTile.canWalkOn) {
             this._logger.error({msg: 'can\'t walk on tile', player: player, position: position});
             throw `Can't walk on tile ${position.toString()}`;
         }
 
         oldTile.playerLeave(playerId);
-        player.move(position, newTile.moveSpeedModifier());
+        player.move(position, newTile.moveSpeedModifier);
         newTile.playerWalkOn(playerId);
     }
 
@@ -206,7 +206,7 @@ export default class Kernel
                     continue ;
                 }
 
-                monster.attack(players[0].id());
+                monster.attack(players[0].id);
                 onMonsterAttack(monster, players[0]);
                 players[0].attackedBy(monster.id);
 
