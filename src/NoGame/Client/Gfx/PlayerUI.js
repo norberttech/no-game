@@ -23,28 +23,28 @@ export default class PlayerUI
      */
     calculateMoveAnimationOffset(tileSize)
     {
-        if (!this._player.isMoving()) {
+        if (!this._player.isMoving) {
             return new Size(0, 0);
         }
 
-        let moveFrom = this._player.getMovingFromPosition();
-        let currentPos = this._player.getCurrentPosition();
+        let moveFrom = this._player.movingFromPosition;
+        let currentPos = this._player.position;
         let offsetX = 0;
         let offsetY = 0;
 
-        if (moveFrom.getX() + 1 === currentPos.getX()) {
+        if (moveFrom.x + 1 === currentPos.x) {
             offsetX -= this._getProgress(tileSize.getWidth()) - tileSize.getWidth();
         }
 
-        if (moveFrom.getX() - 1 === currentPos.getX()) {
+        if (moveFrom.x - 1 === currentPos.x) {
             offsetX += this._getProgress(tileSize.getWidth()) - tileSize.getWidth();
         }
 
-        if (moveFrom.getY() + 1 === currentPos.getY()) {
+        if (moveFrom.y + 1 === currentPos.y) {
             offsetY -= this._getProgress(tileSize.getHeight()) - tileSize.getHeight();
         }
 
-        if (moveFrom.getY() - 1 === currentPos.getY()) {
+        if (moveFrom.y - 1 === currentPos.y) {
             offsetY += this._getProgress(tileSize.getHeight()) - tileSize.getHeight();
         }
 
@@ -54,17 +54,17 @@ export default class PlayerUI
     /**
      * @returns {int}
      */
-    getX()
+    get x()
     {
-        return this._player.getCurrentPosition().getX();
+        return this._player.position.x;
     }
 
     /**
      * @returns {int}
      */
-    getY()
+    get y()
     {
-        return this._player.getCurrentPosition().getY();
+        return this._player.position.y;
     }
 
     /**
@@ -86,9 +86,9 @@ export default class PlayerUI
     /**
      * @returns {string}
      */
-    getName()
+    get name()
     {
-        return this._player.name();
+        return this._player.name;
     }
 
     /**

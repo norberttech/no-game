@@ -19,14 +19,20 @@ export default class Mouse
         this._y = y;
     }
 
-    getX()
+    /**
+     * @returns {int}
+     */
+    get x()
     {
-        return this._x;
+        return Math.floor(this._x);
     }
 
-    getY()
+    /**
+     * @returns {int}
+     */
+    get y()
     {
-        return this._y;
+        return Math.floor(this._y);
     }
 
     /**

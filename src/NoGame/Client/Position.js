@@ -21,7 +21,7 @@ export default class Position
     /**
      * @returns {int}
      */
-    getX()
+    get x()
     {
         return this._x;
     }
@@ -29,7 +29,7 @@ export default class Position
     /**
      * @returns {int}
      */
-    getY()
+    get y()
     {
         return this._y;
     }
@@ -72,6 +72,6 @@ export default class Position
     {
         Assert.instanceOf(position, Position);
 
-        return position.getX() === this._x && position.getY() === this._y;
+        return position.x === this._x && position.y === this._y;
     }
 }

@@ -17,14 +17,14 @@ export default class SpriteMap
     {
         Assert.instanceOf(spriteFile, SpriteFile);
 
-        this._spriteFiles.set(spriteFile.name(), spriteFile);
+        this._spriteFiles.set(spriteFile.name, spriteFile);
     }
 
     load()
     {
         for (let sprite of this._spriteFiles.values()) {
             sprite.load((sprite) => {
-                console.log(`Sprite ${sprite.name()} loaded.`);
+                console.log(`Sprite ${sprite.name} loaded.`);
             });
         }
     }

@@ -27,7 +27,7 @@ export default class Player
         this._health = health;
         this._maxHealth = maxHealth;
         this._moveFrom = new Position(x, y);
-        this._positon = new Position(x, y);
+        this._position = new Position(x, y);
         this._moveEnds = new Date().getTime();
         this._moveTime = 0;
         this._attackedBy = new Map();
@@ -37,7 +37,7 @@ export default class Player
     /**
      * @returns {string}
      */
-    id()
+    get id()
     {
         return this._id;
     }
@@ -45,7 +45,7 @@ export default class Player
     /**
      * @returns {string}
      */
-    name()
+    get name()
     {
         return this._name;
     }
@@ -67,16 +67,6 @@ export default class Player
     }
 
     /**
-     * @param {string} characterId
-     */
-    attack(characterId)
-    {
-        Assert.string(characterId);
-
-        this._targetId = characterId;
-    }
-
-    /**
      * @returns {boolean}
      */
     get isAttacking()
@@ -93,6 +83,40 @@ export default class Player
     }
 
     /**
+     * @returns {Position}
+     */
+    get position()
+    {
+        return this._position;
+    }
+
+    /**
+     * @returns {Position}
+     */
+    get movingFromPosition()
+    {
+        return this._moveFrom;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isMoving()
+    {
+        return new Date().getTime() < this._moveEnds;
+    }
+
+    /**
+     * @param {string} characterId
+     */
+    attack(characterId)
+    {
+        Assert.string(characterId);
+
+        this._targetId = characterId;
+    }
+
+    /**
      * @param {int} newValue
      */
     changeHealth(newValue)
@@ -103,37 +127,13 @@ export default class Player
     }
 
     /**
-     * @returns {Position}
-     */
-    getCurrentPosition()
-    {
-        return this._positon;
-    }
-
-    /**
-     * @returns {Position}
-     */
-    getMovingFromPosition()
-    {
-        return this._moveFrom;
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    isMoving()
-    {
-        return new Date().getTime() < this._moveEnds;
-    }
-
-    /**
      * @param {int} x
      * @param {int} y
      * @returns {boolean}
      */
     isMovingTo(x, y)
     {
-        return this._positon.isEqual(new Position(x, y));
+        return this._position.isEqual(new Position(x, y));
     }
 
     /**
@@ -164,8 +164,8 @@ export default class Player
         Assert.integer(moveTime);
 
         this._moveTime = moveTime;
-        this._moveFrom = this._positon;
-        this._positon = new Position(x, y);
+        this._moveFrom = this._position;
+        this._position = new Position(x, y);
         this._moveEnds = new Date().getTime() + moveTime;
     }
 
@@ -180,7 +180,7 @@ export default class Player
     cancelMove()
     {
         this._moveEnds = new Date().getTime();
-        this._positon = this._moveFrom;
+        this._position = this._moveFrom;
         this._moveTime = 0;
     }
 
