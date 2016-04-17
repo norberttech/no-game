@@ -5,10 +5,8 @@ import SpriteMap from './SpriteMap';
 import Size from './Size';
 import Tile from './../Map/Tile';
 import Sprite from './Sprite';
-
-const NICK_FONT = '15px Verdana';
-const MESSAGE_FONT_SIZE = 15;
-const MESSAGE_FONT = MESSAGE_FONT_SIZE + 'px Verdana';
+import Colors from './Colors';
+import Font from './Font';
 
 export default class Canvas
 {
@@ -23,7 +21,6 @@ export default class Canvas
         this._context = canvas.getContext('2d');
         this._visibleTiles = null;
         this._hiddenTiles = null;
-        this._debug = false;
     }
 
     /**
@@ -78,14 +75,6 @@ export default class Canvas
             tileSize.getWidth(),
             tileSize.getHeight()
         );
-
-        if (this._debug) {
-            this.debugSmallText(
-                `${tileX}:${tileY}`,
-                tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
-                tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
-            );
-        }
     }
 
     /**
@@ -134,57 +123,13 @@ export default class Canvas
 
         let tileSize = this.calculateTileSize();
 
-        this._context.fillStyle = '#000000';
+        this._context.fillStyle = Colors.BLACK;
 
         this._context.fillRect(
             tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getHeight(),
             tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight(),
             tileSize.getWidth(),
             tileSize.getWidth()
-        );
-
-        if (this._debug) {
-            this.debugSmallText(
-                `${tileX}:${tileY}`,
-                tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
-                tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
-            );
-        }
-    }
-
-    /**
-     * @param {string} nick
-     * @param {int} tileX
-     * @param {int} tileY
-     */
-    drawPlayer(nick, tileX, tileY)
-    {
-        if (!this._canDraw()) {
-            return ;
-        }
-
-        Assert.string(nick);
-        Assert.integer(tileX);
-        Assert.integer(tileY);
-
-        let tileSize = this.calculateTileSize();
-
-        this._context.fillStyle = '#10E052';
-
-        this._context.fillRect(
-            tileSize.getWidth() * (tileX - this._hiddenTiles),
-            tileSize.getHeight() * (tileY - this._hiddenTiles),
-            tileSize.getWidth(),
-            tileSize.getHeight()
-        );
-
-        this.outlineText(
-            nick,
-            NICK_FONT,
-            "#FFFFFF",
-            "#000000",
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + this._calculateTextTileOffset(nick, NICK_FONT, tileSize),
-            tileSize.getHeight() * (tileY - this._hiddenTiles) - 22
         );
     }
 
@@ -199,20 +144,20 @@ export default class Canvas
     {
         let percentage = health / maxHealth;
         let tileSize = this.calculateTileSize();
-        let color = '#1BE340';
+        let color = Colors.HP_GREEN;
 
         if (percentage * 100 < 75) {
-            color = '#F2E122';
+            color = Colors.HP_YELLOW;
         }
         if (percentage * 100 < 50) {
-            color = '#E89117';
+            color = Colors.HP_ORANGE;
         }
         if (percentage * 100 < 35) {
-            color = '#F5350A';
+            color = Colors.HP_RED;
         }
 
         this._context.beginPath();
-        this._context.fillStyle = '#000000';
+        this._context.fillStyle = Colors.BLACK;
         this._context.fillRect(
             tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() ,
             tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 15,
@@ -220,7 +165,6 @@ export default class Canvas
             10
         );
         this._context.closePath();
-
 
         this._context.beginPath();
         this._context.fillStyle = color;
@@ -234,7 +178,7 @@ export default class Canvas
 
         this._context.beginPath();
         this._context.lineWidth = 1;
-        this._context.strokeStyle = '#000000';
+        this._context.strokeStyle = Colors.BLACK;
         this._context.rect(
             tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth(),
             tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 15,
@@ -251,39 +195,71 @@ export default class Canvas
      * @param {int} tileX
      * @param {int} tileY
      * @param {Size} offset
+     * @param {Font} font
      */
-    drawCharacterMessage(text, index, tileX, tileY, offset = new Size(0, 0))
+    drawCharacterMessage(text, index, tileX, tileY, offset = new Size(0, 0), font)
     {
         let tileSize = this.calculateTileSize();
-        let topOffset = -(index * (MESSAGE_FONT_SIZE + 8));
+        let topOffset = -(index * (font.size + 8));
 
         this.outlineText(
             text,
-            MESSAGE_FONT,
-            "#c5bf13",
-            "#000000",
-            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(text, MESSAGE_FONT, tileSize),
-            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 40 + topOffset
+            font,
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(text, font, tileSize),
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 60 + topOffset
         );
     }
 
     /**
-     * @param {string} nick
-     * @param {string} color
+     * @param {string} name
      * @param {int} tileX
      * @param {int} tileY
      * @param {Size} offset
+     * @param {Font} font
      */
-    drawCharacter(nick, color, tileX, tileY, offset)
+    drawCharacterName(name, tileX, tileY, offset, font)
     {
         if (!this._canDraw()) {
             return ;
         }
 
-        Assert.string(nick);
+        Assert.string(name);
+        Assert.integer(tileX);
+        Assert.integer(tileY);
+        Assert.instanceOf(offset, Size);
+        Assert.instanceOf(font, Font);
+
+        if (tileY < (this._visibleTiles.y - this._hiddenTiles)
+            && tileX < (this._visibleTiles.x - this._hiddenTiles)
+            && tileX > 0) {
+
+            let tileSize = this.calculateTileSize();
+
+            this.outlineText(
+                name,
+                font,
+                tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(name, font, tileSize),
+                tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 38
+            );
+        }
+    }
+
+    /**
+     * @param {string} color
+     * @param {int} tileX
+     * @param {int} tileY
+     * @param {Size} offset
+     */
+    drawCharacter(color, tileX, tileY, offset)
+    {
+        if (!this._canDraw()) {
+            return ;
+        }
+
         Assert.string(color);
         Assert.integer(tileX);
         Assert.integer(tileY);
+        Assert.instanceOf(offset, Size);
 
         let tileSize = this.calculateTileSize();
 
@@ -295,85 +271,34 @@ export default class Canvas
             tileSize.getWidth(),
             tileSize.getHeight()
         );
-
-        if (tileY < (this._visibleTiles.y - this._hiddenTiles)
-            && tileX < (this._visibleTiles.x - this._hiddenTiles)
-            && tileX > 0) {
-            this.outlineText(
-                nick,
-                NICK_FONT,
-                "#FFFFFF",
-                "#000000",
-                tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(nick, NICK_FONT, tileSize),
-                tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() - 22
-            );
-        }
-
-        if (this._debug) {
-            this.debugSmallText(
-                `${tileX}:${tileY}`,
-                tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + 8,
-                tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + 8
-            );
-        }
     }
 
     /**
      * @param {string} text
+     * @param {Font} font
      * @param {int} pixelX
      * @param {int} pixelY
      */
-    debugText(text, pixelX, pixelY)
+    outlineText(text, font, pixelX, pixelY)
     {
-        this.outlineText(
-            text,
-            "15px Verdana",
-            "#FFFFFF",
-            "#000000",
-            pixelX,
-            pixelY
-        )
-    }
+        Assert.string(text);
+        Assert.instanceOf(font, Font);
+        Assert.integer(pixelX);
+        Assert.integer(pixelY);
 
-    /**
-     * @param {string} text
-     * @param {int} pixelX
-     * @param {int} pixelY
-     */
-    debugSmallText(text, pixelX, pixelY)
-    {
-        this.outlineText(
-            text,
-            "8px Verdana",
-            "#FFFFFF",
-            "#000000",
-            pixelX,
-            pixelY
-        )
-    }
-
-    /**
-     * @param {string} text
-     * @param {string} font
-     * @param {string} color
-     * @param {string} outlineColor
-     * @param {int} pixelX
-     * @param {int} pixelY
-     */
-    outlineText(text, font, color, outlineColor, pixelX, pixelY)
-    {
         let outlineSize = 2;
 
-        this._context.font = font;
-        this._context.fillStyle = outlineColor;
+        this._context.textBaseline = 'top';
+        this._context.font = `${font.weight} ${font.size}px ${font.name}`;
+        this._context.fillStyle = font.colorOutline;
         this._context.fillText(text, pixelX - outlineSize, pixelY);
         this._context.fillText(text, pixelX,   pixelY - outlineSize);
         this._context.fillText(text, pixelX + outlineSize, pixelY);
         this._context.fillText(text, pixelX,   pixelY + outlineSize);
 
-        this._context.fillStyle = color;
+        this._context.fillStyle = font.color;
         this._context.fillText(text, pixelX, pixelY);
-        this._context.font = font;
+        this._context.font = `${font.weight} ${font.size}px ${font.name}`;
     }
 
     /**
@@ -389,14 +314,14 @@ export default class Canvas
 
     /**
      * @param {string} text
-     * @param {string} font
+     * @param {Font§} font
      * @param {Size} tileSize
      * @returns {number}
      * @private
      */
     _calculateTextTileOffset(text, font, tileSize)
     {
-        this._context.font = font;
+        this._context.font = `${font.weight} ${font.size}px ${font.name}`;
         let textWidth = this._context.measureText(text).width;
 
         return (Math.round(tileSize.getWidth() / 2) - Math.round(textWidth / 2));

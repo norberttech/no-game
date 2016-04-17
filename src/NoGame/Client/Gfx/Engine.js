@@ -1,16 +1,19 @@
 'use strict';
 
 import Canvas from './Canvas';
-import Mouse from './../UserInterface/Mouse';
-import SpriteMap from './SpriteMap';
-import Directions from './../Directions';
-import Tile from './../Map/Tile';
+import Size from './Size';
+import Font from './Font';
 import PlayerUI from './PlayerUI';
 import CharactersUI from './CharactersUI';
+import SpriteMap from './SpriteMap';
+import Mouse from './../UserInterface/Mouse';
+import Directions from './../Directions';
+import Tile from './../Map/Tile';
 import Character from './../Character';
 import Assert from 'assert-js';
 import Calculator from './../../Common/Area/Calculator';
 import Position from './../Position';
+import Colors from './Colors';
 
 export default class Engine
 {
@@ -130,7 +133,8 @@ export default class Engine
                     this._canvas.clear();
                     this._drawVisibleArea();
                     this._drawVisibleCharacters();
-                    this._drawPlayer();
+                    this._drawNames();
+                    this._drawMessages();
                     this._drawMousePointer();
                 }
             }
@@ -210,20 +214,35 @@ export default class Engine
             let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
             let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
             let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
+            let color = character.isPlayer ? Colors.BLUE : Colors.GRAY;
 
-            let color = character.isPlayer ? '#44BBE3' : '#6B6B6B';
+            this._canvas.drawCharacter(color, relativeX, relativeY, offset);
+        }
 
-            this._canvas.drawCharacter(character.name, color, relativeX, relativeY, offset);
+        let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
+        this._canvas.drawCharacter(
+            Colors.GREEN,
+            centerSquarePosition.x,
+            centerSquarePosition.y,
+            new Size(0, 0)
+        );
+    }
 
-            if (this._player.isAttacking(character.id)) {
-                this._canvas.drawPointer(
-                    "#FF0000",
-                    relativeX,
-                    relativeY,
-                    offset
-                );
-            }
+    /**
+     * @private
+     */
+    _drawNames()
+    {
+        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
+        let font = new Font('Verdana', 'normal', 15);
 
+        for (let character of visibleCharacters) {
+            let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
+            let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
+            let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
+
+            this._canvas.drawCharacterName(character.name, relativeX, relativeY, offset, font);
             this._canvas.drawHealthBar(
                 character.health,
                 character.maxHealth,
@@ -231,39 +250,56 @@ export default class Engine
                 relativeY,
                 offset
             );
-
-            let messageIndex = 0;
-            for (let message of character.messages) {
-                this._canvas.drawCharacterMessage(message.getText(), messageIndex, relativeX, relativeY, offset);
-                messageIndex++;
-            }
         }
-    }
 
-    /**
-     * @private
-     */
-    _drawPlayer()
-    {
         let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
-
-        this._canvas.drawPlayer(
+        this._canvas.drawCharacterName(
             this._player.name,
             centerSquarePosition.x,
-            centerSquarePosition.y
+            centerSquarePosition.y,
+            new Size(0, 0),
+            font
         );
 
         this._canvas.drawHealthBar(
             this._player.health,
             this._player.maxHealth,
             centerSquarePosition.x,
-            centerSquarePosition.y
+            centerSquarePosition.y,
+            new Size(0, 0)
         );
+    }
 
-        let messageIndex = 0;
+    _drawMessages()
+    {
+        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
+        let font = new Font('Verdana', 'normal', 15, Colors.YELLOW);
+
+        for (let character of visibleCharacters) {
+            let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
+            let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
+            let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
+
+            let messageIndex = 0;
+            for (let message of character.messages) {
+                this._canvas.drawCharacterMessage(message.getText(), messageIndex, relativeX, relativeY, offset, font);
+                messageIndex++;
+            }
+        }
+
+        let centerSquarePosition = Calculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
+        let playerMessageIndex = 0;
         for (let message of this._player.messages) {
-            this._canvas.drawCharacterMessage(message.getText(), messageIndex, centerSquarePosition.x, centerSquarePosition.y);
-            messageIndex++;
+            this._canvas.drawCharacterMessage(
+                message.getText(),
+                playerMessageIndex,
+                centerSquarePosition.x,
+                centerSquarePosition.y,
+                new Size(0,0 ),
+                font
+            );
+            playerMessageIndex++;
         }
     }
 
@@ -273,10 +309,27 @@ export default class Engine
     _drawMousePointer()
     {
         let position = this.getMouseRelativePosition();
+
         let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
+
+        for (let character of visibleCharacters) {
+            let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
+            let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
+            let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
+
+            if (this._player.isAttacking(character.id)) {
+                this._canvas.drawPointer(
+                    Colors.RED,
+                    relativeX,
+                    relativeY,
+                    offset
+                );
+            }
+        }
 
         this._canvas.drawPointer(
-            "#2979CF",
+            Colors.BLUE,
             position.x,
             position.y,
             animationOffset
