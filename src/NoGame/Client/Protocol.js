@@ -169,9 +169,9 @@ export default class Protocol
                 break;
             case ServerMessages.CHARACTER_HEALTH:
                 if (message.data.id === this._kernel.player.id) {
-                    this._kernel.player.changeHealth(message.data.newValue);
+                    this._kernel.playerLooseHealth(message.data.newValue);
                 } else {
-                    this._kernel.getCharacter(message.data.id).changeHealth(message.data.newValue);
+                    this._kernel.characterLooseHealth(message.data.id, message.data.newValue);
                 }
                 break;
             case ServerMessages.CHARACTER_DIED:

@@ -11,6 +11,7 @@ import Directions from './Directions';
 import PathFinder from './../Common/PathFinder';
 import Grid from './../Common/PathFinder/Grid';
 import Calculator from './../Common/Area/Calculator';
+import Animations from './Gfx/Animations';
 
 export default class Kernel
 {
@@ -278,6 +279,42 @@ export default class Kernel
 
         this._area = area;
         this._gfxEngine.setTiles(this._area.tiles());
+    }
+
+    /**
+     * @param {integer} newValue
+     */
+    playerLooseHealth(newValue)
+    {
+        Assert.integer(newValue);
+
+        this._gfxEngine.tileAnimations.add(
+            this.player.position.x,
+            this.player.position.y,
+            Animations.bloodSplashAnimation()
+        );
+
+        this.player.changeHealth(newValue);
+    }
+
+    /**
+     * @param {string} id
+     * @param {int} newValue
+     */
+    characterLooseHealth(id, newValue)
+    {
+        Assert.string(id);
+        Assert.integer(newValue);
+
+        let character = this.getCharacter(id);
+
+        this._gfxEngine.tileAnimations.add(
+            character.position.x,
+            character.position.y,
+            Animations.bloodSplashAnimation()
+        );
+
+        character.changeHealth(newValue);
     }
 
     /**

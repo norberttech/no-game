@@ -53,6 +53,7 @@ export default class SpriteFile
             callback(this);
             this._isLoaded = true;
         };
+
         this._img.src = this._src;
     }
 

@@ -14,6 +14,7 @@ import Assert from 'assert-js';
 import Calculator from './../../Common/Area/Calculator';
 import Position from './../Position';
 import Colors from './Colors';
+import TileAnimations from './Engine/TileAnimations';
 
 export default class Engine
 {
@@ -40,6 +41,7 @@ export default class Engine
         this._visibleTiles = null;
         this._hiddenTiles = 1;
         this._draw = false;
+        this._tileAnimations = new TileAnimations();
     }
 
     /**
@@ -61,6 +63,14 @@ export default class Engine
     getVisibleTiles()
     {
         return this._visibleTiles;
+    }
+
+    /**
+     * @returns {TileAnimations}
+     */
+    get tileAnimations()
+    {
+        return this._tileAnimations;
     }
 
     loadSprites()
@@ -133,6 +143,7 @@ export default class Engine
                     this._canvas.clear();
                     this._drawVisibleArea();
                     this._drawVisibleCharacters();
+                    this._drawTileAnimations();
                     this._drawNames();
                     this._drawMessages();
                     this._drawMousePointer();
@@ -195,7 +206,7 @@ export default class Engine
                 } else {
                     for (let spriteId of tile.stack()) {
                         let sprite = this._spriteMap.getSprite(spriteId);
-                        this._canvas.drawTile(tileX, tileY, sprite, animationOffset);
+                        this._canvas.drawSprite(tileX, tileY, sprite, animationOffset);
                     }
                 }
             }
@@ -268,6 +279,28 @@ export default class Engine
             centerSquarePosition.y,
             new Size(0, 0)
         );
+    }
+
+    _drawTileAnimations()
+    {
+        let areaTiles = {
+            x: this._player.x - ((this._visibleTiles.x - 1) / 2),
+            y: this._player.y - ((this._visibleTiles.y - 1) / 2)
+        };
+
+        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+
+        for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
+            for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
+                let absoluteX = areaTiles.x + tileX;
+                let absoluteY = areaTiles.y + tileY;
+
+                if (this._tileAnimations.has(absoluteX, absoluteY)) {
+                    let sprite = this._spriteMap.getSprite(this._tileAnimations.get(absoluteX, absoluteY).frame);
+                    this._canvas.drawSprite(tileX, tileY, sprite, animationOffset);
+                }
+            }
+        }
     }
 
     _drawMessages()

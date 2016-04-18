@@ -52,7 +52,7 @@ export default class Canvas
      * @param {Sprite} sprite
      * @param {Size} offset
      */
-    drawTile(tileX, tileY, sprite, offset)
+    drawSprite(tileX, tileY, sprite, offset)
     {
         if (!this._canDraw()) {
             return ;
