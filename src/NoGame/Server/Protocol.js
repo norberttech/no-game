@@ -23,6 +23,7 @@ import CharactersMessage from './Network/CharactersMessage';
 import CharacterLogout from './Network/CharacterLogoutMessage';
 import CharacterDiedMessage from './Network/CharacterDiedMessage';
 import CharacterHealthMessage from './Network/CharacterHealthMessage';
+import CharacterParryMessage from './Network/CharacterParryMessage';
 import CharacterMoveMessage from './Network/CharacterMoveMessage';
 import CharacterSayMessage from './Network/CharacterSayMessage';
 import MonsterMoveMessage from './Network/MonsterMoveMessage';
@@ -193,6 +194,30 @@ export default class Protocol
 
         this._broadcaster.sendToPlayers(players, (connection) => {
             return new CharacterHealthMessage(monster.id, monster.health + damage, monster.health);
+        });
+    }
+
+    /**
+     * @param {Player} player
+     */
+    playerParry(player)
+    {
+        let players = this._kernel.area.visiblePlayersFrom(player.position);
+
+        this._broadcaster.sendToPlayers(players, (connection) => {
+            return new CharacterParryMessage(player.id);
+        });
+    }
+
+    /**
+     * @param {Monster} monster
+     */
+    monsterParry(monster)
+    {
+        let players = this._kernel.area.visiblePlayersFrom(monster.position);
+
+        this._broadcaster.sendToPlayers(players, (connection) => {
+            return new CharacterParryMessage(monster.id);
         });
     }
 

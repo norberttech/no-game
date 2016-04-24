@@ -7,6 +7,7 @@ import Tile from './../Map/Tile';
 import Sprite from './Sprite';
 import Colors from './Colors';
 import Font from './Font';
+import TilePosition from './Engine/TilePosition';
 
 export default class Canvas
 {
@@ -202,7 +203,7 @@ export default class Canvas
         let tileSize = this.calculateTileSize();
         let topOffset = -(index * (font.size + 8));
 
-        this.outlineText(
+        this.text(
             text,
             font,
             tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(text, font, tileSize),
@@ -235,7 +236,7 @@ export default class Canvas
 
             let tileSize = this.calculateTileSize();
 
-            this.outlineText(
+            this.text(
                 name,
                 font,
                 tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(name, font, tileSize),
@@ -276,10 +277,55 @@ export default class Canvas
     /**
      * @param {string} text
      * @param {Font} font
+     * @param {int} tileX
+     * @param {int} tileY
+     * @param {Size} offset
+     * @param {Size} textOffset
+     * @param {int} position
+     */
+    textTile(text, font, tileX, tileY, offset, textOffset, position)
+    {
+        Assert.string(text);
+        Assert.instanceOf(font, Font);
+        Assert.integer(tileX);
+        Assert.integer(tileY);
+        Assert.instanceOf(offset, Size);
+        Assert.instanceOf(textOffset, Size);
+        Assert.integer(position);
+
+        let tileSize = this.calculateTileSize();
+
+        let positionOffset = new Size(0, 0);
+
+        switch (position) {
+            case TilePosition.TOP_LEFT:
+                break;
+            case TilePosition.TOP_MIDDLE:
+                positionOffset = new Size(this._calculateTextTileOffset(text, font, tileSize) + textOffset.width, 0);
+                break;
+            case TilePosition.TOP_RIGHT:
+                positionOffset = new Size(tileSize.width, 0);
+                break;
+            default:
+                throw `Tile position ${position} not implemented yet`;
+                break;
+        }
+
+        this.text(
+            text,
+            font,
+            tileSize.getWidth() * (tileX - this._hiddenTiles) + offset.getWidth() + textOffset.getWidth() + positionOffset.getWidth(),
+            tileSize.getHeight() * (tileY - this._hiddenTiles) + offset.getHeight() + textOffset.height + positionOffset.getHeight()
+        );
+    }
+
+    /**
+     * @param {string} text
+     * @param {Font} font
      * @param {int} pixelX
      * @param {int} pixelY
      */
-    outlineText(text, font, pixelX, pixelY)
+    text(text, font, pixelX, pixelY)
     {
         Assert.string(text);
         Assert.instanceOf(font, Font);

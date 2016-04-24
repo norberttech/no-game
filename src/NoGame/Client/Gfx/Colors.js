@@ -11,7 +11,8 @@ const Colors = {
     HP_GREEN: '#1BE340',
     HP_YELLOW: '#F2E122',
     HP_ORANGE: '#E89117',
-    HP_RED: '#F5350A'
+    HP_RED: '#F5350A',
+    LOOSE_HEALTH: '#F5350A'
 };
 
 export default Colors;

@@ -11,7 +11,7 @@ import Directions from './Directions';
 import PathFinder from './../Common/PathFinder';
 import Grid from './../Common/PathFinder/Grid';
 import Calculator from './../Common/Area/Calculator';
-import Animations from './Gfx/Animations';
+import AnimationFactory from './Gfx/AnimationFactory';
 
 export default class Kernel
 {
@@ -291,7 +291,15 @@ export default class Kernel
         this._gfxEngine.tileAnimations.add(
             this.player.position.x,
             this.player.position.y,
-            Animations.bloodSplashAnimation()
+            AnimationFactory.bloodSplashAnimation()
+        );
+
+        let hpDifference = this.player.health - newValue;
+
+        this._gfxEngine.tileAnimations.add(
+            this._player.position.x,
+            this._player.position.y,
+            AnimationFactory.healthFadeOut(hpDifference)
         );
 
         this.player.changeHealth(newValue);
@@ -311,10 +319,44 @@ export default class Kernel
         this._gfxEngine.tileAnimations.add(
             character.position.x,
             character.position.y,
-            Animations.bloodSplashAnimation()
+            AnimationFactory.bloodSplashAnimation()
+        );
+
+        let hpDifference = character.health - newValue;
+
+        this._gfxEngine.tileAnimations.add(
+            character.position.x,
+            character.position.y,
+            AnimationFactory.healthFadeOut(hpDifference)
         );
 
         character.changeHealth(newValue);
+    }
+
+
+    playerParry()
+    {
+        this._gfxEngine.tileAnimations.add(
+            this.player.position.x,
+            this.player.position.y,
+            AnimationFactory.parryAnimation()
+        );
+    }
+
+    /**
+     * @param {string} id
+     */
+    characterParry(id)
+    {
+        Assert.string(id);
+
+        let character = this.getCharacter(id);
+
+        this._gfxEngine.tileAnimations.add(
+            character.position.x,
+            character.position.y,
+            AnimationFactory.parryAnimation()
+        );
     }
 
     /**

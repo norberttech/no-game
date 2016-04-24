@@ -15,6 +15,9 @@ import Calculator from './../../Common/Area/Calculator';
 import Position from './../Position';
 import Colors from './Colors';
 import TileAnimations from './Engine/TileAnimations';
+import TilePosition from './Engine/TilePosition';
+import FrameAnimation from './Animation/FrameAnimation';
+import MoveAnimation from './Animation/MoveAnimation';
 
 export default class Engine
 {
@@ -143,10 +146,10 @@ export default class Engine
                     this._canvas.clear();
                     this._drawVisibleArea();
                     this._drawVisibleCharacters();
-                    this._drawTileAnimations();
                     this._drawNames();
                     this._drawMessages();
                     this._drawMousePointer();
+                    this._drawTileAnimations();
                 }
             }
 
@@ -296,8 +299,27 @@ export default class Engine
                 let absoluteY = areaTiles.y + tileY;
 
                 if (this._tileAnimations.has(absoluteX, absoluteY)) {
-                    let sprite = this._spriteMap.getSprite(this._tileAnimations.get(absoluteX, absoluteY).frame);
-                    this._canvas.drawSprite(tileX, tileY, sprite, animationOffset);
+                    let animationStack = this._tileAnimations.get(absoluteX, absoluteY);
+
+                    for (let animation of animationStack.all) {
+
+                        if (animation instanceof FrameAnimation) {
+                            let sprite = this._spriteMap.getSprite(animation.frame);
+                            this._canvas.drawSprite(tileX, tileY, sprite, animationOffset);
+                        }
+
+                        if (animation instanceof MoveAnimation) {
+                            this._canvas.textTile(
+                                animation.text,
+                                animation.font,
+                                tileX,
+                                tileY,
+                                animationOffset,
+                                new Size(-10, -animation.distance),
+                                TilePosition.TOP_RIGHT
+                            );
+                        }
+                    }
                 }
             }
         }

@@ -15,6 +15,7 @@ const ServerMessages = {
     CHARACTER_SAY: 'character_say',
     CHARACTER_HEALTH: 'character_health',
     CHARACTER_DIED: 'character_died',
+    CHARACTER_PARRY: 'character_parry',
     MONSTER_MOVE: 'monster_move',
     MONSTER_ATTACK: 'monster_attack'
 };

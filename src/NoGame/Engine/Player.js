@@ -8,7 +8,7 @@ import MoveSpeed from './../Common/MoveSpeed';
 
 const BASE_ATTACK_DELAY = 3000;
 const BASE_DEFENCE = 4;
-const BASE_ATTACK_POWER = 10;
+const BASE_ATTACK_POWER = 15;
 
 export default class Player
 {
@@ -254,9 +254,8 @@ export default class Player
 
     /**
      * @param {Monster} monster
-     * @param {function} [onDamage]
      */
-    meleeDamageMonster(monster, onDamage = () => {})
+    meleeDamageMonster(monster)
     {
         Assert.instanceOf(monster, Monster);
 
@@ -268,11 +267,17 @@ export default class Player
             throw `Player ${monster.id} can't be damaged, it is too far from monster ${this._id}`;
         }
 
-        if (monster.defence < this.attackPower) {
-            monster.damage(this.attackPower - monster.defence);
-            onDamage(monster, this.attackPower - monster.defence);
-        }
-
         this._lastAttack = new Date().getTime();
+
+        return new Promise((resolve, reject) => {
+            let power = Math.round((this._attackPower * Math.random()) - (monster.defence * Math.random()));
+
+            if (power > 0) {
+                monster.damage(power);
+                resolve({monster: monster, damage: power});
+            } else {
+                reject({monster: monster});
+            }
+        });
     }
 }

@@ -7,7 +7,7 @@ describe("Player", () => {
     it ("it has uuid", () => {
         let player = new Player("yaboomaster", 100);
 
-        expect(player.id()).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+        expect(player.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
     });
 
     it ("throws exception when more than one using setStartingPosition", () => {
@@ -35,12 +35,12 @@ describe("Player", () => {
 
         player.move(new Position(1,2), 0);
         player.move(new Position(2,2), 0); // should not move here because is moving already
-        expect(player.isMoving()).toBe(true);
+        expect(player.isMoving).toBe(true);
         expect(player.position.isEqualTo(new Position(1,2))).toBe(true);
 
         Utils.sleep(600); // wait to finish move
 
-        expect(player.isMoving()).toBe(false);
+        expect(player.isMoving).toBe(false);
     });
 
     it ("can't have negative health", () => {

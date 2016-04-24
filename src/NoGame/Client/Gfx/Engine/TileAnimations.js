@@ -2,6 +2,7 @@
 
 import Assert from 'assert-js';
 import Animation from './../Animation/Animation';
+import Stack from './../Animation/Stack';
 
 export default class TileAnimations
 {
@@ -21,13 +22,17 @@ export default class TileAnimations
         Assert.integer(y);
         Assert.instanceOf(animation, Animation);
 
-        this._tileAnimations.set(`${x}:${y}`, animation);
+        if (!this.has(x,y)) {
+            this._tileAnimations.set(`${x}:${y}`, new Stack([animation]));
+        } else {
+            this._tileAnimations.get(`${x}:${y}`).putOn(animation);
+        }
     }
 
     /**
      * @param {int} x
      * @param {int} y
-     * @returns {Animation}
+     * @returns {Stack}
      */
     get(x, y)
     {
@@ -52,14 +57,14 @@ export default class TileAnimations
         Assert.integer(y);
 
         if (this._tileAnimations.has(`${x}:${y}`)) {
-            let animation = this._tileAnimations.get(`${x}:${y}`);
-
-            if (animation.isFinished) {
-                this._tileAnimations.delete(`${x}:${y}`);
+            if (!this._tileAnimations.get(`${x}:${y}`).size) {
+                return false;
             }
+
+            return true;
         }
 
-        return this._tileAnimations.has(`${x}:${y}`);
+        return false;
     }
 
     /**

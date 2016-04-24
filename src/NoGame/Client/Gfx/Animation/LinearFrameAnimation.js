@@ -1,9 +1,9 @@
 'use strict';
 
 import Assert from 'assert-js';
-import Animation from './Animation';
+import FrameAnimation from './FrameAnimation';
 
-export default class LinearAnimation extends Animation
+export default class LinearFrameAnimation extends FrameAnimation
 {
     /**
      * @param {[]} frames

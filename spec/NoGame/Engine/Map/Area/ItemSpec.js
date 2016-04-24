@@ -4,6 +4,6 @@ describe("Item", () => {
     it ("is not blocking by default", () => {
         let item = new Item(12345);
 
-        expect(item.isBlocking()).toBe(false);
+        expect(item.isBlocking).toBe(false);
     });
 });
