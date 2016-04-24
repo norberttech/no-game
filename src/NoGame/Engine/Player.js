@@ -270,7 +270,7 @@ export default class Player
         this._lastAttack = new Date().getTime();
 
         return new Promise((resolve, reject) => {
-            let power = Math.round((this._attackPower * Math.random()) - (monster.defence * Math.random()));
+            let power = Math.round((this.attackPower * Math.random()) - (monster.defence * Math.random()));
 
             if (power > 0) {
                 monster.damage(power);
