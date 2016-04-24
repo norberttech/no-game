@@ -235,11 +235,13 @@ export default class Kernel
 
     /**
      * @param {function} onPlayerDamage
+     * @param {function} onPlayerParry
      * @param {function} onMonsterDamage
+     * @param {function} onMonsterParry
      * @param {function} onPlayerDie
      * @param {function} onMonsterDie
      */
-    performMeleeDamage(onPlayerDamage, onMonsterDamage, onPlayerDie, onMonsterDie)
+    performMeleeDamage(onPlayerDamage, onPlayerParry, onMonsterDamage, onMonsterParry, onPlayerDie, onMonsterDie)
     {
         for (let monster of this._area.monsters) {
             if (!monster.isAttacking || monster.isExhausted) {
@@ -252,7 +254,11 @@ export default class Kernel
                 continue ;
             }
 
-            monster.meleeDamage(player, onPlayerDamage);
+            monster.meleeDamage(player).then((result) => {
+                onPlayerDamage(result.player, result.damage)
+            }).catch((result) => {
+                onPlayerParry(result.player);
+            });
 
             if (player.isDead) {
                 onPlayerDie(player);
@@ -270,7 +276,11 @@ export default class Kernel
                 continue ;
             }
 
-            player.meleeDamageMonster(monster, onMonsterDamage);
+            player.meleeDamageMonster(monster).then((result) => {
+                onMonsterDamage(result.monster, result.damage);
+            }).catch((result) => {
+                onMonsterParry(result.monster);
+            });
 
             if (monster.isDead) {
                 onMonsterDie(monster, player);

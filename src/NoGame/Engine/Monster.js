@@ -143,9 +143,9 @@ export default class Monster
 
     /**
      * @param {Player} player
-     * @param {function} [onDamage]
+     * @returns {Promise}
      */
-    meleeDamage(player, onDamage = () => {})
+    meleeDamage(player)
     {
         Assert.instanceOf(player, Player);
 
@@ -157,12 +157,18 @@ export default class Monster
             throw `Player ${player.id} can't be damaged, it is too far from monster ${this._id}`;
         }
 
-        if (player.defence < this._attackPower) {
-            player.damage(this._attackPower - player.defence);
-            onDamage(player, this._attackPower - player.defence);
-        }
-
         this._lastAttack = new Date().getTime();
+
+        return new Promise((resolve, reject) => {
+            let power = Math.round((this._attackPower * Math.random()) - (player.defence * Math.random()));
+
+            if (power > 0) {
+                player.damage(power);
+                resolve({player: player, damage :power});
+            } else {
+                reject({player: player});
+            }
+        });
     }
 
     /**

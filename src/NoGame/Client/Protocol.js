@@ -174,6 +174,13 @@ export default class Protocol
                     this._kernel.characterLooseHealth(message.data.id, message.data.newValue);
                 }
                 break;
+            case ServerMessages.CHARACTER_PARRY:
+                if (message.data.id === this._kernel.player.id) {
+                    this._kernel.playerParry();
+                } else {
+                    this._kernel.characterParry(message.data.id);
+                }
+                break;
             case ServerMessages.CHARACTER_DIED:
                     this._kernel.removeCharacter(message.data.id);
                 break;
@@ -234,11 +241,11 @@ export default class Protocol
                 break;
             case ServerMessages.TILE:
                 let tile = new Tile(
-                        message.data.x,
-                        message.data.y,
-                        message.data.canWalkOn,
-                        message.data.stack,
-                        message.data.moveSpeedModifier
+                    message.data.x,
+                    message.data.y,
+                    message.data.canWalkOn,
+                    message.data.stack,
+                    message.data.moveSpeedModifier
                 );
 
                 this._kernel.area.setTile(tile);

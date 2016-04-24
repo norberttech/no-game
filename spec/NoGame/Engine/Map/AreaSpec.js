@@ -35,33 +35,7 @@ describe("Area", () => {
 
         area.loginPlayer(player);
         expect(() => {area.loginPlayer(player);})
-            .toThrow(`Player with id "${player.id()}" is already present in area "test area"`);
-    });
-
-    it ("throws error on attempt to move player to position without tile", () => {
-        let area = new Area("test area", 10, 10);
-        let player = new Player("yaboomaster", 100);
-
-        area.addTile(new Tile(new Position(0, 0), new Item(1)));
-
-        area.loginPlayer(player);
-        expect(() => {area.movePlayerTo(player.id(), new Position(1,1))})
-            .toThrow(`There is no tile on position 1:1`);
-    });
-
-    it ("throws error on attempt to move player to position where tile is not walkable", () => {
-        let grass = new Item(100);
-        let stack = [new Item(2, true)];
-        let grassTile = new Tile(new Position(1, 0), grass, stack);
-        let area = new Area("test area", 1, 1);
-        let player = new Player("yaboomaster", 100);
-
-        area.addTile(new Tile(new Position(0, 0), new Item(1)));
-        area.addTile(grassTile);
-        area.loginPlayer(player);
-
-        expect(() => {area.movePlayerTo(player.id(), new Position(1,0))})
-            .toThrow(`Can't walk on tile on 1:0`);
+            .toThrow(`Player with id "${player.id}" is already present in area "test area"`);
     });
 
     it ("returns players except player with specific ID", () => {
@@ -77,7 +51,7 @@ describe("Area", () => {
         area.loginPlayer(player1);
         area.loginPlayer(player2);
 
-        expect(area.visiblePlayersFor(player1.id(), 15, 11)).toEqual([player2]);
+        expect(area.visiblePlayersFor(player1.id)).toEqual([player2]);
     });
 
     it ("returns tiles visible by player", () => {
@@ -91,13 +65,13 @@ describe("Area", () => {
         area.changeSpawnPosition(new Position(50, 50));
         area.loginPlayer(player);
 
-        let tiles = area.visibleTilesFor(player.id(), 15, 11);
+        let tiles = area.visibleTilesFor(player.id);
 
         expect(tiles.length).toBe(221);
-        expect(tiles[0].position().x()).toBe(42);
-        expect(tiles[0].position().y()).toBe(44);
+        expect(tiles[0].position.x).toBe(42);
+        expect(tiles[0].position.y).toBe(44);
 
-        expect(tiles[164].position().x()).toBe(54);
-        expect(tiles[164].position().y()).toBe(52);
+        expect(tiles[164].position.x).toBe(54);
+        expect(tiles[164].position.y).toBe(52);
     });
 });
