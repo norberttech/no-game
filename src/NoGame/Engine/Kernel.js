@@ -238,10 +238,8 @@ export default class Kernel
      * @param {function} onPlayerParry
      * @param {function} onMonsterDamage
      * @param {function} onMonsterParry
-     * @param {function} onPlayerDie
-     * @param {function} onMonsterDie
      */
-    performMeleeDamage(onPlayerDamage, onPlayerParry, onMonsterDamage, onMonsterParry, onPlayerDie, onMonsterDie)
+    performMeleeDamage(onPlayerDamage, onPlayerParry, onMonsterDamage, onMonsterParry)
     {
         for (let monster of this._area.monsters) {
             if (!monster.isAttacking || monster.isExhausted) {
@@ -261,7 +259,7 @@ export default class Kernel
             });
 
             if (player.isDead) {
-                onPlayerDie(player);
+                this._area.removeCharacter(player.id);
             }
         }
 
@@ -283,8 +281,6 @@ export default class Kernel
             });
 
             if (monster.isDead) {
-                onMonsterDie(monster, player);
-
                 this._area.removeMonster(monster.id);
             }
         }

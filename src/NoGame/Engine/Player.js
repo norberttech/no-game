@@ -8,7 +8,7 @@ import MoveSpeed from './../Common/MoveSpeed';
 
 const BASE_ATTACK_DELAY = 3000;
 const BASE_DEFENCE = 4;
-const BASE_ATTACK_POWER = 15;
+const BASE_ATTACK_POWER = 40;
 
 export default class Player
 {

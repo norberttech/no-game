@@ -238,6 +238,27 @@ export default class Area
         this._characters.delete(playerId);
     }
 
+
+    /**
+     * @param {string} playerId
+     */
+    removeCharacter(playerId)
+    {
+        let player = this.getPlayer(playerId);
+
+        let tile = this._tiles.get(player.position.toString());
+
+        for (let monsterId of player.attackedByMonsters) {
+            let monster = this.getMonster(monsterId);
+
+            monster.stopAttacking();
+            player.removeAttackingMonster(monsterId);
+        }
+
+        tile.playerLeave(playerId);
+        this._characters.delete(playerId);
+    }
+
     /**
      * @param {Position} position
      * @returns {Tile}

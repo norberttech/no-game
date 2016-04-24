@@ -78,23 +78,6 @@ export default class Protocol
     }
 
     /**
-     * @param {Player} player
-     */
-    die(player)
-    {
-        Assert.instanceOf(player, Player);
-
-        this._broadcaster.sendToPlayer(player, (connection) => {
-            return new LogoutMessage("You died.");
-        });
-
-        let connection = this._broadcaster.getConnection(player.id);
-
-        this.logout(connection);
-        connection.removePlayer();
-    }
-
-    /**
      * @param {Connection} closedConnection
      */
     logout(closedConnection)
@@ -223,15 +206,37 @@ export default class Protocol
 
     /**
      * @param {Monster} monster
-     * @param {Player} killer
      */
-    monsterDied(monster, killer)
+    monsterDied(monster)
     {
         let players = this._kernel.area.visiblePlayersFrom(monster.position);
 
         this._broadcaster.sendToPlayers(players, (connection) => {
-            return new CharacterDiedMessage(monster.id, killer.id);
+            return new CharacterDiedMessage(monster.id);
         });
+    }
+
+
+    /**
+     * @param {Player} player
+     */
+    die(player)
+    {
+        Assert.instanceOf(player, Player);
+
+        this._broadcaster.sendToPlayer(player, (connection) => {
+            return new LogoutMessage("You died.");
+        });
+
+        let connection = this._broadcaster.getConnection(player.id);
+
+        let players = this._kernel.area.visiblePlayersFrom(player.position);
+
+        this._broadcaster.sendToPlayers(players, (connection) => {
+            return new CharacterDiedMessage(player.id);
+        });
+
+        connection.removePlayer();
     }
 
     /**

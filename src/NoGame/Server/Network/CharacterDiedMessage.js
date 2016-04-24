@@ -8,19 +8,16 @@ export default class CharacterDiedMessage extends Message
 {
     /**
      * @param {string} characterId
-     * @param {string} killerId
      */
-    constructor(characterId, killerId)
+    constructor(characterId)
     {
         super();
 
         Assert.string(characterId);
-        Assert.string(killerId);
 
         this._name = ServerMessages.CHARACTER_DIED;
         this._data = {
-            id: characterId,
-            killer: killerId
+            id: characterId
         };
     }
 }
