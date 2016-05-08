@@ -6,7 +6,7 @@ import Font from './Font';
 import PlayerUI from './PlayerUI';
 import CharactersUI from './CharactersUI';
 import SpriteMap from './SpriteMap';
-import Mouse from './../UserInterface/Mouse';
+import Mouse from './../Input/Mouse';
 import Directions from './../Directions';
 import Tile from './../Map/Tile';
 import Character from './../Character';

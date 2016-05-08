@@ -2,8 +2,8 @@
 
 import Assert from 'assert-js';
 import Engine from './Gfx/Engine';
-import KeyBoard from './UserInterface/KeyBoard';
-import Mouse from './UserInterface/Mouse';
+import KeyBoard from './Input/KeyBoard';
+import Mouse from './Input/Mouse';
 import Chat from './UserInterface/Chat';
 
 export default class UserInterface

@@ -8,8 +8,8 @@ import Engine from './Gfx/Engine';
 import Canvas from './Gfx/Canvas';
 import SpriteMap from './Gfx/SpriteMap';
 import SpriteFile from './Gfx/SpriteFile';
-import KeyBoard from './UserInterface/KeyBoard';
-import Mouse from './UserInterface/Mouse';
+import KeyBoard from './Input/KeyBoard';
+import Mouse from './Input/Mouse';
 import ProtocolFactory from './ProtocolFactory';
 
 window.location.getParameter = function(name) {

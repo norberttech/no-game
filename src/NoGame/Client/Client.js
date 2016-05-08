@@ -6,9 +6,9 @@ import Protocol from './Protocol';
 import Position from './Position';
 import Directions from './Directions';
 import Connection from './Network/Connection';
-import KeyBoard from './UserInterface/KeyBoard';
-import Mouse from './UserInterface/Mouse';
-import Keys from './UserInterface/Keys';
+import KeyBoard from './Input/KeyBoard';
+import Mouse from './Input/Mouse';
+import Keys from './Input/Keys';
 import ProtocolFactory from './ProtocolFactory';
 
 export default class Client
