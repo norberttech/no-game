@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "assert-js": "^0.4",
+    "assert-js": "0.6.0",
     "bufferutil": "^1.2.1",
     "bunyan": "^1.7.0",
     "faye-websocket": "^0.10.0",
