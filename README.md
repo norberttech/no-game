@@ -47,7 +47,7 @@ That's all. Now you are ready to build server/client and test the game yourself.
 In order to do that you need to build server&client, following commands should help you with that. 
 
 - ``$ npm test `` - execute test suite 
-- ``$ npm client:dev`` - build and watch for changes in client (after building client you can open it in your browser ``/client/index.html``)
-- ``$ npm client:build`` - build client into ``build`` folder 
-- ``$ npm server:dev`` - build server in memory and start listening for connections
-- ``$ npm server:build`` - build server code into ``build`` folder
+- ``$ npm run client:dev`` - build and watch for changes in client (after building client you can open it in your browser ``/client/index.html``)
+- ``$ npm run client:build`` - build client into ``build`` folder 
+- ``$ npm run server:dev`` - build server in memory and start listening for connections
+- ``$ npm run server:build`` - build server code into ``build`` folder
