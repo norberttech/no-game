@@ -1,10 +1,10 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Message from './../../Common/Network/Message';
-import ServerMessages from './../../Common/Network/ServerMessages';
+const Assert = require('assert-js');
+const Message = require('./../../Common/Network/Message');
+const ServerMessages = require('./../../Common/Network/ServerMessages');
 
-export default class BatchMessage extends Message
+class BatchMessage extends Message
 {
     constructor(messages)
     {
@@ -19,3 +19,5 @@ export default class BatchMessage extends Message
         };
     }
 }
+
+module.exports = BatchMessage;

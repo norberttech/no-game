@@ -1,4 +1,6 @@
-import Position from '../../../../../src/NoGame/Client/Gfx/Sprite/Position'
+'use strict';
+
+import Position from './../../../../../src/NoGame/Client/Gfx/Sprite/Position';
 
 describe("Gfx Size", () => {
     it("throws error when created from invalid values", () => {

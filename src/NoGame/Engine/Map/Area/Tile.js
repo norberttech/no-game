@@ -1,11 +1,11 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Item from './Item';
-import Position from './Position';
-import Monster from './../../Monster'
+const Assert = require('assert-js');
+const Item = require('./Item');
+const Position = require('./Position');
+const Monster = require('./../../Monster')
 
-export default class Tile
+class Tile
 {
     /**
      * @param {Position} position
@@ -137,3 +137,5 @@ export default class Tile
         return this._moveSpeedModifier;
     }
 }
+
+module.exports = Tile;

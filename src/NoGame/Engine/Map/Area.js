@@ -1,17 +1,17 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Tile from './Area/Tile';
-import Position from './Area/Position';
-import Calculator from './../../Common/Area/Calculator';
-import Range from './../../Common/Area/Range';
-import Utils from './../../Common/Utils';
-import PathFinder from './../../Common/PathFinder';
-import Grid from './../../Common/PathFinder/Grid';
+const Assert = require('assert-js');
+const Tile = require('./Area/Tile');
+const Position = require('./Area/Position');
+const Calculator = require('./../../Common/Area/Calculator');
+const Range = require('./../../Common/Area/Range');
+const Utils = require('./../../Common/Utils');
+const PathFinder = require('./../../Common/PathFinder');
+const Grid = require('./../../Common/PathFinder/Grid');
 
-import Player from './../Player';
-import Spawn from './../Spawn';
-import Monster from './../Monster';
+const Player = require('./../Player');
+const Spawn = require('./../Spawn');
+const Monster = require('./../Monster');
 
 /**
  * Client displays x: 15 and y: 11 but it keeps 2 tiles hidden.
@@ -20,7 +20,7 @@ import Monster from './../Monster';
  */
 const VISIBLE_TILES = {x: 17, y: 13};
 
-export default class Area
+class Area
 {
     /**
      * Default spawn position is x:0, y:0 it can be changed with changeSpawnPosition() method
@@ -490,3 +490,5 @@ export default class Area
         }
     }
 }
+
+module.exports = Area;

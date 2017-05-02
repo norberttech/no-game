@@ -1,35 +1,35 @@
 'use strict';
 
-import Kernel from './../Engine/Kernel';
-import Assert from 'assert-js';
-import IncomeMessageQueue from './MessageQueue/IncomeQueue';
-import Broadcaster from './Broadcaster';
-import Logger from './../Common/Logger';
+const Kernel = require('./../Engine/Kernel');
+const Assert = require('assert-js');
+const IncomeMessageQueue = require('./MessageQueue/IncomeQueue');
+const Broadcaster = require('./Broadcaster');
+const Logger = require('./../Common/Logger');
 
-import Player from './../Engine/Player';
-import Monster from './../Engine/Monster';
-import Area from './../Engine/Map/Area';
-import Position from './../Engine/Map/Area/Position';
+const Player = require('./../Engine/Player');
+const Monster = require('./../Engine/Monster');
+const Area = require('./../Engine/Map/Area');
+const Position = require('./../Engine/Map/Area/Position');
 
-import ClientMessages from './../Common/Network/ClientMessages'
-import BatchMessage from './Network/BatchMessage';
-import LoginMessage from './Network/LoginMessage';
-import LogoutMessage from './Network/LogoutMessage';
-import AreaMessage from './Network/AreaMessage';
-import TileMessage from './Network/TileMessage';
-import TilesMessage from './Network/TilesMessage';
-import MoveMessage from './Network/MoveMessage';
-import CharactersMessage from './Network/CharactersMessage';
-import CharacterLogout from './Network/CharacterLogoutMessage';
-import CharacterDiedMessage from './Network/CharacterDiedMessage';
-import CharacterHealthMessage from './Network/CharacterHealthMessage';
-import CharacterParryMessage from './Network/CharacterParryMessage';
-import CharacterMoveMessage from './Network/CharacterMoveMessage';
-import CharacterSayMessage from './Network/CharacterSayMessage';
-import MonsterMoveMessage from './Network/MonsterMoveMessage';
-import MonsterAttackMessage from './Network/MonsterAttackMessage';
+const ClientMessages = require('./../Common/Network/ClientMessages');
+const BatchMessage = require('./Network/BatchMessage');
+const LoginMessage = require('./Network/LoginMessage');
+const LogoutMessage = require('./Network/LogoutMessage');
+const AreaMessage = require('./Network/AreaMessage');
+const TileMessage = require('./Network/TileMessage');
+const TilesMessage = require('./Network/TilesMessage');
+const MoveMessage = require('./Network/MoveMessage');
+const CharactersMessage = require('./Network/CharactersMessage');
+const CharacterLogout = require('./Network/CharacterLogoutMessage');
+const CharacterDiedMessage = require('./Network/CharacterDiedMessage');
+const CharacterHealthMessage = require('./Network/CharacterHealthMessage');
+const CharacterParryMessage = require('./Network/CharacterParryMessage');
+const CharacterMoveMessage = require('./Network/CharacterMoveMessage');
+const CharacterSayMessage = require('./Network/CharacterSayMessage');
+const MonsterMoveMessage = require('./Network/MonsterMoveMessage');
+const MonsterAttackMessage = require('./Network/MonsterAttackMessage');
 
-export default class Protocol
+class Protocol
 {
     /**
      * @param {Kernel} kernel
@@ -343,3 +343,5 @@ export default class Protocol
         this._kernel.playerAttack(currentConnection.playerId, packet.data.id);
     }
 }
+
+module.exports = Protocol;

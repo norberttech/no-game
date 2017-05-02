@@ -1,16 +1,16 @@
 'use strict';
 
-import UUID from 'uuid';
-import Assert from 'assert-js'
-import Monster from './Monster';
-import Position from './Map/Area/Position';
-import MoveSpeed from './../Common/MoveSpeed';
+const UUID = require('uuid');
+const Assert = require('assert-js');
+const Monster = require('./Monster');
+const Position = require('./Map/Area/Position');
+const MoveSpeed = require('./../Common/MoveSpeed');
 
 const BASE_ATTACK_DELAY = 3000;
 const BASE_DEFENCE = 4;
 const BASE_ATTACK_POWER = 40;
 
-export default class Player
+class Player
 {
     /**
      * @param {string} name
@@ -257,7 +257,8 @@ export default class Player
      */
     meleeDamageMonster(monster)
     {
-        Assert.instanceOf(monster, Monster);
+        // TODO: Investigate why Monster is treated as an invalid class name
+        // Assert.instanceOf(monster, Monster);
 
         if (this._attackedMonster !== monster.id) {
             throw `Player ${monster.id} can't be damaged, it wasn't attacked by monster ${this._id}`;
@@ -281,3 +282,5 @@ export default class Player
         });
     }
 }
+
+module.exports = Player;

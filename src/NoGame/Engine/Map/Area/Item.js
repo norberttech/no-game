@@ -1,9 +1,8 @@
 'use strict';
 
-import Assert from 'assert-js';
+const Assert = require('assert-js');
 
-
-export default class Item
+class Item
 {
     /**
      * @param {number} spriteId
@@ -31,3 +30,5 @@ export default class Item
         return this._spriteId;
     }
 }
+
+module.exports = Item;

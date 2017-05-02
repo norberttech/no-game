@@ -1,11 +1,11 @@
 'use strict';
 
-import UUID from 'uuid';
-import Assert from 'assert-js'
-import Position from './Map/Area/Position'
-import Utils from './../Common/Utils';
+const UUID = require('uuid');
+const Assert = require('assert-js')
+const Position = require('./Map/Area/Position')
+const Utils = require('./../Common/Utils');
 
-export default class Spawn
+class Spawn
 {
     /**
      * @param {string} monsterName
@@ -144,3 +144,5 @@ export default class Spawn
         this._lastSpawnDate = new Date().getTime();
     }
 }
+
+module.exports = Spawn;

@@ -1,11 +1,11 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Message from './../../Common/Network/Message';
-import Monster from './../../Engine/Monster';
-import ServerMessages from './../../Common/Network/ServerMessages';
+const Assert = require('assert-js');
+const Message = require('./../../Common/Network/Message');
+const Monster = require('./../../Engine/Monster');
+const ServerMessages = require('./../../Common/Network/ServerMessages');
 
-export default class MonsterAttackMessage extends Message
+class MonsterAttackMessage extends Message
 {
     /**
      * @param {Monster} monster
@@ -25,3 +25,5 @@ export default class MonsterAttackMessage extends Message
         };
     }
 }
+
+module.exports = MonsterAttackMessage;

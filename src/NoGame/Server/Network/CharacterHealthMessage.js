@@ -1,10 +1,10 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Message from './../../Common/Network/Message';
-import ServerMessages from './../../Common/Network/ServerMessages';
+const Assert = require('assert-js');
+const Message = require('./../../Common/Network/Message');
+const ServerMessages = require('./../../Common/Network/ServerMessages');
 
-export default class CharacterHealthMessage extends Message
+class CharacterHealthMessage extends Message
 {
     /**
      * @param {string} characterId
@@ -26,3 +26,5 @@ export default class CharacterHealthMessage extends Message
         };
     }
 }
+
+module.exports = CharacterHealthMessage;

@@ -20,4 +20,4 @@ const ServerMessages = {
     MONSTER_ATTACK: 'monster_attack'
 };
 
-export default ServerMessages;
+module.exports = ServerMessages;

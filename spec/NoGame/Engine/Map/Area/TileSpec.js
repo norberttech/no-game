@@ -1,8 +1,10 @@
-import Item from '../../../../../src/NoGame/Engine/Map/Area/Item'
-import Tile from '../../../../../src/NoGame/Engine/Map/Area/Tile'
-import Position from '../../../../../src/NoGame/Engine/Map/Area/Position'
-import Monster from '../../../../../src/NoGame/Engine/Monster'
-import Player from '../../../../../src/NoGame/Engine/Player'
+'use strict';
+
+const Item = require('./../../../../../src/NoGame/Engine/Map/Area/Item');
+const Tile = require('./../../../../../src/NoGame/Engine/Map/Area/Tile');
+const Position = require('./../../../../../src/NoGame/Engine/Map/Area/Position');
+const Monster = require('./../../../../../src/NoGame/Engine/Monster');
+const Player = require('./../../../../../src/NoGame/Engine/Player');
 
 describe("Tile", () => {
     it ("can be walked on when there are no blocking items on stack", () => {

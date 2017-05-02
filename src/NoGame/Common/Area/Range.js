@@ -1,8 +1,8 @@
 'use strict';
 
-import Assert from 'assert-js';
+const Assert = require('assert-js');
 
-export default class Range
+class Range
 {
     /**
      * @param {int} startX
@@ -55,3 +55,5 @@ export default class Range
         return this._endY;
     }
 }
+
+module.exports = Range;

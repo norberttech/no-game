@@ -1,11 +1,11 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Message from './../../Common/Network/Message';
-import Player from './../../Engine/Player';
-import ServerMessages from './../../Common/Network/ServerMessages';
+const Assert = require('assert-js');
+const Message = require('./../../Common/Network/Message');
+const Player = require('./../../Engine/Player');
+const ServerMessages = require('./../../Common/Network/ServerMessages');
 
-export default class MoveMessage extends Message
+class MoveMessage extends Message
 {
     /**
      * @param {Player} player
@@ -24,3 +24,5 @@ export default class MoveMessage extends Message
         };
     }
 }
+
+module.exports = MoveMessage;

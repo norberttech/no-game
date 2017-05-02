@@ -1,0 +1,6 @@
+{
+  "spec_dir": "spec/NoGame/Common",
+  "spec_files": [
+    "**/*[sS]pec.js"
+  ]
+}

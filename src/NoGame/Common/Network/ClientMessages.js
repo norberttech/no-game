@@ -7,4 +7,4 @@ const ClientMessages = {
     ATTACK_MONSTER: 'attack_monster'
 };
 
-export default ClientMessages;
+module.exports = ClientMessages;

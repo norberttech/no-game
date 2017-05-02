@@ -1,9 +1,9 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Range from './Range';
+const Assert = require('assert-js');
+const Range = require('./Range');
 
-export default class Calculator
+class Calculator
 {
     /**
      * @param {int} centerX
@@ -46,3 +46,5 @@ export default class Calculator
         }
     }
 }
+
+module.exports = Calculator;

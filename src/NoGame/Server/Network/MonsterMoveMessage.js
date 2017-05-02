@@ -1,12 +1,12 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Message from './../../Common/Network/Message';
-import Monster from './../../Engine/Monster';
-import Position from './../../Engine/Map/Area/Position';
-import ServerMessages from './../../Common/Network/ServerMessages';
+const Assert = require('assert-js');
+const Message = require('./../../Common/Network/Message');
+const Monster = require('./../../Engine/Monster');
+const Position = require('./../../Engine/Map/Area/Position');
+const ServerMessages = require('./../../Common/Network/ServerMessages');
 
-export default class MonsterMoveMessage extends Message
+class MonsterMoveMessage extends Message
 {
     /**
      * @param {Monster} monster
@@ -38,3 +38,5 @@ export default class MonsterMoveMessage extends Message
         };
     }
 }
+
+module.exports = MonsterMoveMessage;

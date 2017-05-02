@@ -1,11 +1,11 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Message from './../../Common/Network/Message';
-import Area from './../../Engine/Map/Area';
-import ServerMessages from './../../Common/Network/ServerMessages';
+const Assert = require('assert-js');
+const Message = require('./../../Common/Network/Message');
+const Area = require('./../../Engine/Map/Area');
+const ServerMessages = require('./../../Common/Network/ServerMessages');
 
-export default class AreaMessage extends Message
+class AreaMessage extends Message
 {
     /**
      * @param {string} areaName
@@ -30,3 +30,5 @@ export default class AreaMessage extends Message
         };
     }
 }
+
+module.exports = AreaMessage;

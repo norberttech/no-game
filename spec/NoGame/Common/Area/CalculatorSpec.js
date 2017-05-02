@@ -1,4 +1,6 @@
-import Calculator from '../../../../src/NoGame/Common/Area/Calculator';
+'use strict';
+
+const Calculator = require('./../../../../src/NoGame/Common/Area/Calculator');
 
 describe("Area Calculator", () => {
     it("it calculates center position", () => {

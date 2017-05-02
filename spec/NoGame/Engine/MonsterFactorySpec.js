@@ -1,5 +1,7 @@
-import MonsterFactory from '../../../src/NoGame/Engine/MonsterFactory';
-import Position from '../../../src/NoGame/Engine/Map/Area/Position';
+'use strict';
+
+const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
+const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
 
 describe("Monster Factory", () => {
     it("it creates monster from template", () => {

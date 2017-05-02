@@ -1,6 +1,8 @@
-import Player from '../../../src/NoGame/Engine/Player';
-import Position from '../../../src/NoGame/Engine/Map/Area/Position';
-import Utils from '../../../src/NoGame/Common/Utils';
+'use strict';
+
+const Player = require('./../../../src/NoGame/Engine/Player');
+const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
+const Utils = require('./../../../src/NoGame/Common/Utils');
 
 
 describe("Player", () => {

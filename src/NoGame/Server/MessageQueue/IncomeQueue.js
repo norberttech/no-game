@@ -1,8 +1,8 @@
 'use strict';
 
-import IncomeMessage from './IncomeMessage';
+const IncomeMessage = require('./IncomeMessage');
 
-export default class IncomeQueue
+class IncomeQueue
 {
     constructor()
     {
@@ -28,3 +28,5 @@ export default class IncomeQueue
         return messages;
     }
 }
+
+module.exports = IncomeQueue;

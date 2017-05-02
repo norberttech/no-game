@@ -1,16 +1,16 @@
 'use strict';
 
-import Assert from 'assert-js'
-import Area from './Map/Area';
-import Logger from './../Common/Logger';
-import Tile from './Map/Area/Tile';
-import Item from './Map/Area/Item';
-import Position from './Map/Area/Position';
-import MonsterFactory from './MonsterFactory';
-import Spawn from './Spawn';
-import fs from 'fs';
+const Assert = require('assert-js');
+const Area = require('./Map/Area');
+const Logger = require('./../Common/Logger');
+const Tile = require('./Map/Area/Tile');
+const Item = require('./Map/Area/Item');
+const Position = require('./Map/Area/Position');
+const MonsterFactory = require('./MonsterFactory');
+const Spawn = require('./Spawn');
+const fs = require('fs');
 
-export default class Loader
+class Loader
 {
     /**
      * @param {Kernel} kernel
@@ -70,3 +70,5 @@ export default class Loader
         kernel.setMonsterFactory(monsterFactory);
     }
 }
+
+module.exports = Loader;

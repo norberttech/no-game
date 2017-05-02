@@ -1,9 +1,9 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Utils from './../../../Common/Utils';
+const Assert = require('assert-js');
+const Utils = require('./../../../Common/Utils');
 
-export default class Position
+class Position
 {
     /**
      * @param {int} x
@@ -103,3 +103,5 @@ export default class Position
         return Math.round(distance * 10) / 10;
     }
 }
+
+module.exports = Position;

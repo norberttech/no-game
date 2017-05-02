@@ -1,13 +1,12 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Message from './../../Common/Network/Message';
-import Player from './../../Engine/Player';
-import Monster from './../../Engine/Monster';
-import Position from './../../Engine/Map/Area/Position';
-import ServerMessages from './../../Common/Network/ServerMessages';
+const Assert = require('assert-js');
+const Message = require('./../../Common/Network/Message');
+const Player = require('./../../Engine/Player');
+const Monster = require('./../../Engine/Monster');
+const ServerMessages = require('./../../Common/Network/ServerMessages');
 
-export default class CharactersMessage extends Message
+class CharactersMessage extends Message
 {
     /**
      * @param {Player[]} [players]
@@ -60,3 +59,5 @@ export default class CharactersMessage extends Message
         };
     }
 }
+
+module.exports = CharactersMessage;

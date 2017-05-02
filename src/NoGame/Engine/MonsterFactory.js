@@ -1,10 +1,10 @@
 'use strict';
 
-import Assert from 'assert-js'
-import Monster from './Monster';
-import Position from './Map/Area/Position';
+const Assert = require('assert-js')
+const Monster = require('./Monster');
+const Position = require('./Map/Area/Position');
 
-export default class MonsterFactory
+class MonsterFactory
 {
     constructor()
     {
@@ -66,3 +66,5 @@ export default class MonsterFactory
         );
     }
 }
+
+module.exports = MonsterFactory;

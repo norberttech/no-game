@@ -1,9 +1,9 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Connection from './../Network/Connection';
+const Assert = require('assert-js');
+const Connection = require('./../Network/Connection');
 
-export default class IncomeMessage
+class IncomeMessage
 {
     /**
      * @param {object} packet
@@ -11,7 +11,6 @@ export default class IncomeMessage
      */
     constructor(packet, connection)
     {
-        Assert.object(packet);
         Assert.instanceOf(connection, Connection);
 
         this._packet = packet;
@@ -34,3 +33,5 @@ export default class IncomeMessage
         return this._connection;
     }
 }
+
+module.exports = IncomeMessage;

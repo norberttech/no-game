@@ -6,7 +6,7 @@
  *
  * More here: http://timetocode.tumblr.com/post/71512510386/an-accurate-nodejs-game-loop-inbetween-settimeout
  */
-export default class GameLoop
+class GameLoop
 {
     /**
      * @param {int} tickLengthTime
@@ -44,3 +44,5 @@ export default class GameLoop
         }
     }
 }
+
+module.exports = GameLoop;

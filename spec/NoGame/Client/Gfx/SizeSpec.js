@@ -1,4 +1,6 @@
-import Size from '../../../../src/NoGame/Client/Gfx/Size'
+'use strict';
+
+import Size from './../../../../src/NoGame/Client/Gfx/Size';
 
 describe("Gfx Size", () => {
     it("throws exception when created from invalid values", () => {

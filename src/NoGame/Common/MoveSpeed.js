@@ -1,13 +1,13 @@
 'use strict';
 
-import Assert from 'assert-js';
+const Assert = require('assert-js');
 
 /**
  * @type {number}
  */
 const BASE_MOVE_TIME = 500;
 
-export default class MoveSpeed
+class MoveSpeed
 {
     /**
      * @param {number} distance
@@ -22,3 +22,5 @@ export default class MoveSpeed
         return ((distance * BASE_MOVE_TIME * 100) - moveSpeedModifier) / 100;
     }
 }
+
+module.exports = MoveSpeed;

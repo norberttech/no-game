@@ -1,6 +1,6 @@
 'use strict';
 
-export default class Utils
+class Utils
 {
     /**
      * @param {int} minimum
@@ -35,3 +35,5 @@ export default class Utils
         }
     }
 }
+
+module.exports = Utils;

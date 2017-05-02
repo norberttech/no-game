@@ -1,4 +1,6 @@
-import Position from '../../../../../src/NoGame/Engine/Map/Area/Position'
+'use strict';
+
+const Position = require('./../../../../../src/NoGame/Engine/Map/Area/Position');
 
 describe("Position", () => {
     it ("can be compared with other positoon", () => {

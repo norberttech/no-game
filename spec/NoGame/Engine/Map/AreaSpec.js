@@ -1,8 +1,10 @@
-import Area from '../../../../src/NoGame/Engine/Map/Area';
-import Item from '../../../../src/NoGame/Engine/Map/Area/Item';
-import Tile from '../../../../src/NoGame/Engine/Map/Area/Tile';
-import Position from '../../../../src/NoGame/Engine/Map/Area/Position';
-import Player from '../../../../src/NoGame/Engine/Player';
+'use strict';
+
+const Area = require('./../../../../src/NoGame/Engine/Map/Area');
+const Item = require('./../../../../src/NoGame/Engine/Map/Area/Item');
+const Tile = require('./../../../../src/NoGame/Engine/Map/Area/Tile');
+const Position = require('./../../../../src/NoGame/Engine/Map/Area/Position');
+const Player = require('./../../../../src/NoGame/Engine/Player');
 
 describe("Area", () => {
     it ("can't have two tiles with the same position", () => {

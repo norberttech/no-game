@@ -1,8 +1,8 @@
 'use strict';
 
-import Assert from 'assert-js';
+const Assert = require('assert-js');
 
-export default class Grid
+class Grid
 {
     /**
      * @param {int} sizeX
@@ -57,3 +57,5 @@ export default class Grid
         return this._tiles;
     }
 }
+
+module.exports = Grid;

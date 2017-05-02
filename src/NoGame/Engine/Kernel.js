@@ -1,14 +1,14 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Logger from './../Common/Logger';
-import Loader from './Loader';
-import Player from './Player';
-import Area from './Map/Area';
-import Position from './Map/Area/Position';
-import MonsterFactory from './MonsterFactory';
+const Assert = require('assert-js');
+const Logger = require('./../Common/Logger');
+const Loader = require('./Loader');
+const Player = require('./Player');
+const Area = require('./Map/Area');
+const Position = require('./Map/Area/Position');
+const MonsterFactory = require('./MonsterFactory');
 
-export default class Kernel
+class Kernel
 {
     /**
      * @param {Logger} logger
@@ -314,3 +314,5 @@ export default class Kernel
         this._area.logoutPlayer(playerId);
     }
 }
+
+module.exports = Kernel

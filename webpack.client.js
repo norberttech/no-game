@@ -6,7 +6,7 @@ module.exports = {
     context: __dirname + "/src/NoGame/Client",
     entry:   "./bootstrap.js",
     output: {
-        path: __dirname + "/bin",
+        path: __dirname + "/build",
         filename: "client.js"
     },
     target: "web",
@@ -15,10 +15,15 @@ module.exports = {
         fs: "empty"
     },
     module: {
-        loaders: [
-            { test: /\.html$/, loader: "html" },
-            { test: /\.js$/, exclude: /node_modules/, loader: 'babel', query: {presets: ['es2015']}},
-            { test: /\.json$/, loader: "json" }
+        rules: [
+            {
+                test: /\.js$/,
+                loader: "babel-loader",
+                exclude: /node_modules/,
+                query: {
+                    presets: ['es2015']
+                }
+            }
         ]
     },
     resolve: {

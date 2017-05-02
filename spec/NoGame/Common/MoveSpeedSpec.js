@@ -1,4 +1,6 @@
-import MoveSpeed from '../../../src/NoGame/Common/MoveSpeed';
+'use strict';
+
+const MoveSpeed = require('./../../../src/NoGame/Common/MoveSpeed');
 
 describe("Move Speed", () => {
     it("it calculates move speed without modifiers", () => {

@@ -1,17 +1,16 @@
 'use strict';
 
-import ws from 'ws';
-import Broadcaster from './Broadcaster';
-import Connection from './Network/Connection';
-import IncomeMessageQueue from './MessageQueue/IncomeQueue';
-import CharactersMessage from './Network/CharactersMessage';
-import Assert from 'assert-js';
-import Kernel from './../Engine/Kernel';
-import GameLoop from './GameLoop';
-import Protocol from './Protocol';
-import Logger from './../Common/Logger';
+const WebsocketServer = require('ws').Server;
+const Broadcaster = require('./Broadcaster');
+const Connection = require('./Network/Connection');
+const IncomeMessageQueue = require('./MessageQueue/IncomeQueue');
+const Assert = require('assert-js');
+const Kernel = require('./../Engine/Kernel');
+const GameLoop = require('./GameLoop');
+const Protocol = require('./Protocol');
+const Logger = require('./../Common/Logger');
 
-export default class Server
+class Server
 {
     /**
      * @param {Kernel} kernel
@@ -39,22 +38,26 @@ export default class Server
     {
         Assert.integer(port);
 
-        let onConnection = (socket) => {
-            let connection = new Connection(socket, this._logger);
-
-            connection.bindOnMessage(this.onMessage.bind(this));
-            connection.bindOnClose(this.onClose.bind(this));
-
-            this._broadcaster.addConnection(connection);
-        };
-
         this._gameLoop.start();
-        this._server = ws.createServer({
+        this._server = new WebsocketServer({
+            perMessageDeflate: false,
             port: port,
             verifyClient: false
-        }, onConnection);
+        });
+
+        this._server.on('connection', this.onConnection.bind(this));
+
 
         this._logger.info(`Server is listening on port: ${port}`);
+    }
+
+    onConnection(socket) {
+        let connection = new Connection(socket, this._logger);
+
+        connection.bindOnMessage(this.onMessage.bind(this));
+        connection.bindOnClose(this.onClose.bind(this));
+
+        this._broadcaster.addConnection(connection);
     }
 
     /**
@@ -128,3 +131,5 @@ export default class Server
         this._broadcaster.removeConnection(closedConnection.id);
     }
 }
+
+module.exports = Server;

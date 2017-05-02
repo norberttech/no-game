@@ -1,11 +1,11 @@
 'use strict';
 
-import Connection from './Network/Connection';
-import Area from './../Engine/Map/Area';
-import Player from './../Engine/Player';
-import Assert from 'assert-js';
+const Assert = require('assert-js');
+const Connection = require('./Network/Connection');
+const Area = require('./../Engine/Map/Area');
+const Player = require('./../Engine/Player');
 
-export default class Broadcaster
+class Broadcaster
 {
     constructor()
     {
@@ -152,3 +152,5 @@ export default class Broadcaster
         }
     }
 }
+
+module.exports = Broadcaster;

@@ -1,10 +1,10 @@
 'use strict';
 
-import Assert from 'assert-js';
-import PF from 'pathfinding';
-import Grid from './PathFinder/Grid';
+const Assert = require('assert-js');
+const PF = require('pathfinding');
+const Grid = require('./PathFinder/Grid');
 
-export default class PathFinder
+class PathFinder
 {
     constructor()
     {
@@ -50,3 +50,5 @@ export default class PathFinder
         });
     }
 }
+
+module.exports = PathFinder;

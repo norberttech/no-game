@@ -1,12 +1,12 @@
 'use strict';
 
-import Assert from 'assert-js';
-import WebSocket from 'ws/lib/WebSocket';
-import Logger from './../../Common/Logger';
-import Message from '../../Common/Network/Message';
-import UUID from 'uuid';
+const Assert = require('assert-js');
+const WebSocket = require('ws/lib/WebSocket');
+const Logger = require('./../../Common/Logger');
+const Message = require('../../Common/Network/Message');
+const UUID = require('uuid');
 
-export default class Connection
+class Connection
 {
     /**
      * @param {WebSocket} socket
@@ -125,3 +125,5 @@ export default class Connection
         })
     }
 }
+
+module.exports = Connection;

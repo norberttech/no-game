@@ -1,7 +1,9 @@
-import Monster from '../../../src/NoGame/Engine/Monster';
-import Player from '../../../src/NoGame/Engine/Player';
-import Position from '../../../src/NoGame/Engine/Map/Area/Position';
-import Utils from '../../../src/NoGame/Common/Utils';
+'use strict';
+
+const Monster = require('./../../../src/NoGame/Engine/Monster');
+const Player = require('./../../../src/NoGame/Engine/Player');
+const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
+const Utils = require('./../../../src/NoGame/Common/Utils');
 
 describe("Monster", () => {
     it ("it has uuid", () => {

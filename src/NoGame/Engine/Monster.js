@@ -1,12 +1,12 @@
 'use strict';
 
-import UUID from 'uuid';
-import Assert from 'assert-js'
-import Player from './Player';
-import Position from './Map/Area/Position';
-import MoveSpeed from './../Common/MoveSpeed';
+const UUID = require('uuid');
+const Assert = require('assert-js');
+const Player = require('./Player');
+const Position = require('./Map/Area/Position');
+const MoveSpeed = require('./../Common/MoveSpeed');
 
-export default class Monster
+class Monster
 {
     /**
      * @param {string} name
@@ -243,3 +243,5 @@ export default class Monster
         this._position = newPosition;
     }
 }
+
+module.exports = Monster;

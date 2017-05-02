@@ -1,7 +1,7 @@
 # NoGame [![Build Status](https://travis-ci.org/norzechowicz/no-game.svg?branch=master)](https://travis-ci.org/norzechowicz/no-game)
 
 This repository is a proof of concept of 2D mmorpg game engine&client written in JS (es6).
-It was made as a research before paid project for my client. 
+It was made as a part of research done in my free time before paid project for my client. 
 
 Following features are already implemented: 
 
@@ -19,8 +19,8 @@ Following features are already implemented:
 
 In order to make it playable you gonna need to implement following features:
 
-- leveing system (based on experience) 
-- improve battle system in order to support equpiment (that is also not implemented) 
+- leveling system (based on experience) 
+- improve battle system in order to support equipment (that is also not implemented) 
 - prepare some better looking assets 
 - add more tests (just to make sure that game is stable)
 - add some persistence layer (at the moment when you shutdown server or when player logout his data is lost)
@@ -34,7 +34,7 @@ One ugly square (player) is fighting with another ugly square (rat, monster) :P
 
 # Setup
 
-Before you start make sure you have installed ``npm`` on your machine. 
+Before you start make sure you have installed ``node`` version `>=7.9.x` and ``npm`` version `>4.6.x` on your machine. 
 
 ```
 $ git clone git@github.com:norzechowicz/no-game.git
@@ -50,4 +50,4 @@ In order to do that you need to build server&client, following commands should h
 - ``$ npm run client:dev`` - build and watch for changes in client (after building client you can open it in your browser ``/client/index.html``)
 - ``$ npm run client:build`` - build client into ``build`` folder 
 - ``$ npm run server:dev`` - build server in memory and start listening for connections
-- ``$ npm run server:build`` - build server code into ``build`` folder
+- ``$ npm run server:run`` - run game server

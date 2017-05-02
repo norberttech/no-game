@@ -1,6 +1,8 @@
-import Spawn from '../../../src/NoGame/Engine/Spawn';
-import MonsterFactory from '../../../src/NoGame/Engine/MonsterFactory';
-import Position from '../../../src/NoGame/Engine/Map/Area/Position';
+'use strict';
+
+const Spawn = require('./../../../src/NoGame/Engine/Spawn');
+const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
+const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
 
 describe("Spawn", () => {
     let monsterFactory = new MonsterFactory();

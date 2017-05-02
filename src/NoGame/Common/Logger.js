@@ -1,8 +1,8 @@
 'use strict';
 
-import bunyan from 'bunyan';
+const bunyan = require('bunyan');
 
-export default class Logger
+class Logger
 {
     /**
      * @param {string} logLevel
@@ -45,3 +45,5 @@ export default class Logger
         this._logger.trace(entry);
     }
 }
+
+module.exports = Logger;

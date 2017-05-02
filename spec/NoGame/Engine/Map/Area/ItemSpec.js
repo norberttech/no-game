@@ -1,4 +1,6 @@
-import Item from '../../../../../src/NoGame/Engine/Map/Area/Item'
+'use strict';
+
+const Item = require('./../../../../../src/NoGame/Engine/Map/Area/Item');
 
 describe("Item", () => {
     it ("is not blocking by default", () => {

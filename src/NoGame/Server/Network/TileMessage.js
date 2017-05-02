@@ -1,12 +1,12 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Message from './../../Common/Network/Message';
-import Tile from './../../Engine/Map/Area/Tile';
-import Player from './../../Engine/Player';
-import ServerMessages from './../../Common/Network/ServerMessages';
+const Assert = require('assert-js');
+const Message = require('./../../Common/Network/Message');
+const Tile = require('./../../Engine/Map/Area/Tile');
+const Player = require('./../../Engine/Player');
+const ServerMessages = require('./../../Common/Network/ServerMessages');
 
-export default class TileMessage extends Message
+class TileMessage extends Message
 {
     /**
      * @param {Tile} tile
@@ -31,3 +31,5 @@ export default class TileMessage extends Message
         };
     }
 }
+
+module.exports = TileMessage;

@@ -1,8 +1,8 @@
 'use strict';
 
-import Assert from 'assert-js';
+const Assert = require('assert-js');
 
-export default class Message
+class Message
 {
     constructor()
     {
@@ -45,3 +45,5 @@ export default class Message
         return JSON.stringify({index: this._index, name: this._name, data: this._data});
     }
 }
+
+module.exports = Message;
