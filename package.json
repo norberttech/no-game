@@ -5,7 +5,8 @@
   "main": "bin/server",
   "private": true,
   "scripts": {
-    "client:test": "jasmine JASMINE_CONFIG_PATH=spec/support/client.json",
+    "test": "npm run client:test && npm run server:test",
+    "client:test": "babel-node spec/client.js",
     "client:build": "node_modules/.bin/webpack --config webpack.client.build.js --progress --color --display-modules",
     "client:dev": "node webpack.client.dev.js",
     "server:test": "jasmine JASMINE_CONFIG_PATH=spec/support/server.json && jasmine JASMINE_CONFIG_PATH=spec/support/common.json",
@@ -32,6 +33,7 @@
     "babel-loader": "7.0.0",
     "babel-preset-es2015": "^6.24.1",
     "jasmine": "^2.6.0",
+    "jasmine-es6" : "0.4.0",
     "webpack-dev-server": "2.4.5"
   }
 }
