@@ -280,6 +280,11 @@ class Protocol
      */
     _handleMove(packet, currentConnection)
     {
+        if (!currentConnection.hasPlayerId){
+            currentConnection.disconnect();
+            return ;
+        }
+
         let area = this._kernel.area;
         let toPosition = new Position(packet.data.x, packet.data.y);
         let player = area.getPlayer(currentConnection.playerId);
@@ -322,6 +327,11 @@ class Protocol
      */
     _handleMessage(packet, currentConnection)
     {
+        if (!currentConnection.hasPlayerId){
+            currentConnection.disconnect();
+            return ;
+        }
+
         let area = this._kernel.area;
 
         this._broadcaster.sendToPlayersInRange(
@@ -340,6 +350,11 @@ class Protocol
      */
     _handleAttackMonster(packet, currentConnection)
     {
+        if (!currentConnection.hasPlayerId){
+            currentConnection.disconnect();
+            return ;
+        }
+
         this._kernel.playerAttack(currentConnection.playerId, packet.data.id);
     }
 }

@@ -13,15 +13,22 @@ const fs = require('fs');
 class Loader
 {
     /**
-     * @param {Kernel} kernel
      * @param {Logger} logger
+     * @param {string} name
+     * @param {string} mapPath
+     * @returns {Area}
      */
-    static loadMapArea(kernel, logger)
+    static loadMapArea(logger, name, mapPath)
     {
-        logger.info('Loading tesaria.json...');
-        let areaData = JSON.parse(fs.readFileSync(__dirname + '/../Engine/Resources/Map/tesaria.json', 'utf8'));
+        Assert.instanceOf(logger, Logger);
+        Assert.string(name);
+        Assert.string(mapPath);
 
-        let area = new Area("Tesaria", areaData.width, areaData.height);
+        logger.info(`Loading map from ${mapPath}...`);
+
+        let areaData = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+
+        let area = new Area(name, areaData.width, areaData.height);
 
         let groundTiles = areaData.layers[0];
         let groundsTileSet = areaData.tilesets[0];
@@ -51,13 +58,19 @@ class Loader
 
         area.addSpawn(new Spawn("rat", 1, 10000, new Position(30, 12), 1));
 
-        kernel.setArea(area);
-
         logger.info('tesaria.json loaded!');
+
+        return area;
     }
 
-    static loadMonsterFactory(kernel, logger)
+    /**
+     * @param {Logger} logger
+     * @returns {MonsterFactory}
+     */
+    static loadMonsterFactory(logger)
     {
+        Assert.instanceOf(logger, Logger);
+
         logger.info('Loading monster factory...');
 
         let monsterFactory = new MonsterFactory();
@@ -67,7 +80,7 @@ class Loader
 
         logger.info("Monster factory loaded!");
 
-        kernel.setMonsterFactory(monsterFactory);
+        return monsterFactory;
     }
 }
 

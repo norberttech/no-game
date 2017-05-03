@@ -1,48 +1,35 @@
 'use strict';
 
-const bunyan = require('bunyan');
-
 class Logger
 {
-    /**
-     * @param {string} logLevel
-     */
-    constructor(logLevel)
-    {
-        this._logger = bunyan.createLogger({
-            name: "server",
-            level: logLevel
-        });
-    }
-
     fatal(entry)
     {
-        this._logger.fatal(entry);
+        throw new Error('Not implemented');
     }
 
     error(entry)
     {
-        this._logger.error(entry);
+        throw new Error('Not implemented');
     }
 
     warn(entry)
     {
-        this._logger.warn(entry);
+        throw new Error('Not implemented');
     }
 
     info(entry)
     {
-        this._logger.info(entry);
+        throw new Error('Not implemented');
     }
 
     debug(entry)
     {
-        this._logger.debug(entry);
+        throw new Error('Not implemented');
     }
 
     trace(entry)
     {
-        this._logger.trace(entry);
+        throw new Error('Not implemented');
     }
 }
 

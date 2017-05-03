@@ -32,11 +32,13 @@ class Server
     }
 
     /**
-     * @param {integer} port
+     * @param {int} [port]
+     * @param {function} [callback]
      */
-    listen(port = 8080)
+    listen(port = 8080, callback = () => {})
     {
         Assert.integer(port);
+        Assert.isFunction(callback);
 
         this._gameLoop.start();
         this._server = new WebsocketServer({
@@ -46,9 +48,8 @@ class Server
         });
 
         this._server.on('connection', this.onConnection.bind(this));
-
-
         this._logger.info(`Server is listening on port: ${port}`);
+        callback();
     }
 
     onConnection(socket) {
@@ -129,6 +130,18 @@ class Server
         this._protocol.logout(closedConnection);
 
         this._broadcaster.removeConnection(closedConnection.id);
+    }
+
+    /**
+     * @param {function} [callback]
+     */
+    terminate(callback = () => {})
+    {
+        Assert.isFunction(callback);
+
+        this._gameLoop.stop();
+        this._server.close();
+        callback();
     }
 }
 

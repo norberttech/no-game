@@ -128,7 +128,7 @@ class Area
     {
         let characters = [];
         let player = this.getPlayer(playerId);
-        var range = Calculator.visibleTilesRange(
+        let range = Calculator.visibleTilesRange(
             player.position.x,
             player.position.y,
             VISIBLE_TILES.x,

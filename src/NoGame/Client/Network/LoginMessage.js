@@ -2,7 +2,6 @@
 
 import Assert from 'assert-js';
 import Message from './../../Common/Network/Message';
-import Player from './../../Engine/Player';
 import ClientMessages from './../../Common/Network/ClientMessages';
 
 export default class LoginMessage extends Message

@@ -103,6 +103,11 @@ class Connection
         this._index++;
     }
 
+    disconnect()
+    {
+        this._socket.close();
+    }
+
     _logSend(entry)
     {
         this._logger.debug({

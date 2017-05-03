@@ -10,6 +10,7 @@
     "client:build": "node_modules/.bin/webpack --config webpack.client.build.js --progress --color --display-modules",
     "client:dev": "node webpack.client.dev.js",
     "server:test:unit": "jasmine JASMINE_CONFIG_PATH=spec/support/server.json && jasmine JASMINE_CONFIG_PATH=spec/support/common.json",
+    "server:test:integration": "jasmine JASMINE_CONFIG_PATH=spec/support/integration.json",
     "server:run": "node bin/server"
   },
   "author": "",

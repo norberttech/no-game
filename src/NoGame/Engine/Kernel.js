@@ -12,25 +12,22 @@ class Kernel
 {
     /**
      * @param {Logger} logger
+     * @param {Area} area
+     * @param {MonsterFactory} monsterFactory
      */
-    constructor(logger)
+    constructor(logger, area, monsterFactory)
     {
         Assert.instanceOf(logger, Logger);
 
         this._version = '1.0.0-DEV';
         this._loaded = false;
-        this._area = null;
-        this._monsterFactory = null;
+        this._area = area;
+        this._monsterFactory = monsterFactory;
         this._logger = logger;
     }
 
     boot()
     {
-        Loader.loadMapArea(this, this._logger);
-        Loader.loadMonsterFactory(this, this._logger);
-
-        this.area;
-
         this._loaded = true;
     }
 
@@ -44,28 +41,6 @@ class Kernel
         }
 
         return this._area;
-    }
-
-    /**
-     * @param {Area} area
-     */
-    setArea(area)
-    {
-        Assert.instanceOf(area, Area);
-
-        if (this._area !== null && this._loaded) {
-            throw `Area already set and kernel already loaded.`;
-        }
-
-        this._area = area;
-    }
-
-    /**
-     * @param {MonsterFactory} factory
-     */
-    setMonsterFactory(factory)
-    {
-        this._monsterFactory = factory;
     }
 
     /**
@@ -315,4 +290,4 @@ class Kernel
     }
 }
 
-module.exports = Kernel
+module.exports = Kernel;

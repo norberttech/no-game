@@ -18,6 +18,9 @@ class GameLoop
         this._previousTick = new Date().getTime();
         this._actualTicks = 0;
         this._callback = callback;
+        this._isTerminated = false;
+        this._timeout = null;
+        this._immediate = null;
     }
 
     /**
@@ -25,6 +28,10 @@ class GameLoop
      */
     start()
     {
+        if (this._isTerminated === true) {
+            return ;
+        }
+
         let now = new Date().getTime();
         this._actualTicks++;
 
@@ -38,10 +45,17 @@ class GameLoop
         }
 
         if (new Date().getTime() - this._previousTick < this._tickLengthTime - 16) {
-            setTimeout(this.start.bind(this));
+            this._timeout = setTimeout(this.start.bind(this));
         } else {
-            setImmediate(this.start.bind(this));
+            this._immediate = setImmediate(this.start.bind(this));
         }
+    }
+
+    stop()
+    {
+        this._isTerminated = true;
+        clearTimeout(this._timeout);
+        clearImmediate(this._immediate);
     }
 }
 
