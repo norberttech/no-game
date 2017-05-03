@@ -44,7 +44,7 @@ describe("Monster", () => {
 
         expect(monster.isExhausted).toBe(true);
 
-        Utils.sleep(10);
+        Utils.sleep(100);
 
         expect(monster.isExhausted).toBe(false);
     });

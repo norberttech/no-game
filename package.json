@@ -5,7 +5,7 @@
   "main": "bin/server",
   "private": true,
   "scripts": {
-    "test": "npm run client:test:unit && npm run server:test:unit",
+    "test": "npm run client:test:unit && npm run server:test:unit && npm run server:test:integration",
     "client:test:unit": "babel-node spec/client.js",
     "client:build": "node_modules/.bin/webpack --config webpack.client.build.js --progress --color --display-modules",
     "client:dev": "node webpack.client.dev.js",

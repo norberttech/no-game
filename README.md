@@ -49,5 +49,4 @@ In order to do that you need to build server&client, following commands should h
 - ``$ npm test `` - execute test suite 
 - ``$ npm run client:dev`` - build and watch for changes in client (after building client you can open it in your browser ``/client/index.html``)
 - ``$ npm run client:build`` - build client into ``build`` folder 
-- ``$ npm run server:dev`` - build server in memory and start listening for connections
 - ``$ npm run server:run`` - run game server
