@@ -6,6 +6,7 @@ const Tile = require('./Map/Area/Tile');
 const Monster = require('./Monster');
 const Position = require('./Map/Area/Position');
 const MoveSpeed = require('./../Common/MoveSpeed');
+const Clock = require('./Clock');
 
 const BASE_ATTACK_DELAY = 3000;
 const BASE_DEFENCE = 4;
@@ -17,13 +18,15 @@ class Player
      * @param {string} name
      * @param {int} health
      * @param {int} maxHealth
+     * @param {Clock} clock
      */
-    constructor(name, health = 100, maxHealth = 100)
+    constructor(name, health, maxHealth, clock)
     {
         Assert.string(name);
         Assert.notEmpty(name);
         Assert.greaterThan(0, health);
         Assert.greaterThan(0, maxHealth);
+        Assert.instanceOf(clock, Clock);
 
         this._id = uuid.v4();
         this._health = health;
@@ -34,6 +37,7 @@ class Player
         this._attackedBy = new Map();
         this._lastAttack = 0;
         this._attackedMonster = null;
+        this._clock = clock;
     }
 
     /**
@@ -81,7 +85,7 @@ class Player
      */
     get isMoving()
     {
-        return (new Date().getTime() < this._moveEnds);
+        return (this._clock.time() < this._moveEnds);
     }
 
     /**
@@ -142,7 +146,7 @@ class Player
      */
     get isExhausted()
     {
-        return (new Date().getTime() < this._lastAttack + BASE_ATTACK_DELAY);
+        return (this._clock.time() < this._lastAttack + BASE_ATTACK_DELAY);
     }
 
     /**
@@ -162,7 +166,7 @@ class Player
             throw `Can't move that far`;
         }
 
-        this._moveEnds = new Date().getTime() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
+        this._moveEnds = this._clock.time() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
         this._position = destination.position;
         destination.playerWalkOn(this._id);
     }
@@ -267,7 +271,7 @@ class Player
             throw `Player ${monster.id} can't be damaged, it is too far from monster ${this._id}`;
         }
 
-        this._lastAttack = new Date().getTime();
+        this._lastAttack = this._clock.time();
 
         return new Promise((resolve, reject) => {
             let power = Math.round((this.attackPower * Math.random()) - (monster.defence * Math.random()));

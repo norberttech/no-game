@@ -8,25 +8,36 @@
  */
 class GameLoop
 {
-    /**
-     * @param {int} tickLengthTime
-     * @param {function} callback
-     */
-    constructor(tickLengthTime, callback)
+    constructor()
     {
-        this._tickLengthTime = tickLengthTime;
-        this._previousTick = new Date().getTime();
-        this._actualTicks = 0;
-        this._callback = callback;
-        this._isTerminated = false;
+        this._isTerminated = true;
         this._timeout = null;
         this._immediate = null;
     }
 
     /**
-     * Starts game loop and continue to execute it.
+     * @param {int} tickLengthTime
+     * @param {function} callback
      */
-    start()
+    start(tickLengthTime, callback)
+    {
+        this._tickLengthTime = tickLengthTime;
+        this._previousTick = new Date().getTime();
+        this._callback = callback;
+        this._actualTicks = 0;
+        this._isTerminated = false;
+
+        setTimeout(this._tick.bind(this));
+    }
+
+    stop()
+    {
+        this._isTerminated = true;
+        clearTimeout(this._timeout);
+        clearImmediate(this._immediate);
+    }
+
+    _tick()
     {
         if (this._isTerminated === true) {
             return ;
@@ -45,17 +56,10 @@ class GameLoop
         }
 
         if (new Date().getTime() - this._previousTick < this._tickLengthTime - 16) {
-            this._timeout = setTimeout(this.start.bind(this));
+            this._timeout = setTimeout(this._tick.bind(this));
         } else {
-            this._immediate = setImmediate(this.start.bind(this));
+            this._immediate = setImmediate(this._tick.bind(this));
         }
-    }
-
-    stop()
-    {
-        this._isTerminated = true;
-        clearTimeout(this._timeout);
-        clearImmediate(this._immediate);
     }
 }
 

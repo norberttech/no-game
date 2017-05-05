@@ -4,6 +4,8 @@ const fs = require('fs');
 const Kernel = require('./../src/NoGame/Engine/Kernel');
 const Loader = require('./../src/NoGame/Engine/Loader');
 const Server = require('./../src/NoGame/Server/Server');
+const Clock = require('./../src/NoGame/Engine/Clock');
+const GameLoop = require('./../src/NoGame/Server/GameLoop');
 const BunyanLogger = require('./../src/NoGame/Infrastructure/Logger/BunyanLogger');
 
 let parametersFilePath = __dirname + '/../config/parameters.json';
@@ -14,9 +16,10 @@ let logger = new BunyanLogger('server', config.logLevel);
 let kernel = new Kernel(
     logger,
     Loader.loadMapArea(logger, "Tesaria", __dirname + '/../config/map/tesaria.json'),
-    Loader.loadMonsterFactory(logger)
+    Loader.loadMonsterFactory(logger),
+    new Clock()
 );
 kernel.boot();
 
-let server = new Server(kernel, logger);
+let server = new Server(kernel, logger, new GameLoop());
 server.listen(config.port);

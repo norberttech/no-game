@@ -5,6 +5,7 @@ const Logger = require('./../Common/Logger');
 const Loader = require('./Loader');
 const Player = require('./Player');
 const Area = require('./Map/Area');
+const Clock = require('./Clock');
 const Position = require('./Map/Area/Position');
 const MonsterFactory = require('./MonsterFactory');
 
@@ -14,21 +15,34 @@ class Kernel
      * @param {Logger} logger
      * @param {Area} area
      * @param {MonsterFactory} monsterFactory
+     * @param {Clock} clock
      */
-    constructor(logger, area, monsterFactory)
+    constructor(logger, area, monsterFactory, clock)
     {
         Assert.instanceOf(logger, Logger);
+        Assert.instanceOf(area, Area);
+        Assert.instanceOf(monsterFactory, MonsterFactory);
+        Assert.instanceOf(clock, Clock);
 
         this._version = '1.0.0-DEV';
         this._loaded = false;
         this._area = area;
         this._monsterFactory = monsterFactory;
         this._logger = logger;
+        this._clock = clock;
     }
 
     boot()
     {
         this._loaded = true;
+    }
+
+    /**
+     * @returns {Clock}
+     */
+    get clock()
+    {
+        return this._clock;
     }
 
     /**

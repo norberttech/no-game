@@ -246,7 +246,7 @@ class Protocol
      */
     _handleLogin(packet, connection)
     {
-        let player = new Player(packet.data.username, 100, 100);
+        let player = new Player(packet.data.username, 100, 100, this._kernel.clock);
         this._kernel.login(player);
         let area = this._kernel.area;
         let messagesBatch = [];

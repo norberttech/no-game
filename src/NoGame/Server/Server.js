@@ -15,8 +15,9 @@ class Server
     /**
      * @param {Kernel} kernel
      * @param {Logger} logger
+     * @param {GameLoop} loop
      */
-    constructor(kernel, logger)
+    constructor(kernel, logger, loop)
     {
         Assert.instanceOf(kernel, Kernel);
         Assert.instanceOf(logger, Logger);
@@ -26,7 +27,7 @@ class Server
         this._kernel = kernel;
         this._protocol = new Protocol(kernel, this._incomeMessageQueue, this._broadcaster, logger);
         this._logger = logger;
-        this._gameLoop = new GameLoop(1000 / 45, this.update.bind(this));
+        this._gameLoop = loop;
         this._spawnTimer = 0;
         this._monsterThinkTimer = 0;
     }
@@ -40,7 +41,7 @@ class Server
         Assert.integer(port);
         Assert.isFunction(callback);
 
-        this._gameLoop.start();
+        this._gameLoop.start(1000 / 45, this.update.bind(this));
         this._server = new WebsocketServer({
             perMessageDeflate: false,
             port: port,

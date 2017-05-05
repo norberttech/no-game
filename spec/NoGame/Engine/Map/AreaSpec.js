@@ -5,6 +5,15 @@ describe("Area", () => {
     const Tile = require('./../../../../src/NoGame/Engine/Map/Area/Tile');
     const Position = require('./../../../../src/NoGame/Engine/Map/Area/Position');
     const Player = require('./../../../../src/NoGame/Engine/Player');
+    const TestKit = require('./../../Integration/TestKit/TestKit');
+
+    let clock = null;
+
+    beforeEach(() => {
+        "use strict";
+
+        clock = new TestKit.ManualClock(new Date().getTime());
+    });
 
     it ("can't have two tiles with the same position", () => {
         let grass = new Item(100);
@@ -30,7 +39,7 @@ describe("Area", () => {
 
     it ("throws error on attempt to spawn same player twice", () => {
         let area = new Area("test area", 10, 10);
-        let player = new Player("yaboomaster", 100);
+        let player = new Player("yaboomaster", 100, 100, clock);
 
         area.addTile(new Tile(new Position(0, 0), new Item(1)));
 
@@ -44,8 +53,8 @@ describe("Area", () => {
         let stack = [new Item(2, true)];
         let grassTile = new Tile(new Position(1, 1), grass, stack);
         let area = new Area("test area", 1, 1);
-        let player1 = new Player("yaboo1", 100);
-        let player2 = new Player("yaboo2", 100);
+        let player1 = new Player("yaboo1", 100, 100, clock);
+        let player2 = new Player("yaboo2", 100, 100, clock);
 
         area.addTile(new Tile(new Position(0, 0), new Item(1)));
         area.addTile(grassTile);
@@ -57,7 +66,7 @@ describe("Area", () => {
 
     it ("returns tiles visible by player", () => {
         let area = new Area("test area", 100, 100);
-        let player = new Player("yaboo1", 100);
+        let player = new Player("yaboo1", 100, 100, clock);
         for (let x = 0; x < 100; x++) {
             for (let y = 0; y < 100; y++) {
                 area.addTile(new Tile(new Position(x, y), new Item(100)));

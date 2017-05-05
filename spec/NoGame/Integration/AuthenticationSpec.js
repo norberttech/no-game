@@ -4,6 +4,8 @@ describe("Server - Authentication -", () => {
     const Server = require('./../../../src/NoGame/Server/Server');
     const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
     const MemoryLogger = require('./../../../src/NoGame/Infrastructure/Logger/MemoryLogger');
+    const GameLoop = require('./../../../src/NoGame/Server/GameLoop');
+    const Clock = require('./../../../src/NoGame/Engine/Clock');
 
     const PORT = 3333;
     const HOST = `ws://127.0.0.1:${PORT}`;
@@ -12,10 +14,10 @@ describe("Server - Authentication -", () => {
     beforeEach((done) => {
         let area = TestKit.AreaFactory.emptyWalkable(10, 10);
         let logger = new MemoryLogger();
-        let kernel = new Kernel(logger, area, new MonsterFactory());
+        let kernel = new Kernel(logger, area, new MonsterFactory(new Clock()), new Clock());
         kernel.boot();
 
-        server = new Server(kernel, logger);
+        server = new Server(kernel, logger, new GameLoop());
         server.listen(PORT, () => {
             done();
         });

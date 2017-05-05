@@ -5,6 +5,7 @@ const Assert = require('assert-js');
 const Position = require('./Map/Area/Position');
 const MoveSpeed = require('./../Common/MoveSpeed');
 const Tile = require('./Map/Area/Tile');
+const Clock = require('./Clock');
 
 class Monster
 {
@@ -17,8 +18,9 @@ class Monster
      * @param {int} spriteId
      * @param {Position} spawnPosition
      * @param {string} spawnId
+     * @param {Clock} clock
      */
-    constructor(name, health, attackPower, attackDelay, defence, spriteId, spawnPosition, spawnId)
+    constructor(name, health, attackPower, attackDelay, defence, spriteId, spawnPosition, spawnId, clock)
     {
         Assert.string(name);
         Assert.notEmpty(name);
@@ -29,6 +31,7 @@ class Monster
         Assert.integer(spriteId);
         Assert.instanceOf(spawnPosition, Position);
         Assert.string(spawnId);
+        Assert.instanceOf(clock, Clock);
 
         this._id = uuid.v4();
         this._name = name;
@@ -43,6 +46,7 @@ class Monster
         this._attackedPlayerId = null;
         this._attackDelay = attackDelay;
         this._lastAttack = 0;
+        this._clock = clock;
     }
 
     /**
@@ -82,7 +86,7 @@ class Monster
      */
     get isMoving()
     {
-        return (new Date().getTime() < this._moveEnds);
+        return (this._clock.time() < this._moveEnds);
     }
 
     /**
@@ -130,7 +134,7 @@ class Monster
      */
     get isExhausted()
     {
-        return (new Date().getTime() < this._lastAttack + this._attackDelay);
+        return (this._clock.time() < this._lastAttack + this._attackDelay);
     }
 
     /**
@@ -157,7 +161,7 @@ class Monster
             throw `Player ${player.id} can't be damaged, it is too far from monster ${this._id}`;
         }
 
-        this._lastAttack = new Date().getTime();
+        this._lastAttack = this._clock.time();
 
         return new Promise((resolve, reject) => {
             let power = Math.round((this._attackPower * Math.random()) - (player.defence * Math.random()));
@@ -237,7 +241,7 @@ class Monster
             throw `Can't move that far`;
         }
 
-        this._moveEnds = new Date().getTime() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
+        this._moveEnds = this._clock.time() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
         this._position = destination.position;
         destination.monsterWalkOn(this._id);
     }

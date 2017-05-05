@@ -3,9 +3,16 @@ describe("Spawn", () => {
     const Spawn = require('./../../../src/NoGame/Engine/Spawn');
     const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
     const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
+    const TestKit = require('./../Integration/TestKit/TestKit');
 
-    let monsterFactory = new MonsterFactory();
-    monsterFactory.addTemplate("rat", 1, 100, 5, 500, 5);
+    let monsterFactory = null;
+
+    beforeEach(() => {
+        "use strict";
+
+        monsterFactory = new MonsterFactory(new TestKit.ManualClock(new Date().getTime()));
+        monsterFactory.addTemplate("rat", 1, 100, 5, 500, 5);
+    });
 
     it("it knows when its full", () => {
         let spawn = new Spawn("rat", 1, 1000, new Position(20, 20), 10);

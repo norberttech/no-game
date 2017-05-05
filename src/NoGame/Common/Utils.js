@@ -22,16 +22,6 @@ class Utils
 
         return sign === 0 ? number : -number;
     }
-
-    /**
-     * @param {int} milliseconds
-     */
-    static sleep(milliseconds)
-    {
-        let e = new Date().getTime() + milliseconds;
-
-        while (new Date().getTime() <= e) {}
-    }
 }
 
 module.exports = Utils;
