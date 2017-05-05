@@ -1,12 +1,11 @@
-'use strict';
-
-const Area = require('./../../../../src/NoGame/Engine/Map/Area');
-const Item = require('./../../../../src/NoGame/Engine/Map/Area/Item');
-const Tile = require('./../../../../src/NoGame/Engine/Map/Area/Tile');
-const Position = require('./../../../../src/NoGame/Engine/Map/Area/Position');
-const Player = require('./../../../../src/NoGame/Engine/Player');
-
 describe("Area", () => {
+    const expect = require('expect.js');
+    const Area = require('./../../../../src/NoGame/Engine/Map/Area');
+    const Item = require('./../../../../src/NoGame/Engine/Map/Area/Item');
+    const Tile = require('./../../../../src/NoGame/Engine/Map/Area/Tile');
+    const Position = require('./../../../../src/NoGame/Engine/Map/Area/Position');
+    const Player = require('./../../../../src/NoGame/Engine/Player');
+
     it ("can't have two tiles with the same position", () => {
         let grass = new Item(100);
         let stack = [new Item(2), new Item(3), new Item(4)];
@@ -16,7 +15,7 @@ describe("Area", () => {
         area.addTile(grassTile);
 
         expect(() => {area.addTile(grassTile);})
-            .toThrow("Area \"test area\" already have a tile on position 0:0");
+            .to.throwError("Area \"test area\" already have a tile on position 0:0");
     });
 
     it ("can't take tile that position is out of area boundaries", () => {
@@ -26,7 +25,7 @@ describe("Area", () => {
         let area = new Area("test area", 10, 10);
 
         expect(() => {area.addTile(grassTile);})
-            .toThrow("Area \"test area\" boundaries are x: 10, y: 10. Tile position is 25:25");
+            .to.throwError("Area \"test area\" boundaries are x: 10, y: 10. Tile position is 25:25");
     });
 
     it ("throws error on attempt to spawn same player twice", () => {
@@ -37,7 +36,7 @@ describe("Area", () => {
 
         area.loginPlayer(player);
         expect(() => {area.loginPlayer(player);})
-            .toThrow(`Player with id "${player.id}" is already present in area "test area"`);
+            .to.throwError(`Player with id "${player.id}" is already present in area "test area"`);
     });
 
     it ("returns players except player with specific ID", () => {
@@ -53,7 +52,7 @@ describe("Area", () => {
         area.loginPlayer(player1);
         area.loginPlayer(player2);
 
-        expect(area.visiblePlayersFor(player1.id)).toEqual([player2]);
+        expect(area.visiblePlayersFor(player1.id)).to.eql([player2]);
     });
 
     it ("returns tiles visible by player", () => {
@@ -69,11 +68,11 @@ describe("Area", () => {
 
         let tiles = area.visibleTilesFor(player.id);
 
-        expect(tiles.length).toBe(221);
-        expect(tiles[0].position.x).toBe(42);
-        expect(tiles[0].position.y).toBe(44);
+        expect(tiles.length).to.be(221);
+        expect(tiles[0].position.x).to.be(42);
+        expect(tiles[0].position.y).to.be(44);
 
-        expect(tiles[164].position.x).toBe(54);
-        expect(tiles[164].position.y).toBe(52);
+        expect(tiles[164].position.x).to.be(54);
+        expect(tiles[164].position.y).to.be(52);
     });
 });

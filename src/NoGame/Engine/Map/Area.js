@@ -3,15 +3,14 @@
 const Assert = require('assert-js');
 const Tile = require('./Area/Tile');
 const Position = require('./Area/Position');
+const Player = require('./../Player');
+const Spawn = require('./../Spawn');
+const Monster = require('./../Monster');
 const Calculator = require('./../../Common/Area/Calculator');
 const Range = require('./../../Common/Area/Range');
 const Utils = require('./../../Common/Utils');
 const PathFinder = require('./../../Common/PathFinder');
 const Grid = require('./../../Common/PathFinder/Grid');
-
-const Player = require('./../Player');
-const Spawn = require('./../Spawn');
-const Monster = require('./../Monster');
 
 /**
  * Client displays x: 15 and y: 11 but it keeps 2 tiles hidden.
@@ -158,7 +157,7 @@ class Area
         Assert.string(playerId);
         Assert.instanceOf(position, Position);
 
-        var range = Calculator.visibleTilesRange(
+        let range = Calculator.visibleTilesRange(
             position.x,
             position.y,
             VISIBLE_TILES.x,
@@ -185,7 +184,7 @@ class Area
         Assert.instanceOf(position, Position);
 
         let characters = [];
-        var range = Calculator.visibleTilesRange(
+        let range = Calculator.visibleTilesRange(
             position.x,
             position.y,
             VISIBLE_TILES.x,
@@ -225,7 +224,7 @@ class Area
     logoutPlayer(playerId)
     {
         let player = this.getPlayer(playerId);
-        let tile = this._tiles.get(player.position.toString());
+        let t = this._tiles.get(player.position.toString());
 
         for (let monsterId of player.attackedByMonsters) {
             let monster = this.getMonster(monsterId);
@@ -234,7 +233,7 @@ class Area
             player.removeAttackingMonster(monsterId);
         }
 
-        tile.playerLeave(playerId);
+        t.playerLeave(playerId);
         this._characters.delete(playerId);
     }
 
@@ -246,7 +245,7 @@ class Area
     {
         let player = this.getPlayer(playerId);
 
-        let tile = this._tiles.get(player.position.toString());
+        let t = this._tiles.get(player.position.toString());
 
         for (let monsterId of player.attackedByMonsters) {
             let monster = this.getMonster(monsterId);
@@ -255,7 +254,7 @@ class Area
             player.removeAttackingMonster(monsterId);
         }
 
-        tile.playerLeave(playerId);
+        t.playerLeave(playerId);
         this._characters.delete(playerId);
     }
 
@@ -301,10 +300,10 @@ class Area
 
         for (let x = range.startX; x <= range.endX; x++) {
             for (let y = range.startY; y <= range.endY; y++) {
-                let tile = this._tiles.get(Position.toStringFromNative(x, y));
+                let t = this._tiles.get(Position.toStringFromNative(x, y));
 
-                if (tile !== undefined) {
-                    tiles.push(tile);
+                if (t !== undefined) {
+                    tiles.push(t);
                 }
             }
         }
@@ -319,14 +318,13 @@ class Area
     visibleTilesFor(playerId)
     {
         let player = this.getPlayer(playerId);
-        var range = Calculator.visibleTilesRange(
+
+        return this.tilesRange(Calculator.visibleTilesRange(
             player.position.x,
             player.position.y,
             VISIBLE_TILES.x,
             VISIBLE_TILES.y
-        );
-
-        return this.tilesRange(range);
+        ));
     }
 
     /**
@@ -337,14 +335,12 @@ class Area
     {
         Assert.instanceOf(position, Position);
 
-        var range = Calculator.visibleTilesRange(
+        return this.tilesRange(Calculator.visibleTilesRange(
             position.x,
             position.y,
             VISIBLE_TILES.x,
             VISIBLE_TILES.y
-        );
-
-        return this.tilesRange(range);
+        ));
     }
 
     /**
@@ -363,9 +359,7 @@ class Area
      */
     getMonster(monsterId)
     {
-        let spawnId = this._monsters.get(monsterId);
-
-        return this._spawns.get(spawnId).getMonster(monsterId);
+        return this._spawns.get(this._monsters.get(monsterId)).getMonster(monsterId);
     }
 
     /**
@@ -385,8 +379,8 @@ class Area
     {
         let monster = this.getMonster(monsterId);
 
-        let tile = this._tiles.get(monster.position.toString());
-        tile.monsterLeave();
+        let t = this._tiles.get(monster.position.toString());
+        t.monsterLeave();
 
         for (let player of this._characters.values()) {
             if (player.isAttackingMonster(monster.id)) {
@@ -411,7 +405,7 @@ class Area
     {
         let monsters = [];
         let player = this.getPlayer(playerId);
-        var range = Calculator.visibleTilesRange(
+        let range = Calculator.visibleTilesRange(
             player.position.x,
             player.position.y,
             VISIBLE_TILES.x,

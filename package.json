@@ -5,12 +5,15 @@
   "main": "bin/server",
   "private": true,
   "scripts": {
-    "test": "npm run client:test:unit && npm run server:test:unit && npm run server:test:integration",
-    "client:test:unit": "babel-node spec/client.js",
+    "test": "npm run client:test:unit && npm run server:test:unit && npm run server:test:integration && npm run test:dependencies",
+    "test:dependencies": "madge --circular --warning src",
+    "client:test:unit": "mocha --reporter dot --compilers js:babel-core/register spec/NoGame/Client/* --recursive",
     "client:build": "node_modules/.bin/webpack --config webpack.client.build.js --progress --color --display-modules",
     "client:dev": "node webpack.client.dev.js",
-    "server:test:unit": "jasmine JASMINE_CONFIG_PATH=spec/support/server.json && jasmine JASMINE_CONFIG_PATH=spec/support/common.json",
-    "server:test:integration": "jasmine JASMINE_CONFIG_PATH=spec/support/integration.json",
+    "server:test:unit": "npm run server:test:common:unit && npm run server:test:engine:unit",
+    "server:test:common:unit": "mocha --reporter dot spec/NoGame/Common/* --recursive",
+    "server:test:engine:unit": "mocha --reporter dot spec/NoGame/Engine/* --recursive",
+    "server:test:integration": "mocha --reporter dot spec/NoGame/Integration/* --recursive",
     "server:run": "node bin/server"
   },
   "author": "",
@@ -33,8 +36,10 @@
     "babel-core": "6.24.1",
     "babel-loader": "7.0.0",
     "babel-preset-es2015": "^6.24.1",
+    "expect.js": "^0.3.1",
     "jasmine": "^2.6.0",
-    "jasmine-es6" : "0.4.0",
+    "madge": "^1.6.0",
+    "mocha": "^3.3.0",
     "webpack-dev-server": "2.4.5"
   }
 }

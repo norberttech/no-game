@@ -162,9 +162,11 @@ export default class Kernel
         }
 
         try {
-            let path = this._pathFinder.findPath(centerPosition.x, centerPosition.y, position.x, position.y, grid);
-
-            this._walkPath = new Path(path, this._player.position, new Position(centerPosition.x, centerPosition.y));
+            this._walkPath = new Path(
+                this._pathFinder.findPath(centerPosition.x, centerPosition.y, position.x, position.y, grid),
+                this._player.position,
+                new Position(centerPosition.x, centerPosition.y)
+            );
         } catch (e) {
             return ;
         }

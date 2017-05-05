@@ -1,7 +1,8 @@
 'use strict';
 
-const UUID = require('uuid');
+const uuid = require('uuid');
 const Assert = require('assert-js');
+const Tile = require('./Map/Area/Tile');
 const Monster = require('./Monster');
 const Position = require('./Map/Area/Position');
 const MoveSpeed = require('./../Common/MoveSpeed');
@@ -24,7 +25,7 @@ class Player
         Assert.greaterThan(0, health);
         Assert.greaterThan(0, maxHealth);
 
-        this._id = UUID.v4();
+        this._id = uuid.v4();
         this._health = health;
         this._maxHealth = maxHealth;
         this._position = null;
@@ -145,26 +146,25 @@ class Player
     }
 
     /**
-     * @param {Position} newPosition
-     * @param {number} moveSpeedModifier
+     * @param {Tile} destination
      */
-    move(newPosition, moveSpeedModifier = 0)
+    move(destination)
     {
         if (this.isMoving) {
             return ;
         }
 
-        Assert.instanceOf(newPosition, Position);
-        Assert.integer(moveSpeedModifier);
+        Assert.instanceOf(destination, Tile);
 
-        let distance = this._position.calculateDistanceTo(newPosition);
+        let distance = this._position.calculateDistanceTo(destination.position);
 
         if (distance >= 2) {
             throw `Can't move that far`;
         }
 
-        this._moveEnds = new Date().getTime() + MoveSpeed.calculateMoveTime(distance, moveSpeedModifier);
-        this._position = newPosition;
+        this._moveEnds = new Date().getTime() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
+        this._position = destination.position;
+        destination.playerWalkOn(this._id);
     }
 
     /**
@@ -257,8 +257,7 @@ class Player
      */
     meleeDamageMonster(monster)
     {
-        // TODO: Investigate why Monster is treated as an invalid class name
-        // Assert.instanceOf(monster, Monster);
+         Assert.instanceOf(monster, Monster);
 
         if (this._attackedMonster !== monster.id) {
             throw `Player ${monster.id} can't be damaged, it wasn't attacked by monster ${this._id}`;

@@ -1,6 +1,7 @@
 {
   "spec_dir": "spec/NoGame/Engine",
   "spec_files": [
-    "**/*[sS]pec.js"
+    "**/AreaSpec.js",
+    "**/PlayerSpec.js"
   ]
 }

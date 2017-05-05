@@ -1,15 +1,12 @@
-'use strict';
-
-const Kernel = require('./../../../src/NoGame/Engine/Kernel');
-const Server = require('./../../../src/NoGame/Server/Server');
-const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
-const MemoryLogger = require('./../../../src/NoGame/Infrastructure/Logger/MemoryLogger');
-const TestKit = require('./TestKit/TestKit');
-
-const PORT = 3333;
-const HOST = `ws://127.0.0.1:${PORT}`;
-
 describe("Server - Authentication -", () => {
+    const TestKit = require('./TestKit/TestKit');
+    const Kernel = require('./../../../src/NoGame/Engine/Kernel');
+    const Server = require('./../../../src/NoGame/Server/Server');
+    const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
+    const MemoryLogger = require('./../../../src/NoGame/Infrastructure/Logger/MemoryLogger');
+
+    const PORT = 3333;
+    const HOST = `ws://127.0.0.1:${PORT}`;
     let server;
 
     beforeEach((done) => {

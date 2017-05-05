@@ -3,15 +3,14 @@
 const Assert = require('assert-js');
 const Item = require('./Item');
 const Position = require('./Position');
-const Monster = require('./../../Monster')
 
 class Tile
 {
     /**
      * @param {Position} position
      * @param {Item} ground
-     * @param {Item[]} stack
-     * @param {integer} [moveSpeedModifier]
+     * @param {Item[]|array} stack
+     * @param {int} [moveSpeedModifier]
      */
     constructor(position, ground, stack = [], moveSpeedModifier = 0)
     {
@@ -23,7 +22,7 @@ class Tile
         this._position = position;
         this._ground = ground;
         this._stack = stack;
-        this._moveSpeedModifier = 0;
+        this._moveSpeedModifier = moveSpeedModifier;
         this._characters = new Map();
         this._monster = null;
     }
@@ -130,7 +129,7 @@ class Tile
     }
 
     /**
-     * @returns {number}
+     * @returns {int}
      */
     get moveSpeedModifier()
     {

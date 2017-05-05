@@ -22,11 +22,24 @@ class AreaFactory
 
         for (let x = 0; x <= sizeX; x++) {
             for (let y = 0; y <= sizeY; y++) {
-                area.addTile(new Tile(new Position(x, y), new Item(0, false)))
+                area.addTile(new Tile(new Position(x, y), new Item(0, false)));
             }
         }
 
         return area;
+    }
+
+    /**
+     * @param {int} x
+     * @param {int} y
+     * @returns {Tile}
+     */
+    static blockingTile(x, y)
+    {
+        Assert.integer(x);
+        Assert.integer(y);
+
+        return new Tile(new Position(x, y), new Item(0, true));
     }
 }
 

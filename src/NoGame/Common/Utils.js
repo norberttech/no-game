@@ -28,11 +28,9 @@ class Utils
      */
     static sleep(milliseconds)
     {
-        var e = new Date().getTime() + milliseconds;
+        let e = new Date().getTime() + milliseconds;
 
-        while (new Date().getTime() <= e) {
-            ;
-        }
+        while (new Date().getTime() <= e) {}
     }
 }
 

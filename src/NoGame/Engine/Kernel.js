@@ -113,11 +113,10 @@ class Kernel
             let newPosition = path[0];
 
             let oldTile = this._area.tile(monster.position);
-            let newTile = this._area.tile(newPosition);
+            let destination = this._area.tile(newPosition);
 
             oldTile.monsterLeave();
-            monster.move(newPosition, newTile.moveSpeedModifier);
-            newTile.monsterWalkOn(monster.id);
+            monster.move(destination);
             onMonsterMove(monster, oldTile.position);
         }
     }
@@ -144,16 +143,15 @@ class Kernel
         }
 
         let oldTile = this._area.tile(player.position);
-        let newTile = this._area.tile(position);
+        let destination = this._area.tile(position);
 
-        if (!newTile.canWalkOn) {
+        if (!destination.canWalkOn) {
             this._logger.error({msg: 'can\'t walk on tile', player: player, position: position});
             throw `Can't walk on tile ${position.toString()}`;
         }
 
         oldTile.playerLeave(playerId);
-        player.move(position, newTile.moveSpeedModifier);
-        newTile.playerWalkOn(playerId);
+        player.move(destination);
     }
 
     /**

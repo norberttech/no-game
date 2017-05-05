@@ -1,22 +1,19 @@
-'use strict';
-
-const Kernel = require('./../../../src/NoGame/Engine/Kernel');
-const Server = require('./../../../src/NoGame/Server/Server');
-const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
-const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
-const MemoryLogger = require('./../../../src/NoGame/Infrastructure/Logger/MemoryLogger');
-const TestKit = require('./TestKit/TestKit');
-
-const PORT = 3333;
-const HOST = `ws://127.0.0.1:${PORT}`;
-
 describe("Server - Moves -", () => {
+    const TestKit = require('./TestKit/TestKit');
+    const Kernel = require('./../../../src/NoGame/Engine/Kernel');
+    const Server = require('./../../../src/NoGame/Server/Server');
+    const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
+    const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
+    const MemoryLogger = require('./../../../src/NoGame/Infrastructure/Logger/MemoryLogger');
+
+    const PORT = 3333;
+    const HOST = `ws://127.0.0.1:${PORT}`;
     let server;
+    let area;
     let player;
 
-    beforeEach((done) =>
-    {
-        let area = TestKit.AreaFactory.emptyWalkable(3, 3);
+    beforeEach((done) => {
+        area = TestKit.AreaFactory.emptyWalkable(2, 2);
         area.changeSpawnPosition(new Position(1, 1));
         let logger = new MemoryLogger();
         let kernel = new Kernel(logger, area, new MonsterFactory());
@@ -85,7 +82,7 @@ describe("Server - Moves -", () => {
         player.expectMsg((message) => {
             TestKit.MessageAssert.moveString(message).assertX(1).assertY(1).assertMoveTime(0);
             done();
-        })
+        });
     });
 
     it("makes sure that players can't move too fast", (done) => {
@@ -102,7 +99,31 @@ describe("Server - Moves -", () => {
             TestKit.MessageAssert.charactersObject(messages[2]);
 
             done();
-        })
+        });
+    });
+
+    it("makes sure that player can't walk on another player position", (done) => {
+        area.changeSpawnPosition(new Position(2, 1));
+        let opponent = new TestKit.Player();
+
+        opponent.connect(HOST, () => {
+            opponent.send(TestKit.MessageFactory.authenticate('opponent'));
+
+            opponent.expectMsg((message) => {
+                TestKit.MessageAssert.batchString(message);
+
+                player.expectMsg((message) => {
+                    TestKit.MessageAssert.charactersString(message); // opponent logged in
+                });
+
+                player.send(TestKit.MessageFactory.move(2, 1)); // move to opponent position
+
+                player.expectMsg((message) => {
+                    TestKit.MessageAssert.moveString(message).assertX(1).assertY(1).assertMoveTime(0);
+                    done();
+                });
+            });
+        });
     });
 
     it("sends opponents moves to player", (done) => {
@@ -128,28 +149,28 @@ describe("Server - Moves -", () => {
         player.disconnect();
         server.terminate(() => done());
     });
+
+    /**
+     * @param {Player} player
+     * @param {int} x
+     * @param {int} y
+     * @param {int} moveTime
+     * @param {function} [done]
+     */
+    function testMove(player, x, y, moveTime, done = () => {})
+    {
+        player.send(TestKit.MessageFactory.move(x, y));
+
+        player.expectMsg((message) => {
+            TestKit.MessageAssert.batchString(message);
+
+            let messages = TestKit.MessageParser.parseBatch(message);
+
+            TestKit.MessageAssert.moveObject(messages[0]).assertX(x).assertY(y).assertMoveTime(moveTime);
+            TestKit.MessageAssert.tilesObject(messages[1]);
+            TestKit.MessageAssert.charactersObject(messages[2]);
+
+            done();
+        });
+    }
 });
-
-/**
- * @param {Player} player
- * @param {int} x
- * @param {int} y
- * @param {int} moveTime
- * @param {function} [done]
- */
-function testMove(player, x, y, moveTime, done = () => {})
-{
-    player.send(TestKit.MessageFactory.move(x, y));
-
-    player.expectMsg((message) => {
-        TestKit.MessageAssert.batchString(message);
-
-        let messages = TestKit.MessageParser.parseBatch(message);
-
-        TestKit.MessageAssert.moveObject(messages[0]).assertX(x).assertY(y).assertMoveTime(moveTime);
-        TestKit.MessageAssert.tilesObject(messages[1]);
-        TestKit.MessageAssert.charactersObject(messages[2]);
-
-        done();
-    });
-}

@@ -1,6 +1,6 @@
 'use strict';
 
-const Assert = require('assert-js')
+const Assert = require('assert-js');
 const Monster = require('./Monster');
 const Position = require('./Map/Area/Position');
 
