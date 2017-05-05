@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Since setTimeout is not the best solution and setImmediate can cosnume a lot of
+ * Since setTimeout is not the best solution and setImmediate can consume a lot of
  * processor this GameLoop use both functions.
  *
  * More here: http://timetocode.tumblr.com/post/71512510386/an-accurate-nodejs-game-loop-inbetween-settimeout
@@ -55,8 +55,10 @@ class GameLoop
             this._actualTicks = 0
         }
 
-        if (new Date().getTime() - this._previousTick < this._tickLengthTime - 16) {
-            this._timeout = setTimeout(this._tick.bind(this));
+        let millisecondsSincePreviousTick = new Date().getTime() - this._previousTick;
+        if (millisecondsSincePreviousTick < this._tickLengthTime) {
+            // we are too early => schedule next tick to be executed after some time
+            this._timeout = setTimeout(this._tick.bind(this), this._tickLengthTime - millisecondsSincePreviousTick - 1);
         } else {
             this._immediate = setImmediate(this._tick.bind(this));
         }
