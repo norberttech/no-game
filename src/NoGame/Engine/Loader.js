@@ -8,6 +8,7 @@ const Item = require('./Map/Area/Item');
 const Position = require('./Map/Area/Position');
 const MonsterFactory = require('./MonsterFactory');
 const Spawn = require('./Spawn');
+const Clock = require('./Clock');
 const fs = require('fs');
 
 class Loader
@@ -65,15 +66,17 @@ class Loader
 
     /**
      * @param {Logger} logger
+     * @param {Clock} clock
      * @returns {MonsterFactory}
      */
-    static loadMonsterFactory(logger)
+    static loadMonsterFactory(logger, clock)
     {
         Assert.instanceOf(logger, Logger);
+        Assert.instanceOf(clock, Clock);
 
         logger.info('Loading monster factory...');
 
-        let monsterFactory = new MonsterFactory();
+        let monsterFactory = new MonsterFactory(clock);
 
         logger.info('Loading "rat".');
         monsterFactory.addTemplate("rat", 1001, 32, 50, 3000, 5);

@@ -10,7 +10,7 @@ const Clock = require('./Clock');
 
 const BASE_ATTACK_DELAY = 3000;
 const BASE_DEFENCE = 4;
-const BASE_ATTACK_POWER = 40;
+const BASE_ATTACK_POWER = 20;
 
 class Player
 {

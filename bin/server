@@ -12,12 +12,13 @@ let parametersFilePath = __dirname + '/../config/parameters.json';
 
 let config = JSON.parse(fs.readFileSync(parametersFilePath));
 
+let clock = new Clock();
 let logger = new BunyanLogger('server', config.logLevel);
 let kernel = new Kernel(
     logger,
     Loader.loadMapArea(logger, "Tesaria", __dirname + '/../config/map/tesaria.json'),
-    Loader.loadMonsterFactory(logger),
-    new Clock()
+    Loader.loadMonsterFactory(logger, clock),
+    clock
 );
 kernel.boot();
 
