@@ -22,14 +22,14 @@
     pg_postgis_version: 2.3
 
   roles:
-    - { role: env }
-    - { role: tools }
-    - { role: php7 }
-    - { role: nodejs }
-    - { role: openssl }
-    - { role: composer }
-    - { role: postgresql }
-    - { role: disable-apache }
+#    - { role: env }
+#    - { role: tools }
+#    - { role: php7 }
+#    - { role: nodejs }
+#    - { role: openssl }
+#    - { role: composer }
+#    - { role: postgresql }
+#    - { role: disable-apache }
     - { role: nginx }
     - {
         role: nginx_vhost,
@@ -41,5 +41,8 @@
         role: nginx_vhost,
         nginx_vhost_host: "nogame.local",
         nginx_vhost_web_root: "/var/www/nogame/php/web/public",
-        nginx_vhost_web_port: 80
+        nginx_vhost_web_port: 80,
+        nginx_vhost_locations: [
+            { path: "/", content: "try_files $uri /app.php$is_args$args;" }
+          ]
       }

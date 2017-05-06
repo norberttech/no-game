@@ -16,3 +16,4 @@ nginx_vhost_server_aliases: []
 nginx_vhost_fpm_socket: "/var/run/php/php7.0-fpm.sock"
 nginx_max_upload_size: "10M"
 nginx_log_type: ""
+nginx_vhost_locations: []

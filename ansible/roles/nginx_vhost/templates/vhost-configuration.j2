@@ -11,6 +11,12 @@ server {
 
     client_max_body_size {{ nginx_max_upload_size }};
 
+{% for location in nginx_vhost_locations %}
+    location {{ location.path }} {
+        {{ location.content }} 
+    }
+{% endfor %}
+
     location ~ ^/.+\.php(/|$) {
         fastcgi_pass unix:{{ nginx_vhost_fpm_socket }};
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
@@ -24,8 +30,8 @@ server {
         fastcgi_temp_file_write_size 256k;
         fastcgi_read_timeout 240;
         fastcgi_intercept_errors on;
-    {%- for env_var in nginx_vhost_env_vars -%}
+{% for env_var in nginx_vhost_env_vars %}
         fastcgi_param {{ env_var.name }} {{ env_var.value }}
-    {%- endfor -%}
+{% endfor %}
     }
 }
