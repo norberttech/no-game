@@ -3,6 +3,10 @@ language: node_js
 node_js:
   - "7"
 
+branches:
+  only:
+    - master
+
 addons:
   apt:
     sources:
@@ -10,10 +14,12 @@ addons:
     packages:
     - gcc-5
     - g++-5
+
 before_install:
   - uname -a
+
 install:
-  - CC=gcc-5 CXX=g++-5 npm install
+  - cd $TRAVIS_BUILD_DIR/nodejs/server && CC=gcc-5 CXX=g++-5 npm install
 
 script:
-  - npm test
+  - cd $TRAVIS_BUILD_DIR/nodejs/server && npm test
