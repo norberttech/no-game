@@ -13,7 +13,7 @@ server {
 
 {% for location in nginx_vhost_locations %}
     location {{ location.path }} {
-        {{ location.content }} 
+        {{ location.content }}
     }
 {% endfor %}
 

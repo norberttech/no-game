@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+        http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="AppBundle\Entity\Character" table="nogame_character">
+        <id name="id" type="uuid">
+            <generator strategy="NONE" />
+        </id>
+        <field name="accountId" type="uuid" nullable="false"/>
+        <field name="name" type="string" length="255" nullable="false"/>
+        <field name="normalizedName" type="string" length="255" nullable="false" unique="true"/>
+        <field name="health" type="integer" nullable="false" />
+        <field name="experience" type="integer" nullable="false" />
+    </entity>
+</doctrine-mapping>

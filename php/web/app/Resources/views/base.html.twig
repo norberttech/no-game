@@ -2,12 +2,67 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{% block title %}NoGame - free massive multiplayer online role-playing game{% endblock %}</title>
+        {% block stylesheets %}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+        <style>
+            a, button {
+                cursor: pointer;
+            }
+            .content {
+                padding-top: 10px;
+                background-color: #ffffff;
+                padding-bottom: 50px;
+            }
+            .alert-wrapper {
+                margin-top: 10px;
+            }
+        </style>
+        {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        <nav class="navbar navbar-inverse bg-inverse">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url('nogame_home') }}">NoGame <small class="text-info">beta</small></a>
+                <span class="navbar-text hidden-sm-down">free massive multiplayer online role-playing game!</span>
+
+                <div class="d-inline float-right hidden-sm-down navbar-text">
+                    {% if is_granted('ROLE_USER') %}
+                        <a class="btn btn-sm btn-primary" href="{{ url('nogame_account') }}">{{ 'layout.account'|trans }}</a>
+                        <a class="btn btn-sm btn-secondary" href="{{ url('nogame_logout') }}">{{ 'layout.logout'|trans }}</a>
+                    {% else %}
+                        <a class="btn btn-sm btn-secondary" href="{{ url('nogame_login') }}">{{ 'layout.login'|trans }}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+        <div class="content">
+            {% set typeClass = {success: 'success', error: 'danger', info: 'info'} %}
+            {% if app.session.isStarted() and app.session.flashBag.peekAll|length > 0 %}
+                <div id="alerts" class="container-fluid">
+                    {% for type, typeMessages in app.session.flashbag.peekAll if typeClass[type] is defined %}
+                        <div class="alert-wrapper">
+                            {% for message in app.session.flashbag.get(type) %}
+                                <div class="alert alert-{{ typeClass[type] }}">
+                                    <div class="alert-content">
+                                        {{ message|trans }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block body %}{% endblock %}
+        </div>
+
+        {% block javascripts %}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
+        {% endblock %}
     </body>
 </html>
