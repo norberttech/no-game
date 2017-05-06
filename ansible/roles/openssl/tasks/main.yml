@@ -1,0 +1,77 @@
+- name: Make sure openssl exists
+  apt:
+    pkg: openssl
+    state: latest
+
+- name: Generate SSL config file
+  template:
+    src: ssl.config.j2
+    dest: /etc/ssl/ssl.config
+    mode: 0600
+
+- name: Generate RSA key
+  command: >
+    openssl genrsa
+      -out {{ openssl_cert_path }}{{ openssl_cert_name }}.key
+      2048
+      creates={{ openssl_cert_path }}{{ openssl_cert_name }}.key
+  when: openssl_generate_selfsigned_cert == true
+
+- name: Generate CSR
+  command: >
+    openssl req
+      -new -sha256
+      -subj "/{{ openssl_selfsigned_cert_location }}/CN={{ openssl_selfsigned_cert_common_name }}"
+      -key {{ openssl_cert_path }}{{ openssl_cert_name }}.key
+      -out {{ openssl_cert_path }}{{ openssl_cert_name }}.csr
+      -config /etc/ssl/ssl.config
+      creates={{ openssl_cert_path }}{{ openssl_cert_name }}.csr
+  when: openssl_generate_selfsigned_cert == true
+
+- name: Generate self-signed SSL certificate
+  command: >
+    openssl req -nodes
+      -x509
+      -days 365
+      -subj "/{{ openssl_selfsigned_cert_location }}/CN={{ openssl_selfsigned_cert_common_name }}"
+      -in {{ openssl_cert_path }}{{ openssl_cert_name }}.csr
+      -key {{ openssl_cert_path }}{{ openssl_cert_name }}.key
+      -out {{ openssl_cert_path }}{{ openssl_cert_name }}.pem
+      -config /etc/ssl/ssl.config
+      creates={{ openssl_cert_path }}{{ openssl_cert_name }}.pem
+  when: openssl_generate_selfsigned_cert == true
+
+
+- name: Create ssl crt from template
+  copy:
+    content: "{{ openssl_cert_template_crt }}"
+    dest: "{{ openssl_cert_path }}{{ openssl_cert_name }}.crt"
+  when: openssl_cert_template_crt != ""
+
+- name: Create ssl key from template
+  copy:
+    content: "{{ openssl_cert_template_key }}"
+    dest: "{{ openssl_cert_path }}{{ openssl_cert_name }}.key"
+  when: openssl_cert_template_key != ""
+
+- name: Create ssl PEM
+  shell: "cat {{ openssl_cert_path }}{{ openssl_cert_name }}.key {{ openssl_cert_path }}{{ openssl_cert_name }}.crt > {{ openssl_cert_path }}{{ openssl_cert_name }}.pem"
+  when: openssl_cert_template_key != ""
+
+- name: Create ssl chain crt from template
+  copy:
+    content: "{{ openssl_cert_template_chain_crt }}"
+    dest: "{{ openssl_cert_path }}{{ openssl_cert_name }}.ca.pem"
+  when: openssl_cert_template_chain_crt != ""
+
+- name: Create ssl crt from file
+  copy:
+    src: "{{ openssl_cert_file }}"
+    dest: "{{ openssl_cert_path }}{{ openssl_cert_name }}.crt"
+  when: openssl_cert_file != ""
+
+- name: Create ssl key from file
+  copy:
+    src: "{{ openssl_key_file }}"
+    dest: "{{ openssl_cert_path }}{{ openssl_cert_name }}.key"
+  when: openssl_key_file != ""

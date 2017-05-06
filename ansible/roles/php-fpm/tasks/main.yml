@@ -1,0 +1,24 @@
+---
+- name: Install FPM
+  apt:
+    name: php7.0-fpm
+    state: present
+
+- name: Configure FPM
+  copy:
+    dest: /etc/php/7.0/fpm/php-fpm.conf
+    src: php-fpm.conf
+
+- name: Remove default connection pool
+  file:
+    path: /etc/php/7.0/fpm/pool.d/www.conf
+    state: absent
+
+- name: Add punched connection pool
+  copy:
+    dest: /etc/php/7.0/fpm/pool.d/php-fpm.conf
+    src: php-fpm-pool.conf
+  notify: restart fpm
+
+- name: Restart FPM
+  service: name=php7.0-fpm state=restarted

@@ -37,8 +37,12 @@
 
         window.Settings = {
             host: "ws://" + window.location.hostname + ":8080"
-        }
+        };
+
+        var scriptNode = document.createElement("script");
+        scriptNode.type = "text/javascript";
+        scriptNode.src = "//" + window.location.hostname + ":3003/client.js";
+        window.document.body.appendChild(scriptNode);
     </script>
-    <script src="http://localhost:3003/client.js"></script>
 </body>
 </html>

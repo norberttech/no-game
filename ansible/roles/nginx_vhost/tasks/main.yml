@@ -1,0 +1,67 @@
+---
+- name: Disable default vhost
+  file:
+    path: /etc/nginx/sites-enabled/default.conf
+    state: absent
+  notify: restart nginx
+
+- name: Create htpasswd-users
+  template:
+    dest: /etc/nginx/htpasswd-users
+    src: htpasswd-users.j2
+    owner: "{{ nginx_vhost_nginx_user }}"
+    group: "{{ nginx_vhost_nginx_group }}"
+  when: nginx_vhost_basic_auth_users is defined and nginx_vhost_basic_auth_users > 0
+
+- name: Create nginx vhost configuration
+  template:
+    src: vhost-configuration.j2
+    dest: /etc/nginx/sites-available/{{ nginx_vhost_host }}.conf
+  notify: restart nginx
+
+- name: Create nginx ssl configuration
+  template:
+    src: vhost-ssl-configuration.j2
+    dest: /etc/nginx/sites-available/{{ nginx_vhost_host }}.ssl.conf
+  notify: restart nginx
+  when: nginx_vhost_ssl_crt_path != "" and nginx_vhost_ssl_key_path != ""
+
+- name: Check if project is enabled
+  stat: path=/etc/nginx/sites-enabled/{{ nginx_vhost_host }}.conf
+  register: vhost
+
+- name: Check if ssl project is enabled
+  stat: path=/etc/nginx/sites-enabled/{{ nginx_vhost_host }}.conf
+  register: vhost_ssl
+  when: nginx_vhost_ssl_crt_path != "" and nginx_vhost_ssl_key_path != ""
+
+- name: Enable nginx vhost
+  file:
+    src: /etc/nginx/sites-available/{{ nginx_vhost_host }}.conf
+    path: /etc/nginx/sites-enabled/{{ nginx_vhost_host }}.conf
+    state: link
+  when: vhost.stat.exists == false
+  notify: reload nginx
+
+- name: Enable nginx vhosts ssl
+  file:
+    src: /etc/nginx/sites-available/{{ nginx_vhost_host }}.ssl.conf
+    path: /etc/nginx/sites-enabled/{{ nginx_vhost_host }}.ssl.conf
+    state: link
+  when: vhost_ssl.stat.exists == false # TODO: this condition is skipped
+  notify: restart nginx
+  when: nginx_vhost_ssl_crt_path != "" and nginx_vhost_ssl_key_path != ""
+
+- name: Enable logrotate for vhost
+  template:
+    src: vhost-logrotate.j2
+    dest: "/etc/logrotate.d/nginx-{{ nginx_vhost_host }}"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Restart nginx
+  service: name=nginx state=restarted
+
+- name: Restart FPM
+  service: name=php7.0-fpm state=restarted

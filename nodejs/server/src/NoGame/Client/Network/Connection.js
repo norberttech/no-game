@@ -15,22 +15,28 @@ export default class Connection
      * @param {string} serverAddress
      * @param {function} onOpen
      * @param {function} onMessage
+     * @param {function} onError
      */
-    open(serverAddress, onOpen, onMessage)
+    open(serverAddress, onOpen, onMessage, onError)
     {
         Assert.string(serverAddress);
         Assert.isFunction(onOpen);
-        Assert.isFunction(onMessage)
+        Assert.isFunction(onMessage);
+        Assert.isFunction(onError);
 
         this._socket = new WebSocket(serverAddress, "ws");
 
         this._socket.onopen = () => {
             onOpen(this)
-        };
+        }
 
         this._socket.onmessage = (message) => {
             onMessage(message, this)
-        };
+        }
+
+        this._socket.onerror = (event) => {
+            onError(event);
+        }
     }
 
     /**

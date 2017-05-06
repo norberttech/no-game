@@ -1,0 +1,13 @@
+---
+- name: Create PostGIS extension in a default database
+  become: yes
+  become_user: postgres
+  shell: "psql --no-psqlrc --no-align --tuples-only --quiet --echo-queries --command='create extension postgis;' \"template1\""
+  ignore_errors: true
+
+- name: Create PostGIS extension in installed database
+  become: yes
+  become_user: postgres
+  shell: "psql --no-psqlrc --no-align --tuples-only --quiet --echo-queries --command='create extension postgis;' \"{{ item.name }}\""
+  with_items: "{{ pg_databases }}"
+  ignore_errors: true

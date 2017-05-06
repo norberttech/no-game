@@ -33,7 +33,16 @@ window.location.hasParameter = function(name) {
     return this.getParameter(name) !== null;
 };
 
-window.document.addEventListener("DOMContentLoaded", (event) => {
+if (window.document.readyState == 'loading') {
+    window.document.addEventListener("DOMContentLoaded", (event) => {
+        initialize();
+    });
+} else {
+    initialize();
+}
+
+function initialize()
+{
     let spriteMap = new SpriteMap();
     spriteMap.add(new SpriteFile("grounds", "assets/sprites/grounds.png", 1));
     let mouse = new Mouse();
@@ -97,5 +106,7 @@ window.document.addEventListener("DOMContentLoaded", (event) => {
             ui.hideCanvas();
             ui.addErrorMessage("Disconnected from server.");
         });
+    }).catch((client) => {
+        ui.addErrorMessage("Can't connect to the server.");
     });
-});
+}

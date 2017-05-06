@@ -1,0 +1,23 @@
+---
+- name: revoke create table permissions from public
+  become: yes
+  become_user: postgres
+  shell: "psql --no-psqlrc --no-align --tuples-only --quiet --echo-queries --command='REVOKE ALL ON SCHEMA public FROM public; GRANT USAGE ON SCHEMA public TO public; GRANT ALL ON SCHEMA public TO \"{{ pg_users[0].name }}\";' \"{{ pg_ro_database }}\""
+
+- name: prepare SQL
+  template:
+    src: create-ro-user.sql.j2
+    dest: /tmp/create-ro-user.sql
+    owner: "{{ pg_admin_user }}"
+    group: "{{ pg_admin_user }}"
+    mode: 0600
+
+- name: execute SQL
+  shell: "psql -U \"{{ pg_users[0].name }}\" --no-psqlrc --no-align --tuples-only --quiet --echo-queries --file=\"/tmp/create-ro-user.sql\" \"{{ pg_ro_database }}\""
+  environment:
+    PGPASSWORD: "{{ pg_users[0].password }}"
+
+- name: cleanup
+  file:
+    path: /tmp/create-ro-user.sql
+    state: absent

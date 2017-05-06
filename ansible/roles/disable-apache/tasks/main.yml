@@ -1,0 +1,12 @@
+---
+- name: Turn off apache
+  service:
+    name: pache2
+    state: stopped
+  ignore_errors: true
+
+- name: Disable apache
+  service:
+    name: apache2
+    enabled: no
+  ignore_errors: true

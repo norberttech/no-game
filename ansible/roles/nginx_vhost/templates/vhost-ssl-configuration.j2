@@ -1,0 +1,52 @@
+server {
+    listen 443 ssl;
+    root {{ nginx_vhost_web_root }};
+
+    server_name {{ nginx_vhost_host }}{% for alias in nginx_vhost_server_aliases %} {{ alias }}{% endfor %};
+
+    index index.html index.php;
+
+    access_log /var/log/nginx/{{ nginx_vhost_host }}-access_log {{ nginx_log_type }};
+    error_log /var/log/nginx/{{ nginx_vhost_host }}-error_log info;
+
+    client_max_body_size {{ nginx_max_upload_size }};
+
+    ssl_certificate {{ nginx_vhost_ssl_crt_path }};
+    ssl_certificate_key {{ nginx_vhost_ssl_key_path }};
+
+    location / {
+        try_files $uri /app.php$is_args$args;
+    }
+
+    location ~ ^/(app|app_dev|app_smoke|app_test|microtime|config)\.php(/|$) {
+    {% if nginx_vhost_basic_auth_users|length > 0 -%}
+        set $auth "off";
+        if ($request_uri ~* {{ nginx_vhost_basic_auth_location }}) {
+           set $auth "You shall not pass!";
+        }
+        {% for ip in ansible_all_ipv4_addresses -%}
+        if ($remote_addr = {{ ip }}) {
+           set $auth "off";
+        }
+        {% endfor %}
+        auth_basic_user_file /etc/nginx/htpasswd-users;
+        auth_basic $auth;
+    {% endif %}
+        fastcgi_pass unix:{{ nginx_vhost_fpm_socket }};
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+        fastcgi_param HTTPS off;
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 256 4k;
+        fastcgi_busy_buffers_size 256k;
+        fastcgi_temp_file_write_size 256k;
+        fastcgi_read_timeout 240;
+        fastcgi_intercept_errors on;
+    {%- for env_var in nginx_vhost_env_vars -%}
+        fastcgi_param {{ env_var.name }} {{ env_var.value }}
+    {%- endfor -%}
+    }
+
+}

@@ -1,0 +1,44 @@
+---
+- name: Set system hostname
+  hostname:
+    name: "{{ env_hostname }}"
+  when: env_hostname != ""
+
+- name: Set system wide env variables
+  lineinfile:
+    dest: "/etc/environment"
+    line: "{{ item.line }}"
+    regexp: "{{ item.regexp }}"
+  with_items: "{{ env_vars }}"
+
+- name: Set system wide locale env variable
+  lineinfile:
+    dest: "/etc/environment"
+    line: "LC_ALL=en_US.UTF-8"
+
+- name: Set system timezone
+  copy:
+    content: "{{ env_timezone }}"
+    dest: "/etc/timezone"
+  notify:
+    - update timezone
+
+- name: Set cron jobs
+  cron:
+    job: "{{ item.job }}"
+    user: "{{ item.user }}"
+    name: "{{ item.name }}"
+    minute: "{{ item.minute|default('*') }}"
+    hour: "{{ item.hour|default('*') }}"
+    day: "{{ item.day|default('*') }}"
+    month: "{{ item.month|default('*') }}"
+    weekday: "{{ item.weekday|default('*') }}"
+    state: "{{ item.state|default('present') }}"
+  with_items: "{{ env_cron_jobs }}"
+  when: env_cron_host|bool == true
+
+- name: Update /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ item.ip }} {{ item.host }}"
+  with_items: "{{ env_hosts }}"

@@ -1,0 +1,69 @@
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
+
+module OS
+    def OS.windows?
+        (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
+    end
+
+    def OS.mac?
+        (/darwin/ =~ RUBY_PLATFORM) != nil
+    end
+
+    def OS.unix?
+        !OS.windows?
+    end
+
+    def OS.linux?
+        OS.unix? and not OS.mac?
+    end
+end
+
+
+Vagrant.configure(2) do |config|
+
+    config.vm.define :no_game, primary: true do |web|
+        web.vm.box = "ubuntu/trusty64"
+        web.vm.network :private_network, ip: "10.0.0.200"
+        web.ssh.forward_agent = true
+
+        web.vm.provider :virtualbox do |v|
+            v.gui = false
+            v.name = "no_game"
+            v.memory = 2048
+        end
+
+        # disable synchronization of vagrant folder
+        web.vm.synced_folder ".", "/vagrant", disabled: true
+
+        if OS.mac?
+            puts "Vagrant launched from OSX"
+
+            web.vm.synced_folder "../nodejs/server", "/var/www/nogame/nodejs/server", id: "nogame_nodejs_server", type: "nfs"
+            web.vm.synced_folder "../php/web", "/var/www/nogame/php/web", id: "nogame_php_web", type: "nfs"
+            web.vm.synced_folder "../ansible", "/vagrant/ansible", id: "nogame_ansible", type: "nfs"
+        elsif OS.linux?
+            puts "Vagrant launched from Linux"
+
+            web.vm.synced_folder "../nodejs/server", "/var/www/nogame/nodejs/server", id: "nogame_nodejs_server", mount_options: ["rw", "tcp", "nolock", "noacl", "async"], type: "nfs"
+            web.vm.synced_folder "../php/web", "/var/www/nogame/php/web", id: "nogame_php_web", mount_options: ["rw", "tcp", "nolock", "noacl", "async"], type: "nfs"
+            web.vm.synced_folder "../ansible", "/vagrant/ansible", id: "nogame_ansible", mount_options: ["rw", "tcp", "nolock", "noacl", "async"], type: "nfs"
+        elsif OS.windows?
+            puts "Vagrant launched from Window"
+
+            web.vm.synced_folder "../nodejs/server", "/var/www/nogame/nodejs/server", id: "nogame_nodejs_server", type: "smb", mount_options: ["mfsymlinks,dir_mode=0775,file_mode=0775"]
+            web.vm.synced_folder "../php/web", "/var/www/nogame/php/web", id: "nogame_php_web", type: "smb", mount_options: ["mfsymlinks,dir_mode=0775,file_mode=0775"]
+            web.vm.synced_folder "../ansible", "/vagrant/ansible", id: "nogame_ansible", type: "smb", mount_options: ["mfsymlinks,dir_mode=0775,file_mode=0775"]
+        end
+
+        # COMMENT FOLLOWING IF YOU WANT TO USE ANSIBLE FROM VAGRANT
+        config.vm.provision :shell, path: "../ansible/vagrant.sh"
+
+        # UNCOMMENT FOLLOWING IF YOU WANT TO USE ANSIBLE FROM HOST
+        # config.vm.provision "ansible" do |ansible|
+        #     ansible.playbook = "../ansible/vagrant.yml"
+        #     ansible.inventory_path = "../ansible/inventories/vagrant"
+        #     ansible.limit = "vagrant"
+        # end
+    end
+
+end

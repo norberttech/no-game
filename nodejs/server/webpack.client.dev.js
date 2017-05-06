@@ -7,11 +7,6 @@ new WebpackDevServer(webpack(config), {
     hot: true,
     quiet: false,
     noInfo: false,
-    historyApiFallback: true
-}).listen(3003, '0.0.0.0', function (err, result) {
-    if (err) {
-        console.log(err);
-    }
-
-    console.log('Listening at 0.0.0.0:3003');
-});
+    historyApiFallback: true,
+    disableHostCheck: true
+}).listen(3003);

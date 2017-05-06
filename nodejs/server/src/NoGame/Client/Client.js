@@ -67,7 +67,10 @@ export default class Client
                 () => {
                     resolve(this);
                 },
-                this._onMessage.bind(this)
+                this._onMessage.bind(this),
+                () => {
+                    reject(this);
+                }
             );
         });
     }

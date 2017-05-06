@@ -1,0 +1,119 @@
+---
+- name: Ensure common packages are installed
+  apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
+  with_items:
+    - python-pycurl
+  become: true
+  tags: postgres_common
+
+- name: Include Debian tasks
+  include: debian.yml
+  when: ansible_os_family == "Debian"
+  tags: postgres_debian
+
+- name: Ensure apt cache is up to date
+  apt: update_cache=yes cache_valid_time=3600
+  become: true
+  tags: postgres_debian
+
+- name: Ensure packages are installed
+  apt: pkg={{ item }}
+  with_items:
+    - postgresql-{{ pg_version }}
+    - postgresql-client-{{ pg_version }}
+    - python-psycopg2
+  register: db_setup
+  environment: "{{ pg_proxy_env }}"
+  become: true
+  tags: postgres_packages
+
+- name: Recreate cluster
+  include: recreate_cluster.yml
+  when: pg_cluster_recreate
+  tags: postgres_cluster
+
+- name: Update pg_hba.conf file
+  template: src=pg_hba.conf.j2 dest=/etc/postgresql/{{ pg_version }}/{{ pg_cluster }}/pg_hba.conf owner={{ pg_admin_user }} group={{ pg_admin_user }} mode=0640
+  notify: restart postgresql
+  become: true
+  tags: postgres_config
+
+- name: Update postgres.conf file
+  template: src=master.conf.j2 dest=/etc/postgresql/{{ pg_version }}/{{ pg_cluster }}/postgresql.conf owner={{ pg_admin_user }} group={{ pg_admin_user }} mode=0644
+  become: true
+  notify: restart postgresql
+  tags: postgres_config
+
+- name: Ensure ssl cert permissions
+  file:
+    path="{{ pg_cfg_srv_ssl_cert_file }}"
+    owner="{{ pg_admin_user }}"
+    group="{{ pg_admin_user }}"
+    mode="0600"
+  become: true
+  when: pg_cfg_srv_ssl_cert_file is defined
+  tags: postgres_config
+
+- name: Ensure ssl key permissions
+  file:
+    path="{{ pg_cfg_srv_ssl_key_file }}"
+    owner="{{ pg_admin_user }}"
+    group="{{ pg_admin_user }}"
+    mode="0600"
+  become: true
+  when: pg_cfg_srv_ssl_key_file is defined
+  tags: postgres_config
+
+- include: extensions_common.yml
+  tags: postgres_extensions
+
+- name: Check if PostgreSQL 9.4 is installed
+  stat: path=/etc/postgresql/9.4/main/postgresql.conf
+  register: postgres94
+
+- name: Upgrade postgres
+  include: upgrade-9.4-9.6.yml
+  when:
+    - pg_version | string != "9.4"
+    - postgres94.stat.exists == true
+
+- meta: flush_handlers
+
+- name: ensure postgresql server is started
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+    arguments: "{{ pg_version }}"
+    pattern: "/usr/lib/postgresql/{{ pg_version | float }}/bin/postgres -D /var/lib/postgresql/{{ pg_version }}/{{ pg_cluster }}"
+  become: true
+  tags: postgres_start
+
+- include: postgis.yml
+  when: pg_postgis
+  tags: postgres_postgis
+
+- name: create users
+  become: true
+  become_user: postgres
+  postgresql_user:
+      name: "{{ item.name }}"
+      password: "{{ item.password }}"
+      role_attr_flags: "{{ item.permissions }}"
+  with_items: "{{ pg_users }}"
+
+- name: create databases
+  become: true
+  become_user: postgres
+  postgresql_db:
+      name: "{{ item.name }}"
+      owner: "{{ item.owner }}"
+  with_items: "{{ pg_databases }}"
+
+- name: create read-only user
+  include: ro-user.yml
+  when: pg_ro_user is defined
+
+- include: postgis-database-setup.yml
+  when: pg_postgis
+  tags: postgres_postgis
