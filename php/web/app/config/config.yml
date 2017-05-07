@@ -6,11 +6,11 @@ imports:
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    locale: en
+    locale: en_US
 
 framework:
     #esi: ~
-    #translator: { fallbacks: ['%locale%'] }
+    translator: { fallbacks: ['%locale%'] }
     secret: '%secret%'
     router:
         resource: '%kernel.root_dir%/config/routing.yml'
@@ -27,7 +27,9 @@ framework:
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id:  session.handler.native_file
-        save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+        save_path:   "/var/lib/php/sessions"
+        cookie_lifetime: 31536000
+        gc_probability: 0
     fragments: ~
     http_method_override: true
     assets: ~
@@ -38,11 +40,13 @@ framework:
 twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
+    form_themes:
+        - 'bootstrap_3_layout.html.twig'
 
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver: pdo_mysql
+        driver: pdo_pgsql
         host: '%database_host%'
         port: '%database_port%'
         dbname: '%database_name%'
@@ -55,6 +59,8 @@ doctrine:
         #   2. Uncomment database_path in parameters.yml.dist
         #   3. Uncomment next line:
         #path: '%database_path%'
+        types:
+           uuid:  Ramsey\Uuid\Doctrine\UuidType
 
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
@@ -68,3 +74,9 @@ swiftmailer:
     username: '%mailer_user%'
     password: '%mailer_password%'
     spool: { type: memory }
+
+doctrine_migrations:
+    dir_name: "%kernel.root_dir%/migrations"
+    namespace: Application\Migrations
+    table_name: migration_versions
+    name: NoGame Migrations

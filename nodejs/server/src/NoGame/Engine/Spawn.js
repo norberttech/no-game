@@ -3,7 +3,7 @@
 const UUID = require('uuid');
 const Assert = require('assert-js');
 const Position = require('./Map/Area/Position');
-const Utils = require('./../Common/Utils');
+const Utils = require('nogame-common').Utils;
 
 class Spawn
 {

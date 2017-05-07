@@ -4,14 +4,14 @@ const Kernel = require('./../Engine/Kernel');
 const Assert = require('assert-js');
 const IncomeMessageQueue = require('./MessageQueue/IncomeQueue');
 const Broadcaster = require('./Broadcaster');
-const Logger = require('./../Common/Logger');
+const Logger = require('nogame-common').Logger;
 
 const Player = require('./../Engine/Player');
 const Monster = require('./../Engine/Monster');
 const Area = require('./../Engine/Map/Area');
 const Position = require('./../Engine/Map/Area/Position');
 
-const ClientMessages = require('./../Common/Network/ClientMessages');
+const ClientMessages = require('nogame-common').ClientMessages;
 const BatchMessage = require('./Network/BatchMessage');
 const LoginMessage = require('./Network/LoginMessage');
 const LogoutMessage = require('./Network/LogoutMessage');

@@ -1,0 +1,22 @@
+message:
+  successfully_signed_in: You have been successfully signed in.
+layout:
+  yes: Yes
+  no: No
+  account: Account
+  logout: Logout
+  login: Login
+  register: Register
+security:
+  login:
+    form:
+      username: Username:
+      password: Password:
+
+registration:
+  header: Create Account
+
+account:
+  character:
+    create:
+      header: Create Character

@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% form_theme form _self %}
+
+{% block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <div class="{% if form.parent %}form-control-feedback{% else %}alert alert-danger{% endif %}">
+            <ul class="list-unstyled mb-0">
+                {%- for error in errors -%}
+                    <li>{{ error.message }}</li>
+                {%- endfor -%}
+            </ul>
+        </div>
+    {%- endif %}
+{%- endblock form_errors %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3">
+        </div>
+        <div class="col-lg-6 text-center">
+            <div id="registration" class="card">
+            <div class="card-header">
+                <h4>{{ 'account.character.create.header'|trans }}</h4>
+            </div>
+            <div class="card-block">
+                {{ form_start(form) }}
+
+                <div class="form-group row{% if not form.name.vars.valid %} has-danger{% endif %}">
+                    <label class="required col-4 col-form-label text-right" for="credentials_email">
+                        {{ form_label(form.name) }}
+                    </label>
+                    <div class="col-8">
+                    {{ form_widget(form.name) }}
+                    {{ form_errors(form.name) }}
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-12">
+                        <button class="btn btn-secondary" type="submit">Create!</button>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+        <div class="col-lg-3">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #registration {
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+    </style>
+{% endblock %}

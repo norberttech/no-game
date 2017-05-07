@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <h1>Characters <a href="{{ url('nogame_create_character') }}" class="btn btn-sm btn-primary">create</a></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Name</th>
+                    <th>Experience</th>
+                </tr>
+            {% for character in characters %}
+                <tr>
+                    <td>{{ character.name }}</td>
+                    <td>{{ character.experience }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="2" class="text-center">
+                        <a href="{{ url('nogame_create_character') }}" class="btn btn-sm btn-primary">Create Character</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

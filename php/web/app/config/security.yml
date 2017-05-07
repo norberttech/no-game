@@ -2,10 +2,15 @@
 # http://symfony.com/doc/current/security.html
 security:
 
-    # http://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
+    encoders:
+        AppBundle\Entity\Credentials:
+            algorithm: bcrypt
+            cost: 12
+
     providers:
-        in_memory:
-            memory: ~
+        nogame_credentials:
+            entity:
+                class: AppBundle\Entity\Credentials
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -13,12 +18,19 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        main:
+        nogame:
+            pattern:    ^/
             anonymous: ~
-            # activate different ways to authenticate
+            form_login:
+                provider: nogame_credentials
+                login_path: nogame_login
+                check_path: nogame_login_check
+                failure_path: nogame_login
+                use_referer: true
+            logout:
+                path:   nogame_logout
+                target: /
 
-            # http://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-            #http_basic: ~
-
-            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
-            #form_login: ~
+    access_control:
+        - { path: ^/account/*, roles: [ROLE_USER] }
+        - { path: ^/, roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] }

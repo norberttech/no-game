@@ -1,7 +1,6 @@
 'use strict';
 
-const Assert = require('assert-js');
-const ServerMessages = require('./../../../../src/NoGame/Common/Network/ServerMessages');
+const ServerMessages = require('nogame-common').ServerMessages;
 const MessageParser = require('./MessageParser');
 const MoveMessageAssertion = require('./Message/MoveMessageAssertion');
 

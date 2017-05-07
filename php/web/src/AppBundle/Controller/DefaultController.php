@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Query\AccountQuery;
+use AppBundle\Query\CharacterQuery;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,13 +11,19 @@ use Symfony\Component\HttpFoundation\Request;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="homepage")
+     * @Route("/", name="nogame_home")
      */
     public function indexAction(Request $request)
     {
-        // replace this example code with whatever you need
+        $accountQuery = new AccountQuery($this->get('database_connection'));
+        $characterQuery = new CharacterQuery($this->get('database_connection'));
+
+        $total = $accountQuery->totalAccounts();
+        $top10 = $characterQuery->top(10);
+
         return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
+            'totalAccounts' => $total,
+            'top10' => $top10
         ]);
     }
 }

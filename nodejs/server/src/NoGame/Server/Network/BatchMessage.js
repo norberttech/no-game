@@ -1,15 +1,15 @@
 'use strict';
 
 const Assert = require('assert-js');
-const Message = require('./../../Common/Network/Message');
-const ServerMessages = require('./../../Common/Network/ServerMessages');
+const NetworkMessage = require('nogame-common').NetworkMessage;
+const ServerMessages = require('nogame-common').ServerMessages;
 
-class BatchMessage extends Message
+class BatchMessage extends NetworkMessage
 {
     constructor(messages)
     {
         super();
-        Assert.containsOnly(messages, Message);
+        Assert.containsOnly(messages, NetworkMessage);
 
         this._name = ServerMessages.BATCH_MESSAGE;
         this._data = {
