@@ -1,6 +1,6 @@
 'use strict';
 
-const Logger = require('./../../../../src/NoGame/Common/Logger');
+const Logger = require('nogame-common').Logger;
 
 class MemoryLogger extends Logger
 {

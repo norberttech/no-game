@@ -2,7 +2,7 @@
 
 const Assert = require('assert-js');
 const Area = require('./Map/Area');
-const Logger = require('./../Common/Logger');
+const Logger = require('nogame-common').Logger;
 const Tile = require('./Map/Area/Tile');
 const Item = require('./Map/Area/Item');
 const Position = require('./Map/Area/Position');

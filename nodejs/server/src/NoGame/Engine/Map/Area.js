@@ -6,11 +6,10 @@ const Position = require('./Area/Position');
 const Player = require('./../Player');
 const Spawn = require('./../Spawn');
 const Monster = require('./../Monster');
-const Calculator = require('./../../Common/Area/Calculator');
-const Range = require('./../../Common/Area/Range');
-const Utils = require('./../../Common/Utils');
-const PathFinder = require('./../../Common/PathFinder');
-const Grid = require('./../../Common/PathFinder/Grid');
+const Calculator = require('nogame-common').AreaCalculator;
+const Range = require('nogame-common').AreaRange;
+const PathFinder = require('nogame-common').PathFinder;
+const Grid = require('nogame-common').PathFinderGrid;
 
 /**
  * Client displays x: 15 and y: 11 but it keeps 2 tiles hidden.

@@ -1,9 +1,9 @@
 'use strict';
 
 const Assert = require('assert-js');
-const Message = require('./../../Common/Network/Message');
+const Message = require('nogame-common').NetworkMessage;
 const Player = require('./../../Engine/Player');
-const ServerMessages = require('./../../Common/Network/ServerMessages');
+const ServerMessages = require('nogame-common').ServerMessages;
 
 class LoginMessage extends Message
 {

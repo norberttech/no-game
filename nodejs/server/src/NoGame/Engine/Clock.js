@@ -1,7 +1,5 @@
 'use strict';
 
-const Assert = require('assert-js');
-
 class Clock
 {
     /**

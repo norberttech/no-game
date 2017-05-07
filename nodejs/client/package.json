@@ -1,0 +1,39 @@
+{
+  "name": "nogame-client",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "common:update": "rm -r -f node_modules/nogame-common && npm install",
+    "test": "npm run client:test:unit && npm run test:dependencies",
+    "test:dependencies": "madge --circular --warning src",
+    "client:test:unit": "mocha --reporter dot --compilers js:babel-core/register spec/NoGame/Client/* --recursive",
+    "client:build": "node_modules/.bin/webpack --config webpack.client.build.js --progress --color --display-modules",
+    "client:dev": "node webpack.client.dev.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nogame-common": "file:../common",
+    "assert-js": "0.6.0",
+    "bufferutil": "^1.2.1",
+    "bunyan": "^1.7.0",
+    "json-loader": "^0.5.4",
+    "markdown-loader": "^0.1.7",
+    "pathfinding": "^0.4.17",
+    "utf-8-validate": "^1.2.1",
+    "uuid": "^2.0.1",
+    "webpack": "2.4.1",
+    "ws": "2.3.1"
+  },
+  "devDependencies": {
+    "babel-cli": "6.24.0",
+    "babel-core": "6.24.0",
+    "babel-loader": "7.0.0",
+    "babel-preset-es2015": "^6.24.1",
+    "expect.js": "^0.3.1",
+    "madge": "^1.6.0",
+    "mocha": "^3.3.0",
+    "webpack-dev-server": "2.4.5"
+  }
+}

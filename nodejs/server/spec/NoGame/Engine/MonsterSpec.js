@@ -5,7 +5,6 @@ describe("Monster", () => {
     const Item = require('./../../../src/NoGame/Engine/Map/Area/Item');
     const Player = require('./../../../src/NoGame/Engine/Player');
     const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
-    const Utils = require('./../../../src/NoGame/Common/Utils');
     const TestKit = require('./../Integration/TestKit/TestKit');
 
     let clock = null;

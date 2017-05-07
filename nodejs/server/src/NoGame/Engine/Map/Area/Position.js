@@ -1,7 +1,7 @@
 'use strict';
 
 const Assert = require('assert-js');
-const Utils = require('./../../../Common/Utils');
+const Utils = require('nogame-common').Utils;
 
 class Position
 {

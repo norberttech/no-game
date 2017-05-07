@@ -2,8 +2,8 @@
 
 const Assert = require('assert-js');
 const WebSocket = require('ws/lib/WebSocket');
-const Logger = require('./../../Common/Logger');
-const Message = require('../../Common/Network/Message');
+const Logger = require('nogame-common').Logger;
+const Message = require('nogame-common').NetworkMessage;
 const UUID = require('uuid');
 
 class Connection
