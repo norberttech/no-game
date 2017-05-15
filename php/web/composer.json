@@ -1,6 +1,6 @@
 {
     "name": "nogame/web",
-    "license": "MIT",
+    "license": "GPL 3",
     "type": "project",
     "autoload": {
         "psr-4": {

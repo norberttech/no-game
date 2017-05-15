@@ -11,8 +11,10 @@
     "client:build": "node_modules/.bin/webpack --config webpack.client.build.js --progress --color --display-modules",
     "client:dev": "node webpack.client.dev.js"
   },
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": ">=7.9.0"
+  },
+  "license": "GPL 3",
   "dependencies": {
     "nogame-common": "file:../common",
     "assert-js": "0.6.0",

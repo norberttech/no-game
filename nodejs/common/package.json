@@ -12,7 +12,7 @@
   "engines" : {
     "node" : ">=7.9.0"
   },
-  "license": "ISC",
+  "license": "GPL 3",
   "dependencies": {
     "assert-js": "0.6.0",
     "pathfinding": "^0.4.17"
