@@ -18,7 +18,7 @@
   "license": "GPL 3",
   "dependencies": {
     "assert-js": "0.6.0",
-    "base-64": "^0.1.0",
+    "bcrypt": "^1.0.2",
     "bufferutil": "^1.2.1",
     "bunyan": "^1.7.0",
     "crypto-js": "^3.1.9-1",
@@ -26,6 +26,7 @@
     "markdown-loader": "^0.1.7",
     "nogame-common": "file:../common",
     "pathfinding": "^0.4.17",
+    "pg": "^6.1.5",
     "utf-8-validate": "^1.2.1",
     "uuid": "^2.0.1",
     "ws": "2.3.1"

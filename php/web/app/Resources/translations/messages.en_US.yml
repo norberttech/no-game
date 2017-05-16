@@ -10,7 +10,7 @@ layout:
 security:
   login:
     form:
-      username: Username:
+      username: Email:
       password: Password:
 
 registration:

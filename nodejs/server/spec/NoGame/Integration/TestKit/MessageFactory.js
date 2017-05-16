@@ -6,13 +6,25 @@ const ClientMessages = require('nogame-common').ClientMessages;
 class MessageFactory
 {
     /**
-     * @param {string} username
+     * @param {string} login
+     * @param {string} pass
      */
-    static authenticate(username)
+    static login(login, pass)
     {
-        Assert.string(username);
+        Assert.string(login);
+        Assert.string(pass);
 
-        return JSON.stringify({name:ClientMessages.LOGIN,data:{username:username}});
+        return JSON.stringify({name:ClientMessages.LOGIN,data:{login:login,password:pass}});
+    }
+
+    /**
+     * @param {string} characterId
+     */
+    static loginCharacter(characterId)
+    {
+        Assert.string(characterId);
+
+        return JSON.stringify({name:ClientMessages.LOGIN_CHARACTER,data:{characterId:characterId}});
     }
 
     /**

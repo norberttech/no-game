@@ -12,16 +12,33 @@
 <body>
     <div id="messages"></div>
     <div id="login-screen">
+        <div class="header">
+            <h2>Login</h2>
+        </div>
         <form class="login">
             <div>
-                <input type="text" name="username" placeholder="username" />
+                <input type="text" name="username" placeholder="email" />
             </div>
-
+            <div>
+                <input type="password" name="password" placeholder="password" />
+            </div>
             <div>
                 <input type="submit" value="login" />
             </div>
         </form>
     </div>
+
+    <div id="login-character-list-screen">
+        <div class="header">
+            <h2>Choose Character</h2>
+        </div>
+        <div class="list">
+        </div>
+        <div class="footer">
+            <input id="character-login" type="submit" value="login" />
+        </div>
+    </div>
+
     <div id="game-wrapper">
         <canvas id="game-canvas" width="1024" height="768">Canvas not supported.</canvas>
         <div id="ui">

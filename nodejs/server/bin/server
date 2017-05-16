@@ -4,6 +4,12 @@ const fs = require('fs');
 const Kernel = require('./../src/NoGame/Engine/Kernel');
 const Loader = require('./../src/NoGame/Engine/Loader');
 const Server = require('./../src/NoGame/Server/Server');
+const Pool = require('pg').Pool;
+const PgsqlAccounts = require('./../src/NoGame/Infrastructure/PG/PgsqlAccounts');
+const PgsqlCharacters = require('./../src/NoGame/Infrastructure/PG/PgsqlCharacters');
+const Protocol = require('./../src/NoGame/Server/Protocol');
+const Broadcaster = require('./../src/NoGame/Server/Broadcaster');
+const IncomeQueue = require('./../src/NoGame/Server/MessageQueue/IncomeQueue');
 const Clock = require('./../src/NoGame/Engine/Clock');
 const GameLoop = require('./../src/NoGame/Server/GameLoop');
 const BunyanLogger = require('./../src/NoGame/Infrastructure/Logger/BunyanLogger');
@@ -22,5 +28,19 @@ let kernel = new Kernel(
 );
 kernel.boot();
 
-let server = new Server(kernel, logger, new GameLoop());
+let broadcaster = new Broadcaster();
+let incomeQueue = new IncomeQueue();
+const pool = new Pool({
+    user: 'nogame',
+    password: 'nogame',
+    host: 'localhost',
+    database: 'nogame',
+    max: 10,
+    idleTimeoutMillis: 1000
+});
+let accounts = new PgsqlAccounts(pool);
+let characters = new PgsqlCharacters(pool, clock);
+
+let protocol = new Protocol(kernel, accounts, characters, incomeQueue, broadcaster, logger);
+let server = new Server(kernel, protocol, logger, new GameLoop(), broadcaster, incomeQueue);
 server.listen(config.port);

@@ -41,6 +41,37 @@ class MessageAssert
         }
     }
 
+    static characterListObject(message)
+    {
+        this.messageObject(message);
+
+        if (message.name !== ServerMessages.LOGIN_CHARACTER_LIST) {
+            throw Error(`${ServerMessages.LOGIN_CHARACTER_LIST} expected but got ${message.name}`);
+        }
+    }
+
+    static characterListString(message)
+    {
+        this.messageString(message);
+
+        let msg = MessageParser.parse(message);
+
+        if (msg.name !== ServerMessages.LOGIN_CHARACTER_LIST) {
+            throw Error(`${ServerMessages.LOGIN_CHARACTER_LIST} expected but got ${msg.name}`);
+        }
+    }
+
+    static loginAccountNotFoundString(message)
+    {
+        this.messageString(message);
+
+        let msg = MessageParser.parse(message);
+
+        if (msg.name !== ServerMessages.LOGIN_ACCOUNT_NOT_FOUND) {
+            throw Error(`${ServerMessages.LOGIN_ACCOUNT_NOT_FOUND} expected but got ${msg.name}`);
+        }
+    }
+
     static areaObject(message)
     {
         this.messageObject(message);

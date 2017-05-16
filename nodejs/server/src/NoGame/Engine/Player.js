@@ -1,6 +1,5 @@
 'use strict';
 
-const uuid = require('uuid');
 const Assert = require('assert-js');
 const Tile = require('./Map/Area/Tile');
 const Monster = require('./Monster');
@@ -15,22 +14,24 @@ const BASE_ATTACK_POWER = 20;
 class Player
 {
     /**
+     * @param {string} id
      * @param {string} name
+     * @param {int} currentHealth
      * @param {int} health
-     * @param {int} maxHealth
      * @param {Clock} clock
      */
-    constructor(name, health, maxHealth, clock)
+    constructor(id, name, currentHealth, health, clock)
     {
+        Assert.string(id);
         Assert.string(name);
         Assert.notEmpty(name);
+        Assert.greaterThan(0, currentHealth);
         Assert.greaterThan(0, health);
-        Assert.greaterThan(0, maxHealth);
         Assert.instanceOf(clock, Clock);
 
-        this._id = uuid.v4();
+        this._id = id;
+        this._currentHealth = currentHealth;
         this._health = health;
-        this._maxHealth = maxHealth;
         this._position = null;
         this._moveEnds = 0;
         this._name = name;
@@ -61,7 +62,7 @@ class Player
      */
     get health()
     {
-        return this._health;
+        return this._currentHealth;
     }
 
     /**
@@ -69,7 +70,7 @@ class Player
      */
     get maxHealth()
     {
-        return this._maxHealth;
+        return this._health;
     }
 
     /**
@@ -77,7 +78,7 @@ class Player
      */
     get isDead()
     {
-        return this._health === 0;
+        return this._currentHealth === 0;
     }
 
     /**
@@ -178,10 +179,10 @@ class Player
     {
         Assert.greaterThan(0, damage);
 
-        this._health = this._health - damage;
+        this._currentHealth = this._currentHealth - damage;
 
-        if (this._health < 0) {
-            this._health = 0;
+        if (this._currentHealth < 0) {
+            this._currentHealth = 0;
         }
     }
 

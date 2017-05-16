@@ -37,6 +37,11 @@ final class Character
     /**
      * @var int
      */
+    private $currentHealth;
+
+    /**
+     * @var int
+     */
     private $experience;
 
     /**
@@ -56,6 +61,7 @@ final class Character
         $this->name = $name;
         $this->normalizedName = mb_strtolower($name);
         $this->health = $health;
+        $this->currentHealth = $health;
         $this->experience = 0;
     }
 }

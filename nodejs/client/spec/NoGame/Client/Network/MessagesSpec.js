@@ -5,9 +5,9 @@ import SayMessage from './../../../../src/NoGame/Client/Network/SayMessage';
 
 describe("Messages", () => {
     it("allows to stringify login message", () => {
-        let message = new LoginMessage("norbert");
+        let message = new LoginMessage("norbert", "password");
 
-        expect(message.toString()).to.be('{"index":0,"name":"login","data":{"username":"norbert"}}');
+        expect(message.toString()).to.be('{"index":0,"name":"login","data":{"login":"norbert","password":"password"}}');
     });
 
     it("allows to stringify move message", () => {

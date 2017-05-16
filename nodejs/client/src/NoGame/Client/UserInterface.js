@@ -1,10 +1,10 @@
 'use strict';
 
 import Assert from 'assert-js';
-import Engine from './Gfx/Engine';
 import KeyBoard from './Input/KeyBoard';
 import Mouse from './Input/Mouse';
 import Chat from './UserInterface/Chat';
+import CharacterList from './UserInterface/CharacterList';
 
 export default class UserInterface
 {
@@ -23,8 +23,9 @@ export default class UserInterface
         this._keyboard = keyboard;
         this._mouse = mouse;
         this._loginScreen = this._doc.getElementById("login-screen");
+        this._loginCharacterListScreen = new CharacterList(this._doc, this._doc.getElementById("login-character-list-screen"));
         this._loginForm = this._loginScreen.querySelector("form");
-        this._packet = this._doc.querySelector("#messages");
+        this._messages = this._doc.querySelector("#messages");
         this._gameCanvasWrapper = this._doc.querySelector("#game-wrapper");
         this._gameCanvas = this._doc.querySelector("#game-canvas");
         this._chat = new Chat(this._doc, this._doc.querySelector('#chat'), this._doc.querySelector('#chat-input'));
@@ -36,6 +37,14 @@ export default class UserInterface
     chat()
     {
         return this._chat;
+    }
+
+    /**
+     * @returns {CharacterList}
+     */
+    get characterList()
+    {
+        return this._loginCharacterListScreen;
     }
 
     /**
@@ -69,12 +78,19 @@ export default class UserInterface
     onLoginSubmit(callback)
     {
         this._loginForm.addEventListener("submit", (event) => {
-            let userName = this._loginForm.querySelector('input[name="username"]');
             event.preventDefault();
 
-            if (userName.value.length) {
-                callback(userName.value);
-                userName.value = '';
+            this.clearErrorMessages();
+
+            let username = this._loginForm.querySelector('input[name="username"]');
+            let password = this._loginForm.querySelector('input[name="password"]');
+
+            if (username.value.length && password.value.length) {
+                callback(username.value, password.value);
+                username.value = '';
+                password.value = '';
+            } else {
+                this.addErrorMessage("Username and password can't be empty");
             }
         });
     }
@@ -86,7 +102,12 @@ export default class UserInterface
         message.classList.add("alert-error");
         message.innerHTML = text;
 
-        this._packet.appendChild(message);
+        this._messages.appendChild(message);
+    }
+
+    clearErrorMessages()
+    {
+        this._messages.innerHTML = '';
     }
 
     bindArrows()

@@ -7,23 +7,74 @@ html, body {
     background: #969593;
 }
 
+/* LOGIN SCREEN */
+
 #login-screen {
-    width: 800px;
+    width: 400px;
     border: 1px solid black;
     display: none;
     margin: 150px auto 0;
     background: #ffffff;
 }
 
+#login-screen .header {
+    text-align: center;
+    border-bottom: 1px solid gray;
+    padding: 10px;
+}
+
+#login-screen .header h1, h2 {
+    margin: 0;
+    padding: 0;
+}
+
 #login-screen form {
     width: 400px;
-    margin: 50px auto;
+    margin: 30px auto;
     text-align: center;
 }
 
 #login-screen form input {
     margin-bottom: 10px;
 }
+
+/* LOGIN SCREEN - END */
+
+/* CHARACTER LIST */
+
+#login-character-list-screen {
+    display: none;
+    width: 400px;
+    border: 1px solid black;
+    margin: 150px auto 0;
+    background: #ffffff;
+}
+
+#login-character-list-screen .header {
+    text-align: center;
+    border-bottom: 1px solid gray;
+    padding: 10px;
+}
+
+#login-character-list-screen .header h1, h2 {
+    margin: 0;
+    padding: 0;
+}
+
+#login-character-list-screen .list {
+    padding: 30px;
+}
+
+#login-character-list-screen .list .character {
+    padding: 10px;
+}
+
+#login-character-list-screen .footer {
+    text-align: center;
+    padding: 10px;
+}
+
+/* CHARACTER LIST - END */
 
 #messages {
     position: absolute;
@@ -42,6 +93,8 @@ html, body {
     background: #f2dede;
     color: #a94442;
 }
+
+/* GAME CANVAS */
 
 #game-wrapper {
     width: 100%;
@@ -112,3 +165,5 @@ html, body {
     outline: none;
     padding: 7px 3px;
 }
+
+/* GAME CANVAS - END */

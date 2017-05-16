@@ -9,10 +9,14 @@ const Logger = require('nogame-common').Logger;
 const Player = require('./../Engine/Player');
 const Monster = require('./../Engine/Monster');
 const Area = require('./../Engine/Map/Area');
+const Accounts = require('./../Engine/Accounts');
+const Characters = require('./../Engine/Characters');
 const Position = require('./../Engine/Map/Area/Position');
 
 const ClientMessages = require('nogame-common').ClientMessages;
 const BatchMessage = require('./Network/BatchMessage');
+const LoginCharacterListMessage = require('./Network/LoginCharacterListMessage');
+const LoginAccountNotFoundMessage = require('./Network/LoginAccountNotFoundMessage');
 const LoginMessage = require('./Network/LoginMessage');
 const LogoutMessage = require('./Network/LogoutMessage');
 const AreaMessage = require('./Network/AreaMessage');
@@ -33,17 +37,23 @@ class Protocol
 {
     /**
      * @param {Kernel} kernel
+     * @param {Accounts} accounts
+     * @param {Characters} characters
      * @param {IncomeQueue} incomeMessages
      * @param {Broadcaster} broadcaster
      * @param {Logger} logger
      */
-    constructor(kernel, incomeMessages, broadcaster, logger)
+    constructor(kernel, accounts, characters, incomeMessages, broadcaster, logger)
     {
         Assert.instanceOf(kernel, Kernel);
+        Assert.instanceOf(accounts, Accounts);
+        Assert.instanceOf(characters, Characters);
         Assert.instanceOf(incomeMessages, IncomeMessageQueue);
         Assert.instanceOf(broadcaster, Broadcaster);
 
         this._kernel = kernel;
+        this._accounts = accounts;
+        this._characters = characters;
         this._incomeMessages = incomeMessages;
         this._broadcaster = broadcaster;
         this._logger = logger;
@@ -60,6 +70,9 @@ class Protocol
             switch (message.packet.name) {
                 case ClientMessages.LOGIN:
                     this._handleLogin(message.packet, message.connection);
+                    break;
+                case ClientMessages.LOGIN_CHARACTER:
+                    this._handleLoginCharacter(message.packet, message.connection);
                     break;
                 case ClientMessages.MOVE:
                     this._handleMove(message.packet, message.connection);
@@ -246,30 +259,51 @@ class Protocol
      */
     _handleLogin(packet, connection)
     {
-        let player = new Player(packet.data.username, 100, 100, this._kernel.clock);
-        this._kernel.login(player);
-        let area = this._kernel.area;
-        let messagesBatch = [];
+      this._accounts.getAccount(packet.data.login, packet.data.password)
+          .then((account) => {
+              connection.send(new LoginCharacterListMessage(account.characters));
+          }).catch((e) => {
+            this._logger.debug(e.message);
+            connection.send(new LoginAccountNotFoundMessage());
+        });
+    }
 
-        connection.setPlayerId(player.id);
+    /**
+     * @param {object} packet
+     * @param {Connection} connection
+     * @private
+     */
+    _handleLoginCharacter(packet, connection)
+    {
+        this._characters.get(packet.data.characterId).then((player) => {
+            this._kernel.login(player);
+            let area = this._kernel.area;
+            let messagesBatch = [];
 
-        messagesBatch.push(new LoginMessage(player));
-        messagesBatch.push(new AreaMessage(area.name, Area.visibleX, Area.visibleY));
-        messagesBatch.push(new TilesMessage(
-            area.visibleTilesFor(player.id)
-        ));
-        messagesBatch.push(new CharactersMessage(
-            area.visiblePlayersFor(player.id),
-            area.visibleMonstersFor(player.id)
-        ));
+            connection.setPlayerId(player.id);
 
-        connection.send(new BatchMessage(messagesBatch));
+            messagesBatch.push(new LoginMessage(player));
+            messagesBatch.push(new AreaMessage(area.name, Area.visibleX, Area.visibleY));
+            messagesBatch.push(new TilesMessage(
+                area.visibleTilesFor(player.id)
+            ));
+            messagesBatch.push(new CharactersMessage(
+                area.visiblePlayersFor(player.id),
+                area.visibleMonstersFor(player.id)
+            ));
 
-        this._broadcaster.sendToPlayersInRange(area, player.id, (playerConnection) => {
-            return new CharactersMessage(
-                area.visiblePlayersFor(playerConnection.playerId),
-                area.visibleMonstersFor(playerConnection.playerId)
-            )
+            connection.send(new BatchMessage(messagesBatch));
+
+            this._broadcaster.sendToPlayersInRange(area, player.id, (playerConnection) => {
+                return new CharactersMessage(
+                    area.visiblePlayersFor(playerConnection.playerId),
+                    area.visibleMonstersFor(playerConnection.playerId)
+                )
+            });
+        }).catch((e) => {
+            this._logger.debug(e.message);
+
+            connection.send(new LoginAccountNotFoundMessage());
         });
     }
 
