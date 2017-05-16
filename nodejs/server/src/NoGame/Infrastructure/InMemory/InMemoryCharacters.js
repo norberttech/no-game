@@ -41,6 +41,15 @@ class InMemoryCharacters extends Characters
             reject(new Error(`Character with id ${characterId} des not exists.`));
         });
     }
+
+    /**
+     * @param {Player} character
+     */
+    save(character)
+    {
+        Assert.instanceOf(character, Player);
+        // do nothing, its in memory
+    }
 }
 
 module.exports = InMemoryCharacters;

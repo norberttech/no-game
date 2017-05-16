@@ -237,15 +237,11 @@ class Protocol
     {
         Assert.instanceOf(player, Player);
 
-        this._broadcaster.sendToPlayer(player, (connection) => {
-            return new LogoutMessage("You died.");
-        });
-
         let connection = this._broadcaster.getConnection(player.id);
 
-        let players = this._kernel.area.visiblePlayersFrom(player.position);
+        connection.send(new LogoutMessage("You died."));
 
-        this._broadcaster.sendToPlayers(players, (connection) => {
+        this._broadcaster.sendToPlayers(this._kernel.area.visiblePlayersFrom(player.position), (connection) => {
             return new CharacterDiedMessage(player.id);
         });
 

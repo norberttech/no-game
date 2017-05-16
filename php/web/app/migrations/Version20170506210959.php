@@ -20,7 +20,20 @@ class Version20170506210959 extends AbstractMigration
 
         $this->addSql('CREATE TABLE nogame_account (id UUID NOT NULL, PRIMARY KEY(id))');
         $this->addSql('COMMENT ON COLUMN nogame_account.id IS \'(DC2Type:uuid)\'');
-        $this->addSql('CREATE TABLE nogame_character (id UUID NOT NULL, account_id UUID NOT NULL, name VARCHAR(255) NOT NULL, normalized_name VARCHAR(255) NOT NULL, health INT NOT NULL, current_health INT NOT NULL, experience INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE nogame_character (
+              id UUID NOT NULL, 
+              account_id UUID NOT NULL, 
+              name VARCHAR(255) NOT NULL, 
+              normalized_name VARCHAR(255) NOT NULL, 
+              health INT NOT NULL, 
+              current_health INT NOT NULL, 
+              experience INT NOT NULL, 
+              spawn_pos_x INT NOT NULL,
+              spawn_pos_y INT NOT NULL,
+              pos_x INT NOT NULL,
+              pos_y INT NOT NULL,
+              PRIMARY KEY(id)
+          )');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_73A9BEF6D69C0128 ON nogame_character (normalized_name)');
         $this->addSql('COMMENT ON COLUMN nogame_character.id IS \'(DC2Type:uuid)\'');
         $this->addSql('COMMENT ON COLUMN nogame_character.account_id IS \'(DC2Type:uuid)\'');

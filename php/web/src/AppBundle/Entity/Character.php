@@ -4,6 +4,7 @@ declare (strict_types = 1);
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Character\Position;
 use NoGame\Assertion;
 use Ramsey\Uuid\Uuid;
 
@@ -45,11 +46,32 @@ final class Character
     private $experience;
 
     /**
+     * @var int
+     */
+    private $spawnPosX;
+
+    /**
+     * @var int
+     */
+    private $spawnPosY;
+
+    /**
+     * @var int
+     */
+    private $posX;
+
+    /**
+     * @var int
+     */
+    private $posY;
+
+    /**
      * @param Uuid $accountId
      * @param string $name
      * @param int $health
+     * @param Position $spawnPosition
      */
-    public function __construct(Uuid $accountId, string $name, int $health)
+    public function __construct(Uuid $accountId, string $name, int $health, Position $spawnPosition)
     {
         $this->id = Uuid::uuid4();
         Assertion::notEmpty($name);
@@ -63,5 +85,9 @@ final class Character
         $this->health = $health;
         $this->currentHealth = $health;
         $this->experience = 0;
+        $this->spawnPosX = $spawnPosition->x();
+        $this->spawnPosY = $spawnPosition->y();
+        $this->posX = $spawnPosition->x();
+        $this->posY = $spawnPosition->y();
     }
 }

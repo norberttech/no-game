@@ -3,6 +3,7 @@
 const Assert = require('assert-js');
 const Characters = require('./../../Engine/Characters');
 const Player = require('./../../Engine/Player');
+const Position = require('./../../Engine/Map/Area/Position');
 const Clock = require('./../../Engine/Clock');
 const Pool = require('pg').Pool;
 
@@ -46,11 +47,48 @@ class PgsqlCharacters extends Characters
                         result.rows[0].name,
                         result.rows[0].current_health,
                         result.rows[0].health, // replace with max_health,
-                        this._clock
+                        this._clock,
+                        new Position(
+                            result.rows[0].pos_x,
+                            result.rows[0].pos_y
+                        ),
+                        new Position(
+                            result.rows[0].spawn_pos_x,
+                            result.rows[0].spawn_pos_y
+                        )
                     ));
                 }
             )
         });
+    }
+
+    /**
+     * @param {Player} character
+     */
+    save(character)
+    {
+        Assert.instanceOf(character, Player);
+
+        this._pool.query(
+            `UPDATE nogame_character
+             SET 
+                current_health = $2, 
+                health = $3,
+                pos_x = $4 ,
+                pos_y = $5,
+                spawn_pos_x = $6,
+                spawn_pos_y = $7
+            WHERE id = $1`,
+            [
+                character.id,
+                character.health,
+                character.maxHealth,
+                character.position.x,
+                character.position.y,
+                character.spawnPosition.x,
+                character.spawnPosition.y
+            ]
+        );
     }
 }
 

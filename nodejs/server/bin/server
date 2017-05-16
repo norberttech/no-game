@@ -20,13 +20,6 @@ let config = JSON.parse(fs.readFileSync(parametersFilePath));
 
 let clock = new Clock();
 let logger = new BunyanLogger('server', config.logLevel);
-let kernel = new Kernel(
-    logger,
-    Loader.loadMapArea(logger, "Tesaria", __dirname + '/../config/map/tesaria.json'),
-    Loader.loadMonsterFactory(logger, clock),
-    clock
-);
-kernel.boot();
 
 let broadcaster = new Broadcaster();
 let incomeQueue = new IncomeQueue();
@@ -40,6 +33,16 @@ const pool = new Pool({
 });
 let accounts = new PgsqlAccounts(pool);
 let characters = new PgsqlCharacters(pool, clock);
+
+let kernel = new Kernel(
+    characters,
+    Loader.loadMapArea(logger, "Tesaria", __dirname + '/../config/map/tesaria.json'),
+    Loader.loadMonsterFactory(logger, clock),
+    clock,
+    logger
+);
+kernel.boot();
+
 
 let protocol = new Protocol(kernel, accounts, characters, incomeQueue, broadcaster, logger);
 let server = new Server(kernel, protocol, logger, new GameLoop(), broadcaster, incomeQueue);

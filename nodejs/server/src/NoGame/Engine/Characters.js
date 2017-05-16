@@ -12,6 +12,17 @@ class Characters
     {
         throw new Error('Method not implemented');
     }
+
+    /**
+     * Repositories should not have save method, but because there is no good
+     * available Unit of Work we have no better choice.
+     *
+     * @param {Player} character
+     */
+    save(character)
+    {
+        throw new Error('Method not implemented');
+    }
 }
 
 module.exports = Characters;

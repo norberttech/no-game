@@ -4,6 +4,7 @@ describe("Server - Authentication -", () => {
     const Account = require('./../../../src/NoGame/Engine/Account');
     const AccountCharacter = require('./../../../src/NoGame/Engine/Account/AccountCharacter');
     const Player = require('./../../../src/NoGame/Engine/Player');
+    const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
     const Protocol = require('./../../../src/NoGame/Server/Protocol');
     const IncomeQueue = require('./../../../src/NoGame/Server/MessageQueue/IncomeQueue');
     const Broadcaster = require('./../../../src/NoGame/Server/Broadcaster');
@@ -24,11 +25,11 @@ describe("Server - Authentication -", () => {
         let area = TestKit.AreaFactory.emptyWalkable(10, 10);
         let logger = new MemoryLogger();
         let clock = new Clock();
-        let kernel = new Kernel(logger, area, new MonsterFactory(new Clock()), clock);
         let incomeQueue = new IncomeQueue();
         let broadcaster = new Broadcaster();
         let accounts = new TestKit.Accounts();
         let characters = new TestKit.Characters();
+        let kernel = new Kernel(characters, area, new MonsterFactory(new Clock()), clock, logger);
 
         accounts.addAccount('user-01@nogame.com', 'password', new Account('1111111111', [
                 new AccountCharacter(CHAR_01_ID, 'Character 01')
@@ -38,8 +39,8 @@ describe("Server - Authentication -", () => {
                 new AccountCharacter(CHAR_02_ID, 'Character 01')
             ])
         );
-        characters.addCharacter(CHAR_01_ID, new Player(CHAR_01_ID, 'Character 01', 100, 100, clock));
-        characters.addCharacter(CHAR_02_ID, new Player(CHAR_02_ID, 'Character 02', 100, 100, clock));
+        characters.addCharacter(CHAR_01_ID, new Player(CHAR_01_ID, 'Character 01', 100, 100, clock, new Position(0, 0), new Position(0, 0)));
+        characters.addCharacter(CHAR_02_ID, new Player(CHAR_02_ID, 'Character 02', 100, 100, clock, new Position(0, 0), new Position(0, 0)));
 
         let protocol = new Protocol(kernel, accounts, characters, incomeQueue, broadcaster, new TestKit.Logger());
 

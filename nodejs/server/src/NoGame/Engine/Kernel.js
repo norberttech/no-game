@@ -7,22 +7,25 @@ const Player = require('./Player');
 const Area = require('./Map/Area');
 const Clock = require('./Clock');
 const Position = require('./Map/Area/Position');
+const Characters = require('./Characters');
 const MonsterFactory = require('./MonsterFactory');
 
 class Kernel
 {
     /**
-     * @param {Logger} logger
+     * @param {Characters} characters
      * @param {Area} area
      * @param {MonsterFactory} monsterFactory
      * @param {Clock} clock
+     * @param {Logger} logger
      */
-    constructor(logger, area, monsterFactory, clock)
+    constructor(characters, area, monsterFactory, clock, logger)
     {
-        Assert.instanceOf(logger, Logger);
         Assert.instanceOf(area, Area);
         Assert.instanceOf(monsterFactory, MonsterFactory);
         Assert.instanceOf(clock, Clock);
+        Assert.instanceOf(characters, Characters);
+        Assert.instanceOf(logger, Logger);
 
         this._version = '1.0.0-DEV';
         this._loaded = false;
@@ -30,6 +33,7 @@ class Kernel
         this._monsterFactory = monsterFactory;
         this._logger = logger;
         this._clock = clock;
+        this._characters = characters;
     }
 
     boot()
@@ -171,7 +175,7 @@ class Kernel
     /**
      * @param {function} onMonsterAttack
      */
-    monstersAttack(onMonsterAttack)
+    chooseMonstersAttackTarget(onMonsterAttack)
     {
         Assert.isFunction(onMonsterAttack);
 
@@ -223,34 +227,61 @@ class Kernel
     /**
      * @param {function} onPlayerDamage
      * @param {function} onPlayerParry
-     * @param {function} onMonsterDamage
-     * @param {function} onMonsterParry
+     * @param {function} onPlayerDied
      */
-    performMeleeDamage(onPlayerDamage, onPlayerParry, onMonsterDamage, onMonsterParry)
+    runMonstersAttackTurn(onPlayerDamage, onPlayerParry, onPlayerDied)
     {
         for (let monster of this._area.monsters) {
+
+            /**
+             * I was thinking about moving this whole logic into monster object,
+             * but this would mean that kernel would need to catch a lot of exceptions
+             * (when monster is exhausted, when it's not attacking anybody or when target is too far).
+             * I don't think this would be most efficient way to handle monsters attacks
+             * so I let Kernel to decide about everything
+             */
             if (!monster.isAttacking || monster.isExhausted) {
-                continue ;
+                continue;
             }
 
             let player = this._area.getPlayer(monster.attackedPlayerId);
 
             if (player.position.calculateDistanceTo(monster.position) > 1) {
-                continue ;
+                continue;
             }
 
-            monster.meleeDamage(player).then((result) => {
-                onPlayerDamage(result.player, result.damage)
-            }).catch((result) => {
-                onPlayerParry(result.player);
-            });
+            let damagePower = monster.meleeHit(player.defence);
 
-            if (player.isDead) {
-                this._area.removeCharacter(player.id);
+            if (damagePower > 0) {
+                let isDeadly = player.health <= damagePower;
+
+                player.damage(damagePower);
+                onPlayerDamage(player, damagePower);
+
+                if (isDeadly) {
+                    onPlayerDied(player);
+
+                    this._area.removeCharacter(player.id);
+                    player.die();
+                    this._characters.save(player);
+                }
+            } else {
+                onPlayerParry(player);
             }
         }
+    }
 
+    /**
+     * @param {function} onMonsterDamage
+     * @param {function} onMonsterParry
+     * @param {function} onMonsterDied
+     */
+    runPlayersAttack(onMonsterDamage, onMonsterParry, onMonsterDied)
+    {
         for (let player of this._area.players) {
+            /**
+             * Check runMonstersAttackTurn for some explanations
+             */
             if (!player.isAttacking || player.isExhausted) {
                 continue ;
             }
@@ -261,14 +292,18 @@ class Kernel
                 continue ;
             }
 
-            player.meleeDamageMonster(monster).then((result) => {
-                onMonsterDamage(result.monster, result.damage);
-            }).catch((result) => {
-                onMonsterParry(result.monster);
-            });
+            let damagePower = player.meleeHit(monster.defence);
 
-            if (monster.isDead) {
-                this._area.removeMonster(monster.id);
+            if (damagePower > 0) {
+                monster.damage(damagePower);
+                onMonsterDamage(monster, damagePower);
+
+                if (monster.isDead) {
+                    onMonsterDied(monster);
+                    this._area.removeMonster(monster.id);
+                }
+            } else {
+                onMonsterParry(monster);
             }
         }
     }
@@ -296,9 +331,11 @@ class Kernel
      */
     logout(playerId)
     {
-        Assert.string(playerId);
+        let player = this._area.getPlayer(playerId);
 
         this._area.logoutPlayer(playerId);
+
+        this._characters.save(player)
     }
 }
 

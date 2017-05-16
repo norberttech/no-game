@@ -106,27 +106,32 @@ class Server
             this._monsterThinkTimer = 0;
         }
 
-        this._kernel.monstersAttack((monster, player) => {
+        this._kernel.chooseMonstersAttackTarget((monster, player) => {
             this._protocol.monsterStartAttack(monster, player);
         });
 
-        this._kernel.performMeleeDamage(
+        this._kernel.runMonstersAttackTurn(
             (player, damage) => {
                 this._protocol.playerLossHealth(player, damage);
-
-                if (player.isDead) {
-                    this._protocol.die(player);
-                }
             },
-            (player) => { this._protocol.playerParry(player); },
+            (player) => {
+                this._protocol.playerParry(player);
+            },
+            (player) => {
+                this._protocol.die(player);
+            }
+        );
+
+        this._kernel.runPlayersAttack(
             (monster, damage) => {
                 this._protocol.monsterLossHealth(monster, damage);
-
-                if (monster.isDead) {
-                    this._protocol.monsterDied(monster);
-                }
             },
-            (monster) => { this._protocol.monsterParry(monster); }
+            (monster) => {
+                this._protocol.monsterParry(monster);
+            },
+            (monster) => {
+                this._protocol.monsterDied(monster);
+            }
         );
     }
 
