@@ -12,6 +12,11 @@
         <field name="name" type="string" length="255" nullable="false"/>
         <field name="normalizedName" type="string" length="255" nullable="false" unique="true"/>
         <field name="health" type="integer" nullable="false" />
+        <field name="currentHealth" type="integer" nullable="false" />
         <field name="experience" type="integer" nullable="false" />
+        <field name="spawnPosX" type="integer" nullable="false" />
+        <field name="spawnPosY" type="integer" nullable="false" />
+        <field name="posX" type="integer" nullable="false" />
+        <field name="posY" type="integer" nullable="false" />
     </entity>
 </doctrine-mapping>

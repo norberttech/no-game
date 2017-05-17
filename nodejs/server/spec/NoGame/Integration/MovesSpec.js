@@ -1,6 +1,12 @@
 describe("Server - Moves -", () => {
     const TestKit = require('./TestKit/TestKit');
     const Kernel = require('./../../../src/NoGame/Engine/Kernel');
+    const Account = require('./../../../src/NoGame/Engine/Account');
+    const AccountCharacter = require('./../../../src/NoGame/Engine/Account/AccountCharacter');
+    const Player = require('./../../../src/NoGame/Engine/Player');
+    const Protocol = require('./../../../src/NoGame/Server/Protocol');
+    const IncomeQueue = require('./../../../src/NoGame/Server/MessageQueue/IncomeQueue');
+    const Broadcaster = require('./../../../src/NoGame/Server/Broadcaster');
     const Server = require('./../../../src/NoGame/Server/Server');
     const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
     const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
@@ -10,26 +16,51 @@ describe("Server - Moves -", () => {
 
     const PORT = 3333;
     const HOST = `ws://127.0.0.1:${PORT}`;
+    const CHAR_01_ID = '01-1111111111';
+    const CHAR_02_ID = '02-2222222222';
+
     let server;
     let area;
     let player;
 
     beforeEach((done) => {
         area = TestKit.AreaFactory.emptyWalkable(2, 2);
-        area.changeSpawnPosition(new Position(1, 1));
         let logger = new MemoryLogger();
-        let kernel = new Kernel(logger, area, new MonsterFactory(new Clock()), new Clock());
+        let clock = new Clock();
+        let incomeQueue = new IncomeQueue();
+        let broadcaster = new Broadcaster();
+        let accounts = new TestKit.Accounts();
+        let characters = new TestKit.Characters();
+        let kernel = new Kernel(characters, area, new MonsterFactory(new Clock()), new Clock(), logger);
         kernel.boot();
 
-        server = new Server(kernel, logger, new GameLoop());
+        accounts.addAccount('user-01@nogame.com', 'password', new Account('1111111111', [
+                new AccountCharacter(CHAR_01_ID, 'Character 01')
+            ])
+        );
+        accounts.addAccount('user-02@nogame.com', 'password', new Account('2222222222', [
+                new AccountCharacter(CHAR_02_ID, 'Character 01')
+            ])
+        );
+        characters.addCharacter(CHAR_01_ID, new Player(CHAR_01_ID, 'Character 01', 100, 100, clock, new Position(1, 1), new Position(0, 0)));
+        characters.addCharacter(CHAR_02_ID, new Player(CHAR_02_ID, 'Character 02', 100, 100, clock, new Position(2, 1), new Position(0, 0)));
+
+        let protocol = new Protocol(kernel, accounts, characters, incomeQueue, broadcaster, new TestKit.Logger());
+
+        server = new Server(kernel, protocol, logger, new GameLoop(), broadcaster, incomeQueue);
         server.listen(PORT, () => {
             player = new TestKit.Player();
             player.connect(HOST, () => {
-                player.send(TestKit.MessageFactory.authenticate('test'));
+                player.send(TestKit.MessageFactory.login('user-01@nogame.com', 'password'));
 
                 player.expectMsg((message) => {
-                    TestKit.MessageAssert.batchString(message);
-                    done(); // player logged in, testsuite can proceed
+                    TestKit.MessageAssert.characterListString(message);
+                    player.send(TestKit.MessageFactory.loginCharacter(CHAR_01_ID));
+
+                    player.expectMsg((message) => {
+                        TestKit.MessageAssert.batchString(message);
+                        done(); // player logged in, testsuite can proceed
+                    });
                 })
             });
         });
@@ -105,24 +136,28 @@ describe("Server - Moves -", () => {
     });
 
     it("makes sure that player can't walk on another player position", (done) => {
-        area.changeSpawnPosition(new Position(2, 1));
         let opponent = new TestKit.Player();
 
         opponent.connect(HOST, () => {
-            opponent.send(TestKit.MessageFactory.authenticate('opponent'));
+            opponent.send(TestKit.MessageFactory.login('user-02@nogame.com', 'password'));
 
             opponent.expectMsg((message) => {
-                TestKit.MessageAssert.batchString(message);
+                TestKit.MessageAssert.characterListString(message);
+                opponent.send(TestKit.MessageFactory.loginCharacter(CHAR_02_ID));
 
-                player.expectMsg((message) => {
-                    TestKit.MessageAssert.charactersString(message); // opponent logged in
-                });
+                opponent.expectMsg((message) => {
+                    TestKit.MessageAssert.batchString(message);
 
-                player.send(TestKit.MessageFactory.move(2, 1)); // move to opponent position
+                    player.expectMsg((message) => {
+                        TestKit.MessageAssert.charactersString(message); // opponent logged in
+                    });
 
-                player.expectMsg((message) => {
-                    TestKit.MessageAssert.moveString(message).assertX(1).assertY(1).assertMoveTime(0);
-                    done();
+                    player.send(TestKit.MessageFactory.move(2, 1)); // move to opponent position
+
+                    player.expectMsg((message) => {
+                        TestKit.MessageAssert.moveString(message).assertX(1).assertY(1).assertMoveTime(0);
+                        done();
+                    });
                 });
             });
         });
@@ -132,17 +167,22 @@ describe("Server - Moves -", () => {
         let opponent = new TestKit.Player();
 
         opponent.connect(HOST, () => {
-            opponent.send(TestKit.MessageFactory.authenticate('opponent'));
+            opponent.send(TestKit.MessageFactory.login('user-02@nogame.com', 'password'));
 
             opponent.expectMsg((message) => {
-                TestKit.MessageAssert.batchString(message);
+                TestKit.MessageAssert.characterListString(message);
+                opponent.send(TestKit.MessageFactory.loginCharacter(CHAR_02_ID));
 
-                opponent.send(TestKit.MessageFactory.move(2, 1));
+                opponent.expectMsg((message) =>{
+                    TestKit.MessageAssert.batchString(message);
 
-                player.expectMsg((message) => {
-                    TestKit.MessageAssert.charactersString(message);
-                    done();
-                })
+                    opponent.send(TestKit.MessageFactory.move(2, 1));
+
+                    player.expectMsg((message) => {
+                        TestKit.MessageAssert.charactersString(message);
+                        done();
+                    });
+                });
             });
         });
     });

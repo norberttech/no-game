@@ -11,9 +11,11 @@ import Character from './Character';
 import Kernel from './Kernel';
 import Connection from './Network/Connection';
 import LoginMessage from './Network/LoginMessage';
+import LoginCharacterMessage from './Network/LoginCharacterMessage';
 import SayMessage from './Network/SayMessage';
 import AttackMonsterMessage from './Network/AttackMonsterMessage';
 import MoveMessage from './Network/MoveMessage';
+import UserInterface from './UserInterface';
 
 const LATENCY_DELAY = 50;
 
@@ -21,14 +23,17 @@ export default class Protocol
 {
     /**
      * @param {Kernel} kernel
+     * @param {UserInterface} ui
      * @param {Connection} connection
      */
-    constructor(kernel, connection)
+    constructor(kernel, ui, connection)
     {
         Assert.instanceOf(kernel, Kernel);
+        Assert.instanceOf(ui, UserInterface);
         Assert.instanceOf(connection, Connection);
 
         this._kernel = kernel;
+        this._ui = ui;
         this._connection = connection;
         this._onLogin = null;
         this._onLogout = null;
@@ -45,12 +50,28 @@ export default class Protocol
 
     /**
      * @param {string} username
+     * @param {string} password
      */
-    login(username)
+    login(username, password)
     {
         Assert.string(username);
+        Assert.string(password);
 
-        this._connection.send(new LoginMessage(username));
+        this._connection.send(new LoginMessage(username, password));
+    }
+
+    /**
+     * NOTE: This function is very unsecured, it needs to have additional time expired token generated for account
+     * to make sure that only people that sent valid username/password are able to login.
+     * This feature will be added next.
+     *
+     * @param {string} characterId
+     */
+    loginCharacter(characterId)
+    {
+        Assert.string(characterId);
+
+        this._connection.send(new LoginCharacterMessage(characterId));
     }
 
     /**
@@ -127,6 +148,25 @@ export default class Protocol
                 if (this._onLogin !== null) {
                     this._onLogin();
                 }
+                this._ui.hideLoginScreen();
+                this._ui.chat().setCurrentUsername(message.data.name);
+                this._ui.characterList.hide();
+                this._ui.showCanvas();
+                break;
+            case ServerMessages.LOGIN_ACCOUNT_NOT_FOUND:
+                this._ui.addErrorMessage("Account not found.");
+
+                break;
+            case ServerMessages.LOGIN_CHARACTER_LIST:
+                this._ui.hideLoginScreen();
+                this._ui.characterList.show();
+                message.data.characters.map((characterData) => {
+                    this._ui.characterList.addCharacter(characterData.id, characterData.name)
+                });
+
+                if (!message.data.characters.length) {
+                    this._ui.characterList.emptyList();
+                }
 
                 break;
             case ServerMessages.LOGOUT:
@@ -135,6 +175,7 @@ export default class Protocol
                 if (this._onLogout !== null) {
                     this._onLogout(message.data.reason);
                 }
+
 
                 break;
             case ServerMessages.AREA:

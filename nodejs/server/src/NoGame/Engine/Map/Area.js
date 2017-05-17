@@ -95,15 +95,6 @@ class Area
 
         return monsters;
     }
-    /**
-     * @param {Position} newSpawnPosition
-     */
-    changeSpawnPosition(newSpawnPosition)
-    {
-        Assert.instanceOf(newSpawnPosition, Position);
-
-        this._spawnPosition = newSpawnPosition;
-    }
 
     /**
      * @param {string} playerId
@@ -111,6 +102,8 @@ class Area
      */
     getPlayer(playerId)
     {
+        Assert.string(playerId);
+
         if (!this._characters.has(playerId)) {
             throw `Player with id ${playerId} does not exists.`;
         }
@@ -211,8 +204,6 @@ class Area
             throw `Player with id "${newPlayer.id}" is already present in area "${this._name}"`;
         }
 
-        newPlayer.setStartingPosition(this._spawnPosition);
-
         this._characters.set(newPlayer.id, newPlayer);
         this._tiles.get(newPlayer.position.toString()).playerWalkOn(newPlayer.id);
     }
@@ -223,7 +214,7 @@ class Area
     logoutPlayer(playerId)
     {
         let player = this.getPlayer(playerId);
-        let t = this._tiles.get(player.position.toString());
+        let tile = this._tiles.get(player.position.toString());
 
         for (let monsterId of player.attackedByMonsters) {
             let monster = this.getMonster(monsterId);
@@ -232,7 +223,7 @@ class Area
             player.removeAttackingMonster(monsterId);
         }
 
-        t.playerLeave(playerId);
+        tile.playerLeave(playerId);
         this._characters.delete(playerId);
     }
 
@@ -244,7 +235,7 @@ class Area
     {
         let player = this.getPlayer(playerId);
 
-        let t = this._tiles.get(player.position.toString());
+        let tile = this._tiles.get(player.position.toString());
 
         for (let monsterId of player.attackedByMonsters) {
             let monster = this.getMonster(monsterId);
@@ -253,7 +244,7 @@ class Area
             player.removeAttackingMonster(monsterId);
         }
 
-        t.playerLeave(playerId);
+        tile.playerLeave(playerId);
         this._characters.delete(playerId);
     }
 

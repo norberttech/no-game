@@ -1,6 +1,5 @@
 'use strict';
 
-const uuid = require('uuid');
 const Assert = require('assert-js');
 const Tile = require('./Map/Area/Tile');
 const Monster = require('./Monster');
@@ -15,22 +14,28 @@ const BASE_ATTACK_POWER = 20;
 class Player
 {
     /**
+     * @param {string} id
      * @param {string} name
+     * @param {int} currentHealth
      * @param {int} health
-     * @param {int} maxHealth
      * @param {Clock} clock
+     * @param {Position} position
+     * @param {Position} spawnPosition
      */
-    constructor(name, health, maxHealth, clock)
+    constructor(id, name, currentHealth, health, clock, position, spawnPosition)
     {
+        Assert.string(id);
         Assert.string(name);
         Assert.notEmpty(name);
+        Assert.greaterThan(0, currentHealth);
         Assert.greaterThan(0, health);
-        Assert.greaterThan(0, maxHealth);
         Assert.instanceOf(clock, Clock);
+        Assert.instanceOf(position, Position);
+        Assert.instanceOf(spawnPosition, Position);
 
-        this._id = uuid.v4();
+        this._id = id;
+        this._currentHealth = currentHealth;
         this._health = health;
-        this._maxHealth = maxHealth;
         this._position = null;
         this._moveEnds = 0;
         this._name = name;
@@ -38,6 +43,8 @@ class Player
         this._lastAttack = 0;
         this._attackedMonster = null;
         this._clock = clock;
+        this._position = position;
+        this._spawnPosition = spawnPosition;
     }
 
     /**
@@ -61,7 +68,7 @@ class Player
      */
     get health()
     {
-        return this._health;
+        return this._currentHealth;
     }
 
     /**
@@ -69,7 +76,7 @@ class Player
      */
     get maxHealth()
     {
-        return this._maxHealth;
+        return this._health;
     }
 
     /**
@@ -77,7 +84,15 @@ class Player
      */
     get isDead()
     {
-        return this._health === 0;
+        return this._currentHealth === 0;
+    }
+
+    die()
+    {
+        this._position = this._spawnPosition;
+        this._currentHealth = this._health;
+
+        // remove some of experience
     }
 
     /**
@@ -102,6 +117,14 @@ class Player
     get position()
     {
         return this._position;
+    }
+
+    /**
+     * @returns {Position}
+     */
+    get spawnPosition()
+    {
+        return this._spawnPosition;
     }
 
     /**
@@ -178,25 +201,11 @@ class Player
     {
         Assert.greaterThan(0, damage);
 
-        this._health = this._health - damage;
+        this._currentHealth = this._currentHealth - damage;
 
-        if (this._health < 0) {
-            this._health = 0;
+        if (this._currentHealth < 0) {
+            this._currentHealth = 0;
         }
-    }
-
-    /**
-     * @param {Position} startingPosition
-     */
-    setStartingPosition(startingPosition)
-    {
-        Assert.instanceOf(startingPosition, Position);
-
-        if (this._position instanceof  Position) {
-            throw `Starting position can be set only once, when player is spawned in area`;
-        }
-
-        this._position = startingPosition;
     }
 
     /**
@@ -258,31 +267,15 @@ class Player
 
     /**
      * @param {Monster} monster
+     * @returns {int}
      */
-    meleeDamageMonster(monster)
+    meleeHit(defence)
     {
-         Assert.instanceOf(monster, Monster);
-
-        if (this._attackedMonster !== monster.id) {
-            throw `Player ${monster.id} can't be damaged, it wasn't attacked by monster ${this._id}`;
-        }
-
-        if (monster.position.calculateDistanceTo(this._position) > 1) {
-            throw `Player ${monster.id} can't be damaged, it is too far from monster ${this._id}`;
-        }
+        Assert.integer(defence);
 
         this._lastAttack = this._clock.time();
 
-        return new Promise((resolve, reject) => {
-            let power = Math.round((this.attackPower * Math.random()) - (monster.defence * Math.random()));
-
-            if (power > 0) {
-                monster.damage(power);
-                resolve({monster: monster, damage: power});
-            } else {
-                reject({monster: monster});
-            }
-        });
+        return Math.round((this.attackPower * Math.random()) - (defence * Math.random()));
     }
 }
 

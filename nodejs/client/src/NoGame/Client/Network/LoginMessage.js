@@ -7,15 +7,17 @@ import {ClientMessages} from 'nogame-common';
 export default class LoginMessage extends NetworkMessage
 {
     /**
-     * @param {string} playername
+     * @param {string} login
+     * @param {string} password
      */
-    constructor(playername)
+    constructor(login, password)
     {
         super();
 
-        Assert.string(playername);
+        Assert.string(login);
+        Assert.string(password);
 
         this._name = ClientMessages.LOGIN;
-        this._data = {username: playername};
+        this._data = {login: login, password: password};
     }
 }

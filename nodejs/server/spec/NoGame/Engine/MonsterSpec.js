@@ -42,39 +42,19 @@ describe("Monster", () => {
 
     it ("is has attack delay", () => {
         let monster = new Monster("bobok", 100, 50, 10, 5, 1, new Position(1, 1), "1234556789", clock);
-        let player = new Player("yaboomaster", 100, 100, clock);
-        player.setStartingPosition(new Position(1, 2));
+        let player = new Player("1111", "yaboomaster", 100, 100, clock, new Position(1, 2), new Position(1, 2));
 
         monster.attack(player.id);
 
         expect(monster.isExhausted).to.be(false);
 
-        monster.meleeDamage(player).then(() => {
-            expect(monster.isExhausted).to.be(true);
+        monster.meleeHit(10);
 
-            clock.pushForward(100);
+        expect(monster.isExhausted).to.be(true);
 
-            expect(monster.isExhausted).to.be(false);
-        });
-    });
+        clock.pushForward(100);
 
-    it ("it throws exception on damaging player that is not attacked by mosnter", () => {
-        let monster = new Monster("bobok", 100, 5, 500, 5, 1, new Position(1, 1), "1234556789", clock);
-        let player = new Player("yaboomaster", 100, 100, clock);
-
-        expect(() => {monster.meleeDamage(player)})
-            .to.throwError(`Player ${player.id} can't be damaged, it wasn't attacked by monster ${monster.id}`);
-    });
-
-    it ("it throws exception on damaging player that is too far from mosnter", () => {
-        let monster = new Monster("bobok", 100, 5, 500, 5, 1, new Position(1, 1), "1234556789", clock);
-        let player = new Player("yaboomaster", 100, 100, clock);
-        player.setStartingPosition(new Position(5, 5));
-
-        monster.attack(player.id);
-
-        expect(() => {monster.meleeDamage(player)})
-            .to.throwError(`Player ${player.id} can't be damaged, it is too far from monster ${monster.id}`);
+        expect(monster.isExhausted).to.be(false);
     });
 
     it ("can't have negative health", () => {

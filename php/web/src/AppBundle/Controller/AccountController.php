@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class AccountController extends Controller
 {
+    const SPAWN_POSITION_X = 42;
+    const SPAWN_POSITION_Y = 12;
+
     /**
      * @Route("/account", name="nogame_account")
      */
@@ -35,7 +38,15 @@ final class AccountController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $character = new Character($this->getUser()->accountId(), $form->get('name')->getData(), 100);
+            $character = new Character(
+                $this->getUser()->accountId(),
+                $form->get('name')->getData(),
+                100,
+                new Character\Position(
+                    self::SPAWN_POSITION_X,
+                    self::SPAWN_POSITION_Y
+                )
+            );
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($character);

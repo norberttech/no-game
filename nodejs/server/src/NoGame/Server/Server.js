@@ -3,7 +3,7 @@
 const WebsocketServer = require('ws').Server;
 const Broadcaster = require('./Broadcaster');
 const Connection = require('./Network/Connection');
-const IncomeMessageQueue = require('./MessageQueue/IncomeQueue');
+const IncomeQueue = require('./MessageQueue/IncomeQueue');
 const Assert = require('assert-js');
 const Kernel = require('./../Engine/Kernel');
 const GameLoop = require('./GameLoop');
@@ -14,18 +14,25 @@ class Server
 {
     /**
      * @param {Kernel} kernel
+     * @param {Protocol} protocol
      * @param {Logger} logger
      * @param {GameLoop} loop
+     * @param {Broadcaster} broadcaster
+     * @param {IncomeQueue} incomeMessageQueue
      */
-    constructor(kernel, logger, loop)
+    constructor(kernel, protocol, logger, loop, broadcaster, incomeMessageQueue)
     {
         Assert.instanceOf(kernel, Kernel);
+        Assert.instanceOf(protocol, Protocol);
+        Assert.instanceOf(loop, GameLoop);
         Assert.instanceOf(logger, Logger);
+        Assert.instanceOf(broadcaster, Broadcaster);
+        Assert.instanceOf(incomeMessageQueue, IncomeQueue);
 
-        this._broadcaster = new Broadcaster();
-        this._incomeMessageQueue = new IncomeMessageQueue();
+        this._broadcaster = broadcaster;
+        this._incomeMessageQueue = incomeMessageQueue;
         this._kernel = kernel;
-        this._protocol = new Protocol(kernel, this._incomeMessageQueue, this._broadcaster, logger);
+        this._protocol = protocol;
         this._logger = logger;
         this._gameLoop = loop;
         this._spawnTimer = 0;
@@ -99,27 +106,32 @@ class Server
             this._monsterThinkTimer = 0;
         }
 
-        this._kernel.monstersAttack((monster, player) => {
+        this._kernel.chooseMonstersAttackTarget((monster, player) => {
             this._protocol.monsterStartAttack(monster, player);
         });
 
-        this._kernel.performMeleeDamage(
+        this._kernel.runMonstersAttackTurn(
             (player, damage) => {
                 this._protocol.playerLossHealth(player, damage);
-
-                if (player.isDead) {
-                    this._protocol.die(player);
-                }
             },
-            (player) => { this._protocol.playerParry(player); },
+            (player) => {
+                this._protocol.playerParry(player);
+            },
+            (player) => {
+                this._protocol.die(player);
+            }
+        );
+
+        this._kernel.runPlayersAttack(
             (monster, damage) => {
                 this._protocol.monsterLossHealth(monster, damage);
-
-                if (monster.isDead) {
-                    this._protocol.monsterDied(monster);
-                }
             },
-            (monster) => { this._protocol.monsterParry(monster); }
+            (monster) => {
+                this._protocol.monsterParry(monster);
+            },
+            (monster) => {
+                this._protocol.monsterDied(monster);
+            }
         );
     }
 

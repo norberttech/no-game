@@ -146,33 +146,16 @@ class Monster
     }
 
     /**
-     * @param {Player} player
-     * @returns {Promise}
+     * @param {int} defence
+     * @returns {int}
      */
-    meleeDamage(player)
+    meleeHit(defence)
     {
-        // there is no player assertion here because for node it would be a circular dependency
-
-        if (this._attackedPlayerId !== player.id) {
-            throw `Player ${player.id} can't be damaged, it wasn't attacked by monster ${this._id}`;
-        }
-
-        if (player.position.calculateDistanceTo(this._position) > 1) {
-            throw `Player ${player.id} can't be damaged, it is too far from monster ${this._id}`;
-        }
+        Assert.integer(defence)
 
         this._lastAttack = this._clock.time();
 
-        return new Promise((resolve, reject) => {
-            let power = Math.round((this._attackPower * Math.random()) - (player.defence * Math.random()));
-
-            if (power > 0) {
-                player.damage(power);
-                resolve({player: player, damage :power});
-            } else {
-                reject({player: player});
-            }
-        });
+        return Math.round((this._attackPower * Math.random()) - (defence * Math.random()));
     }
 
     /**

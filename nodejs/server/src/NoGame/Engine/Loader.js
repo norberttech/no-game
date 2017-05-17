@@ -34,8 +34,6 @@ class Loader
         let groundTiles = areaData.layers[0];
         let groundsTileSet = areaData.tilesets[0];
 
-        area.changeSpawnPosition(new Position(groundTiles.properties.spawnPositionX, groundTiles.properties.spawnPositionY));
-
         let x = 0;
         let y = 0;
 

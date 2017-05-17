@@ -3,6 +3,8 @@
 const ServerMessages = {
     BATCH_MESSAGE: 'batch',
     LOGIN: 'login',
+    LOGIN_CHARACTER_LIST: 'login_character_list',
+    LOGIN_ACCOUNT_NOT_FOUND: 'login_account_not_found',
     LOGOUT: 'logout',
     AREA: 'area',
     TILE: 'tile',

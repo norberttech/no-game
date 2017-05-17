@@ -47,7 +47,9 @@ function initialize()
     spriteMap.add(new SpriteFile("grounds", "assets/sprites/grounds.png", 1));
     let mouse = new Mouse();
     let keyboard = new KeyBoard();
+    let ui = new UserInterface(window.document, keyboard, mouse);
     let protocolFactory = new ProtocolFactory(
+        ui,
         window.location.hasParameter('test')
     );
 
@@ -65,7 +67,6 @@ function initialize()
         mouse,
         protocolFactory
     );
-    let ui = new UserInterface(window.document, keyboard, mouse);
 
     ui.bindWindowResize();
     ui.bindArrows();
@@ -78,11 +79,16 @@ function initialize()
             connectedClient.protocol.say(message);
         });
 
-        ui.onLoginSubmit((username) => {
-            ui.hideLoginScreen();
-            ui.showCanvas();
-            connectedClient.protocol.login(username);
-            ui.chat().setCurrentUsername(username);
+        ui.onLoginSubmit((username, password) => {
+            connectedClient.protocol.login(username, password);
+        });
+
+        ui.characterList.onLoginSubmit(() => {
+            if (ui.characterList.isCharacterSelected) {
+                connectedClient.protocol.loginCharacter(ui.characterList.selectedCharacterId);
+            } else {
+                ui.addErrorMessage("Please select character first");
+            }
         });
 
         connectedClient.protocol.onCharacterSay((characterName, message) => {
