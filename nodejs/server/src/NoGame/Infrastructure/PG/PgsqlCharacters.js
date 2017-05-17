@@ -1,6 +1,7 @@
 'use strict';
 
 const Assert = require('assert-js');
+const Logger = require('nogame-common').Logger;
 const Characters = require('./../../Engine/Characters');
 const Player = require('./../../Engine/Player');
 const Position = require('./../../Engine/Map/Area/Position');
@@ -12,16 +13,19 @@ class PgsqlCharacters extends Characters
     /**
      * @param {Pool} pool
      * @param {Clock} clock
+     * @param {Logger} logger
      */
-    constructor(pool, clock)
+    constructor(pool, clock, logger)
     {
         super();
 
         Assert.instanceOf(pool, Pool);
         Assert.instanceOf(clock, Clock);
+        Assert.instanceOf(logger, Logger);
 
         this._pool = pool;
         this._clock = clock;
+        this._logger = logger;
     }
 
     /**
@@ -65,12 +69,14 @@ class PgsqlCharacters extends Characters
     /**
      * @param {Player} character
      */
-    save(character)
+    async save(character)
     {
         Assert.instanceOf(character, Player);
 
-        this._pool.query(
-            `UPDATE nogame_character
+        try {
+            this._logger.debug(`Saving character ${character.id}.`);
+            var res = await this._pool.query(
+                `UPDATE nogame_character
              SET 
                 current_health = $2, 
                 health = $3,
@@ -79,16 +85,20 @@ class PgsqlCharacters extends Characters
                 spawn_pos_x = $6,
                 spawn_pos_y = $7
             WHERE id = $1`,
-            [
-                character.id,
-                character.health,
-                character.maxHealth,
-                character.position.x,
-                character.position.y,
-                character.spawnPosition.x,
-                character.spawnPosition.y
-            ]
-        );
+                [
+                    character.id,
+                    character.health,
+                    character.maxHealth,
+                    character.position.x,
+                    character.position.y,
+                    character.spawnPosition.x,
+                    character.spawnPosition.y
+                ]
+            )
+            this._logger.debug(`Character ${character.id} saved.`);
+        } catch (err) {
+            this._logger.error(`Can't save character ${character.id} saved.`);
+        }
     }
 }
 

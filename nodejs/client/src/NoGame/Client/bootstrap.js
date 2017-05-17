@@ -110,6 +110,7 @@ function initialize()
         connectedClient.onDisconnect((client) => {
             ui.showLoginScreen();
             ui.hideCanvas();
+            ui.characterList.hide();
             ui.addErrorMessage("Disconnected from server.");
         });
     }).catch((client) => {

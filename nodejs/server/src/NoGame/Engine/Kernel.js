@@ -335,7 +335,7 @@ class Kernel
 
         this._area.logoutPlayer(playerId);
 
-        this._characters.save(player)
+        this._characters.save(player);
     }
 }
 
