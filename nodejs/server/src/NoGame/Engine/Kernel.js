@@ -165,7 +165,7 @@ class Kernel
 
         if (!destination.canWalkOn) {
             this._logger.error({msg: 'can\'t walk on tile', player: player, position: position});
-            throw `Can't walk on tile ${position.toString()}`;
+            throw new Error(`Can't walk on tile ${position.toString()}`);
         }
 
         oldTile.playerLeave(playerId);
@@ -335,7 +335,7 @@ class Kernel
 
         this._area.logoutPlayer(playerId);
 
-        this._characters.save(player)
+        this._characters.save(player);
     }
 }
 

@@ -189,7 +189,7 @@ describe("Server - Moves -", () => {
 
     afterEach((done) => {
         player.disconnect();
-        server.terminate(() => done());
+        server.terminate(() => done(), 1);
     });
 
     /**

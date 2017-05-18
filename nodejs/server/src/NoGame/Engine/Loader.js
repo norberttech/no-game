@@ -17,13 +17,15 @@ class Loader
      * @param {Logger} logger
      * @param {string} name
      * @param {string} mapPath
+     * @param {Clock} clock
      * @returns {Area}
      */
-    static loadMapArea(logger, name, mapPath)
+    static loadMapArea(logger, name, mapPath, clock)
     {
         Assert.instanceOf(logger, Logger);
         Assert.string(name);
         Assert.string(mapPath);
+        Assert.instanceOf(clock, Clock);
 
         logger.info(`Loading map from ${mapPath}...`);
 
@@ -55,7 +57,7 @@ class Loader
             x++;
         }
 
-        area.addSpawn(new Spawn("rat", 1, 10000, new Position(30, 12), 1));
+        area.addSpawn(new Spawn("rat", 1, 10000, new Position(30, 12), 1, clock));
 
         logger.info('tesaria.json loaded!');
 

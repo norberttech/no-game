@@ -147,6 +147,6 @@ describe("Server - Authentication -", () => {
     });
 
     afterEach((done) => {
-        server.terminate(() => done());
+        server.terminate(() => done(), 1);
     });
 });

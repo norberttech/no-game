@@ -32,11 +32,11 @@ const pool = new Pool({
     idleTimeoutMillis: 1000
 });
 let accounts = new PgsqlAccounts(pool);
-let characters = new PgsqlCharacters(pool, clock);
+let characters = new PgsqlCharacters(pool, clock, logger);
 
 let kernel = new Kernel(
     characters,
-    Loader.loadMapArea(logger, "Tesaria", __dirname + '/../config/map/tesaria.json'),
+    Loader.loadMapArea(logger, "Tesaria", __dirname + '/../config/map/tesaria.json', clock),
     Loader.loadMonsterFactory(logger, clock),
     clock,
     logger
@@ -47,3 +47,24 @@ kernel.boot();
 let protocol = new Protocol(kernel, accounts, characters, incomeQueue, broadcaster, logger);
 let server = new Server(kernel, protocol, logger, new GameLoop(), broadcaster, incomeQueue);
 server.listen(config.port);
+
+
+function exitHandler(err) {
+    if (err) {
+        logger.error(err.message);
+    }
+
+    // prevent terminating server more than one time
+    if (!server.isTerminated) {
+        server.terminate(() =>
+        {
+            process.exit();
+        });
+    }
+}
+
+//catches ctrl+c event
+process.on('SIGINT', exitHandler.bind(null));
+
+//catches uncaught exceptions
+process.on('uncaughtException', exitHandler.bind(null));

@@ -37,6 +37,7 @@ class Server
         this._gameLoop = loop;
         this._spawnTimer = 0;
         this._monsterThinkTimer = 0;
+        this._isTerminated = false;
     }
 
     /**
@@ -146,15 +147,34 @@ class Server
     }
 
     /**
-     * @param {function} [callback]
+     * @returns {boolean}
      */
-    terminate(callback = () => {})
+    get isTerminated()
+    {
+        return this._isTerminated;
+    }
+
+    /**
+     * @param {function} [callback]
+     * @param {int} terminationTimeout
+     */
+    terminate(callback = () => {}, terminationTimeout = 5000)
     {
         Assert.isFunction(callback);
+        Assert.integer(terminationTimeout);
 
+        this._isTerminated = true;
+        this._logger.info("Server Terminate: Stopping game loop.");
         this._gameLoop.stop();
+        this._logger.info("Server Terminate: Closing WebServer.");
         this._server.close();
-        callback();
+        this._logger.info("Server Terminate: Saving Characters.");
+
+        setTimeout(() => {
+            this._logger.info("Server Terminate: Terminated.");
+            callback();
+            // lets give server enough time to save all characters.
+        }, terminationTimeout);
     }
 }
 

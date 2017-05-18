@@ -11,8 +11,6 @@ describe("Player", () => {
     let clock = null;
 
     beforeEach(() => {
-        "use strict";
-
         clock = new TestKit.ManualClock(new Date().getTime());
     });
 
