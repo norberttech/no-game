@@ -3,6 +3,7 @@
 const UUID = require('uuid');
 const Assert = require('assert-js');
 const Position = require('./Map/Area/Position');
+const Clock = require('./Clock');
 const Utils = require('nogame-common').Utils;
 
 class Spawn
@@ -13,14 +14,16 @@ class Spawn
      * @param {int} spawnDuration - in seconds
      * @param {Position} centerPosition
      * @param {int} radius
+     * @param {Clock} clock
      */
-    constructor(monsterName, maxSize, spawnDuration, centerPosition, radius)
+    constructor(monsterName, maxSize, spawnDuration, centerPosition, radius, clock)
     {
         Assert.string(monsterName);
         Assert.greaterThan(0, maxSize);
         Assert.greaterThan(0, spawnDuration);
         Assert.instanceOf(centerPosition, Position);
         Assert.greaterThan(0, radius);
+        Assert.instanceOf(clock, Clock);
 
         this._id = UUID.v4();
         this._monsterName = monsterName;
@@ -30,6 +33,7 @@ class Spawn
         this._monsters = new Map();
         this._centerPosition = centerPosition;
         this._radius = radius;
+        this._clock = clock;
     }
 
     /**
@@ -61,7 +65,7 @@ class Spawn
      */
     get canSpawn()
     {
-        return new Date().getTime() >= this._lastSpawnDate + this._spawnDuration;
+        return this._clock.time() >= this._lastSpawnDate + this._spawnDuration;
     }
 
     /**
@@ -100,17 +104,17 @@ class Spawn
         Assert.instanceOf(position, Position);
 
         if (this.isFull) {
-            throw `Spawn ${this._id} for "${this._monsterName}" is full.`;
+            throw new Error(`Spawn ${this._id} for "${this._monsterName}" is full.`);
         }
 
         if (!this.canSpawn) {
-            throw `Spawn ${this._id} for "${this._monsterName}" is not ready for new monster yet.`;
+            throw new Error(`Spawn ${this._id} for "${this._monsterName}" is not ready for new monster yet.`);
         }
 
         let monster = factory.create(this._monsterName, position, this._id);
 
         this._monsters.set(monster.id, monster);
-        this._lastSpawnDate = new Date().getTime();
+        this._lastSpawnDate = this._clock.time();
 
         return monster;
     }
@@ -141,7 +145,7 @@ class Spawn
         }
 
         this._monsters.delete(monsterId);
-        this._lastSpawnDate = new Date().getTime();
+        this._lastSpawnDate = this._clock.time();
     }
 }
 

@@ -255,13 +255,13 @@ class Protocol
      */
     _handleLogin(packet, connection)
     {
-      this._accounts.getAccount(packet.data.login, packet.data.password)
-          .then((account) => {
-              connection.send(new LoginCharacterListMessage(account.characters));
-          }).catch((e) => {
-            this._logger.debug(e.message);
-            connection.send(new LoginAccountNotFoundMessage());
-        });
+        this._accounts.getAccount(packet.data.login, packet.data.password)
+            .then((account) => {
+                connection.send(new LoginCharacterListMessage(account.characters));
+            }).catch((e) => {
+                this._logger.debug(e.message);
+                connection.send(new LoginAccountNotFoundMessage());
+            });
     }
 
     /**

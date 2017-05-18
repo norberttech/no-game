@@ -266,7 +266,7 @@ class Player
     }
 
     /**
-     * @param {Monster} monster
+     * @param {int} defence
      * @returns {int}
      */
     meleeHit(defence)

@@ -156,22 +156,25 @@ class Server
 
     /**
      * @param {function} [callback]
+     * @param {int} terminationTimeout
      */
-    terminate(callback = () => {})
+    terminate(callback = () => {}, terminationTimeout = 5000)
     {
         Assert.isFunction(callback);
+        Assert.integer(terminationTimeout);
+
         this._isTerminated = true;
         this._logger.info("Server Terminate: Stopping game loop.");
         this._gameLoop.stop();
         this._logger.info("Server Terminate: Closing WebServer.");
         this._server.close();
         this._logger.info("Server Terminate: Saving Characters.");
-        
+
         setTimeout(() => {
             this._logger.info("Server Terminate: Terminated.");
             callback();
             // lets give server enough time to save all characters.
-        }, 5000);
+        }, terminationTimeout);
     }
 }
 
