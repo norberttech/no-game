@@ -15,7 +15,7 @@ describe("Player", () => {
     });
 
     it ("throws exception on attempt to move for a distance more than 1 square", () => {
-        let player = new Player("1111", "yaboomaster", 100, 100, clock, new Position(1, 1), new Position(1, 1));
+        let player = new Player("1111", "yaboomaster", 0, 100, 100, clock, new Position(1, 1), new Position(1, 1));
 
         expect(() => {
             player.move(new Tile(new Position(1,3), new Item(0, false)));
@@ -23,7 +23,7 @@ describe("Player", () => {
     });
 
     it ("moves to a different position with delay between moves", () => {
-        let player = new Player("1111", "yaboomaster", 100, 100, clock, new Position(1, 1), new Position(1, 1));
+        let player = new Player("1111", "yaboomaster", 0, 100, 100, clock, new Position(1, 1), new Position(1, 1));
 
 
         player.move(new Tile(new Position(1,2), new Item(0, false)));
@@ -38,7 +38,7 @@ describe("Player", () => {
 
     it ("is has attack delay", () => {
         let monster = new Monster("bobok", 100, 50, 10, 5, 1, new Position(1, 1), "1234556789", clock);
-        let player = new Player("1111", "yaboomaster", 100, 100, clock, new Position(1, 2), new Position(1, 2));
+        let player = new Player("1111", "yaboomaster", 0, 100, 100, clock, new Position(1, 2), new Position(1, 2));
 
         player.attackMonster(monster.id);
 
@@ -54,7 +54,7 @@ describe("Player", () => {
     });
 
     it ("can't have negative health", () => {
-        let player = new Player("11111", "yaboomaster", 100, 100, clock, new Position(1, 1), new Position(1, 1));
+        let player = new Player("11111", "yaboomaster", 0, 100, 100, clock, new Position(1, 1), new Position(1, 1));
 
         player.damage(200);
 

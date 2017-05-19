@@ -49,6 +49,7 @@ class PgsqlCharacters extends Characters
                     resolve(new Player(
                         result.rows[0].id,
                         result.rows[0].name,
+                        result.rows[0].experience,
                         result.rows[0].current_health,
                         result.rows[0].health, // replace with max_health,
                         this._clock,
@@ -78,15 +79,17 @@ class PgsqlCharacters extends Characters
             var res = await this._pool.query(
                 `UPDATE nogame_character
              SET 
-                current_health = $2, 
-                health = $3,
-                pos_x = $4 ,
-                pos_y = $5,
-                spawn_pos_x = $6,
-                spawn_pos_y = $7
+                experience = $2,
+                current_health = $3, 
+                health = $4,
+                pos_x = $5,
+                pos_y = $6,
+                spawn_pos_x = $7,
+                spawn_pos_y = $8
             WHERE id = $1`,
                 [
                     character.id,
+                    character.experience,
                     character.health,
                     character.maxHealth,
                     character.position.x,
@@ -98,6 +101,7 @@ class PgsqlCharacters extends Characters
             this._logger.debug(`Character ${character.id} saved.`);
         } catch (err) {
             this._logger.error(`Can't save character ${character.id} saved.`);
+            this._logger.error(err);
         }
     }
 }

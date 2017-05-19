@@ -8,6 +8,7 @@ var Utils = require('./NoGame/Common/Utils');
 var ClientMessages = require('./NoGame/Common/ClientMessages');
 var NetworkMessage = require('./NoGame/Common/NetworkMessage');
 var ServerMessages = require('./NoGame/Common/ServerMessages');
+var ExperienceCalculator = require('./NoGame/Common/ExperienceCalculator');
 var AreaCalculator = require('./NoGame/Common/AreaCalculator');
 var AreaRange = require('./NoGame/Common/AreaRange');
 
@@ -21,5 +22,6 @@ module.exports = {
     NetworkMessage: NetworkMessage,
     ServerMessages: ServerMessages,
     AreaCalculator: AreaCalculator,
+    ExperienceCalculator: ExperienceCalculator,
     AreaRange: AreaRange
 };

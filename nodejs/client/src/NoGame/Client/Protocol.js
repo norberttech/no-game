@@ -137,6 +137,7 @@ export default class Protocol
                     new Player(
                         message.data.id,
                         message.data.name,
+                        message.data.experience,
                         message.data.health,
                         message.data.maxHealth,
                         message.data.position.x,

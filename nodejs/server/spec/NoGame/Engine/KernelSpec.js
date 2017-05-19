@@ -68,7 +68,7 @@ describe("Kernel", () => {
         let kernel = new Kernel(characters, area, monsterFactory, clock, logger);
 
         kernel.spawnMonsters((monster) => {
-            let player = new Player("11111", "player", 100, 100, clock, new Position(12, 12), new Position(12, 12));
+            let player = new Player("11111", "player", 0, 100, 100, clock, new Position(12, 12), new Position(12, 12));
             kernel.login(player);
 
             kernel.chooseMonstersAttackTarget((monster, player) => {
@@ -93,7 +93,7 @@ describe("Kernel", () => {
         let kernel = new Kernel(characters, area, monsterFactory, clock, logger);
 
         kernel.spawnMonsters((monster) => {
-            let player = new Player("11111", "player", 100, 100, clock, new Position(monster.position.x + 9, 10), new Position(10, 10));
+            let player = new Player("11111", "player", 0, 100, 100, clock, new Position(monster.position.x + 9, 10), new Position(10, 10));
             kernel.login(player);
 
             kernel.chooseMonstersAttackTarget((monster, player) => {
@@ -113,7 +113,7 @@ describe("Kernel", () => {
         let kernel = new Kernel(characters, area, monsterFactory, clock, logger);
 
         kernel.spawnMonsters((monster) => {
-            let player = new Player("11111", "player", 100, 100, clock, new Position(monster.position.x + 3, monster.position.y), new Position(10, 10));
+            let player = new Player("11111", "player", 0, 100, 100, clock, new Position(monster.position.x + 3, monster.position.y), new Position(10, 10));
             kernel.login(player);
             kernel.chooseMonstersAttackTarget((monster, player) => {});
         });

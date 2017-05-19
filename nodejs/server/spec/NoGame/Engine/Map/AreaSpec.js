@@ -39,7 +39,7 @@ describe("Area", () => {
 
     it ("throws error on attempt to spawn same player twice", () => {
         let area = new Area("test area", 10, 10);
-        let player = new Player("1111", "yaboomaster", 100, 100, clock, new Position(0, 0), new Position(0, 0));
+        let player = new Player("1111", "yaboomaster", 0, 100, 100, clock, new Position(0, 0), new Position(0, 0));
 
         area.addTile(new Tile(new Position(0, 0), new Item(1)));
 
@@ -53,8 +53,8 @@ describe("Area", () => {
         let stack = [new Item(2, true)];
         let grassTile = new Tile(new Position(1, 1), grass, stack);
         let area = new Area("test area", 1, 1);
-        let player1 = new Player("111", "yaboo1", 100, 100, clock, new Position(1, 1), new Position(1, 1));
-        let player2 = new Player("222", "yaboo2", 100, 100, clock, new Position(1, 1), new Position(1, 1));
+        let player1 = new Player("111", "yaboo1", 0, 100, 100, clock, new Position(1, 1), new Position(1, 1));
+        let player2 = new Player("222", "yaboo2", 0, 100, 100, clock, new Position(1, 1), new Position(1, 1));
 
         area.addTile(new Tile(new Position(0, 0), new Item(1)));
         area.addTile(grassTile);
@@ -66,7 +66,7 @@ describe("Area", () => {
 
     it ("returns tiles visible by player", () => {
         let area = new Area("test area", 100, 100);
-        let player = new Player("1111", "yaboo1", 100, 100, clock, new Position(50, 50), new Position(50, 50));
+        let player = new Player("1111", "yaboo1", 0, 100, 100, clock, new Position(50, 50), new Position(50, 50));
         for (let x = 0; x < 100; x++) {
             for (let y = 0; y < 100; y++) {
                 area.addTile(new Tile(new Position(x, y), new Item(100)));

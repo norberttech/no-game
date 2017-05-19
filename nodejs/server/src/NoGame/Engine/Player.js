@@ -16,17 +16,19 @@ class Player
     /**
      * @param {string} id
      * @param {string} name
+     * @param {int} experience
      * @param {int} currentHealth
      * @param {int} health
      * @param {Clock} clock
      * @param {Position} position
      * @param {Position} spawnPosition
      */
-    constructor(id, name, currentHealth, health, clock, position, spawnPosition)
+    constructor(id, name, experience, currentHealth, health, clock, position, spawnPosition)
     {
         Assert.string(id);
         Assert.string(name);
         Assert.notEmpty(name);
+        Assert.integer(experience);
         Assert.greaterThan(0, currentHealth);
         Assert.greaterThan(0, health);
         Assert.instanceOf(clock, Clock);
@@ -34,11 +36,12 @@ class Player
         Assert.instanceOf(spawnPosition, Position);
 
         this._id = id;
+        this._name = name;
+        this._experience = experience;
         this._currentHealth = currentHealth;
         this._health = health;
         this._position = null;
         this._moveEnds = 0;
-        this._name = name;
         this._attackedBy = new Map();
         this._lastAttack = 0;
         this._attackedMonster = null;
@@ -61,6 +64,14 @@ class Player
     get name()
     {
         return this._name;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get experience()
+    {
+        return this._experience;
     }
 
     /**
