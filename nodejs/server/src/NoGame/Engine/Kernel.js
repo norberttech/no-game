@@ -103,7 +103,7 @@ class Kernel
         Assert.isFunction(onMonsterStopAttack);
 
         for (let monster of this._area.monsters) {
-            if (monster.isMoving || !monster.isAttacking) {
+            if (monster.isMoving(this._clock) || !monster.isAttacking) {
                 continue ;
             }
 
@@ -134,7 +134,7 @@ class Kernel
             let destination = this._area.tile(newPosition);
 
             oldTile.monsterLeave();
-            monster.move(destination);
+            monster.move(destination, this._clock);
             onMonsterMove(monster, oldTile.position);
         }
     }
@@ -240,7 +240,7 @@ class Kernel
              * I don't think this would be most efficient way to handle monsters attacks
              * so I let Kernel to decide about everything
              */
-            if (!monster.isAttacking || monster.isExhausted) {
+            if (!monster.isAttacking || monster.isExhausted(this._clock)) {
                 continue;
             }
 
@@ -250,7 +250,7 @@ class Kernel
                 continue;
             }
 
-            let damagePower = monster.meleeHit(player.defence);
+            let damagePower = monster.meleeHit(player.defence, this._clock);
 
             if (damagePower > 0) {
                 let isDeadly = player.health <= damagePower;

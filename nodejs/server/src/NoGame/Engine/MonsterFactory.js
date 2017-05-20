@@ -3,19 +3,12 @@
 const Assert = require('assert-js');
 const Monster = require('./Monster');
 const Position = require('./Map/Area/Position');
-const Clock = require('./Clock');
 
 class MonsterFactory
 {
-    /**
-     * @param {Clock} clock
-     */
-    constructor(clock)
+    constructor()
     {
-        Assert.instanceOf(clock, Clock);
-
         this._monsterTemplates = new Map();
-        this._clock = clock;
     }
 
     /**
@@ -69,8 +62,7 @@ class MonsterFactory
             template.defence,
             template.spriteId,
             position,
-            spawnId,
-            this._clock
+            spawnId
         );
     }
 }

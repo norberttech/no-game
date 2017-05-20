@@ -69,14 +69,13 @@ class Loader
      * @param {Clock} clock
      * @returns {MonsterFactory}
      */
-    static loadMonsterFactory(logger, clock)
+    static loadMonsterFactory(logger)
     {
         Assert.instanceOf(logger, Logger);
-        Assert.instanceOf(clock, Clock);
 
         logger.info('Loading monster factory...');
 
-        let monsterFactory = new MonsterFactory(clock);
+        let monsterFactory = new MonsterFactory();
 
         logger.info('Loading "rat".');
         monsterFactory.addTemplate("rat", 1001, 32, 50, 3000, 5);

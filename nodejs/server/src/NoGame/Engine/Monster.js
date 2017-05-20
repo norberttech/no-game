@@ -18,9 +18,8 @@ class Monster
      * @param {int} spriteId
      * @param {Position} spawnPosition
      * @param {string} spawnId
-     * @param {Clock} clock
      */
-    constructor(name, health, attackPower, attackDelay, defence, spriteId, spawnPosition, spawnId, clock)
+    constructor(name, health, attackPower, attackDelay, defence, spriteId, spawnPosition, spawnId)
     {
         Assert.string(name);
         Assert.notEmpty(name);
@@ -31,7 +30,6 @@ class Monster
         Assert.integer(spriteId);
         Assert.instanceOf(spawnPosition, Position);
         Assert.string(spawnId);
-        Assert.instanceOf(clock, Clock);
 
         this._id = uuid.v4();
         this._name = name;
@@ -46,7 +44,6 @@ class Monster
         this._attackedPlayerId = null;
         this._attackDelay = attackDelay;
         this._lastAttack = 0;
-        this._clock = clock;
     }
 
     /**
@@ -82,11 +79,14 @@ class Monster
     }
 
     /**
+     * @param {Clock} clock
      * @returns {boolean}
      */
-    get isMoving()
+    isMoving(clock)
     {
-        return (this._clock.time() < this._moveEnds);
+        Assert.instanceOf(clock, Clock);
+
+        return (clock.time() < this._moveEnds);
     }
 
     /**
@@ -130,11 +130,14 @@ class Monster
     }
 
     /**
+     * @param {Clock} clock
      * @returns {boolean}
      */
-    get isExhausted()
+    isExhausted(clock)
     {
-        return (this._clock.time() < this._lastAttack + this._attackDelay);
+        Assert.instanceOf(clock, Clock);
+
+        return (clock.time() < this._lastAttack + this._attackDelay);
     }
 
     /**
@@ -147,13 +150,15 @@ class Monster
 
     /**
      * @param {int} defence
+     * @param {Clock} clock
      * @returns {int}
      */
-    meleeHit(defence)
+    meleeHit(defence, clock)
     {
-        Assert.integer(defence)
+        Assert.integer(defence);
+        Assert.instanceOf(clock, Clock);
 
-        this._lastAttack = this._clock.time();
+        this._lastAttack = clock.time();
 
         return Math.round((this._attackPower * Math.random()) - (defence * Math.random()));
     }
@@ -209,22 +214,24 @@ class Monster
 
     /**
      * @param {Tile} destination
+     * @param {Clock} clock
      */
-    move(destination)
+    move(destination, clock)
     {
-        if (this.isMoving) {
+        if (this.isMoving(clock)) {
             return ;
         }
 
         Assert.instanceOf(destination, Tile);
+        Assert.instanceOf(clock, Clock);
 
         let distance = this.position.calculateDistanceTo(destination.position);
 
         if (distance >= 2) {
-            throw `Can't move that far`;
+            throw Error(`Can't move that far`);
         }
 
-        this._moveEnds = this._clock.time() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
+        this._moveEnds = clock.time() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
         this._position = destination.position;
         destination.monsterWalkOn(this._id);
     }
