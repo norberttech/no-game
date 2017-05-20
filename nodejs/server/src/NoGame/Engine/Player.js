@@ -19,11 +19,10 @@ class Player
      * @param {int} experience
      * @param {int} currentHealth
      * @param {int} health
-     * @param {Clock} clock
      * @param {Position} position
      * @param {Position} spawnPosition
      */
-    constructor(id, name, experience, currentHealth, health, clock, position, spawnPosition)
+    constructor(id, name, experience, currentHealth, health, position, spawnPosition)
     {
         Assert.string(id);
         Assert.string(name);
@@ -31,7 +30,6 @@ class Player
         Assert.integer(experience);
         Assert.greaterThan(0, currentHealth);
         Assert.greaterThan(0, health);
-        Assert.instanceOf(clock, Clock);
         Assert.instanceOf(position, Position);
         Assert.instanceOf(spawnPosition, Position);
 
@@ -45,7 +43,6 @@ class Player
         this._attackedBy = new Map();
         this._lastAttack = 0;
         this._attackedMonster = null;
-        this._clock = clock;
         this._position = position;
         this._spawnPosition = spawnPosition;
     }
@@ -107,11 +104,14 @@ class Player
     }
 
     /**
+     * @param {Clock} clock
      * @returns {boolean}
      */
-    get isMoving()
+    isMoving(clock)
     {
-        return (this._clock.time() < this._moveEnds);
+        Assert.instanceOf(clock, Clock);
+
+        return (clock.time() < this._moveEnds);
     }
 
     /**
@@ -176,23 +176,28 @@ class Player
     }
 
     /**
+     * @param {Clock} clock
      * @returns {boolean}
      */
-    get isExhausted()
+    isExhausted(clock)
     {
-        return (this._clock.time() < this._lastAttack + BASE_ATTACK_DELAY);
+        Assert.instanceOf(clock, Clock);
+
+        return (clock.time() < this._lastAttack + BASE_ATTACK_DELAY);
     }
 
     /**
+     * @param {Clock} clock
      * @param {Tile} destination
      */
-    move(destination)
+    move(destination, clock)
     {
-        if (this.isMoving) {
+        if (this.isMoving(clock)) {
             return ;
         }
 
         Assert.instanceOf(destination, Tile);
+        Assert.instanceOf(clock, Clock);
 
         let distance = this._position.calculateDistanceTo(destination.position);
 
@@ -200,7 +205,7 @@ class Player
             throw `Can't move that far`;
         }
 
-        this._moveEnds = this._clock.time() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
+        this._moveEnds = clock.time() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
         this._position = destination.position;
         destination.playerWalkOn(this._id);
     }
@@ -278,13 +283,15 @@ class Player
 
     /**
      * @param {int} defence
+     * @param {Clock} clock
      * @returns {int}
      */
-    meleeHit(defence)
+    meleeHit(defence, clock)
     {
         Assert.integer(defence);
+        Assert.instanceOf(clock, Clock);
 
-        this._lastAttack = this._clock.time();
+        this._lastAttack = clock.time();
 
         return Math.round((this.attackPower * Math.random()) - (defence * Math.random()));
     }

@@ -33,14 +33,14 @@ describe("Monster", () => {
     });
 
     it ("is not attacking by default", () => {
-        let mon = new Monster("bobok", 100, 5, 500, 5, 1, new Position(1, 1), "1234556789", clock);
+        let mon = new Monster("bobok", 100, 5, 500, 5, 1, new Position(1, 1), "1234556789");
 
         expect(mon.isExhausted(clock)).to.be(false);
     });
 
     it ("is has attack delay", () => {
-        let monster = new Monster("bobok", 100, 50, 10, 5, 1, new Position(1, 1), "1234556789", clock);
-        let player = new Player("1111", "yaboomaster", 0, 100, 100, clock, new Position(1, 2), new Position(1, 2));
+        let monster = new Monster("bobok", 100, 50, 10, 5, 1, new Position(1, 1), "1234556789");
+        let player = new Player("1111", "yaboomaster", 0, 100, 100, new Position(1, 2), new Position(1, 2));
 
         monster.attack(player.id);
 

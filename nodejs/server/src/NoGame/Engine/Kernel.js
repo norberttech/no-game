@@ -150,7 +150,7 @@ class Kernel
 
         let player = this._area.getPlayer(playerId);
 
-        if (player.isMoving) {
+        if (player.isMoving(this._clock)) {
             this._logger.error({msg: 'still moving', player: player});
             return;
         }
@@ -169,7 +169,7 @@ class Kernel
         }
 
         oldTile.playerLeave(playerId);
-        player.move(destination);
+        player.move(destination, this._clock);
     }
 
     /**
@@ -282,7 +282,7 @@ class Kernel
             /**
              * Check runMonstersAttackTurn for some explanations
              */
-            if (!player.isAttacking || player.isExhausted) {
+            if (!player.isAttacking || player.isExhausted(this._clock)) {
                 continue ;
             }
 
@@ -292,7 +292,7 @@ class Kernel
                 continue ;
             }
 
-            let damagePower = player.meleeHit(monster.defence);
+            let damagePower = player.meleeHit(monster.defence, this._clock);
 
             if (damagePower > 0) {
                 monster.damage(damagePower);
