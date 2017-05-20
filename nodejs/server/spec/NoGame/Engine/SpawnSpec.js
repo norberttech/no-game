@@ -15,31 +15,31 @@ describe("Spawn", () => {
     });
 
     it("it knows when its full", () => {
-        let spawn = new Spawn("rat", 1, 1000, new Position(20, 20), 10, clock);
+        let spawn = new Spawn("rat", 1, 1000, new Position(20, 20), 10);
 
         clock.pushForward(1000);
 
-        spawn.spawnMonster(monsterFactory, spawn.randomPosition);
+        spawn.spawnMonster(monsterFactory, spawn.randomPosition, clock);
 
         clock.pushForward(1000);
 
-        expect(() => {spawn.spawnMonster(monsterFactory, spawn.randomPosition);})
+        expect(() => {spawn.spawnMonster(monsterFactory, spawn.randomPosition, clock);})
             .to.throwError(`Spawn ${spawn.id} for "${spawn.monsterName}" is full.`);
     });
 
     it("it throws exception when not ready to spawn new monster", () => {
-        let spawn = new Spawn("rat", 10, 1000, new Position(20, 20), 10, clock);
+        let spawn = new Spawn("rat", 10, 1000, new Position(20, 20), 10);
 
         clock.pushForward(1000);
 
-        spawn.spawnMonster(monsterFactory, spawn.randomPosition);
+        spawn.spawnMonster(monsterFactory, spawn.randomPosition, clock);
 
-        expect(() => {spawn.spawnMonster(monsterFactory, spawn.randomPosition);})
+        expect(() => {spawn.spawnMonster(monsterFactory, spawn.randomPosition, clock);})
             .to.throwError(`Spawn ${spawn.id} for "${spawn.monsterName}" is not ready for new monster yet.`);
     });
 
     it("is not full by default", () => {
-        let spawn = new Spawn("rat", 1, 1000, new Position(20, 20), 10, clock);
+        let spawn = new Spawn("rat", 1, 1000, new Position(20, 20), 10);
 
         expect(spawn.isFull).to.be(false);
     });

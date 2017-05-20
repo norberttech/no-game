@@ -80,7 +80,7 @@ class Kernel
                         continue ;
                     }
 
-                    let monster = spawn.spawnMonster(this._monsterFactory, position);
+                    let monster = spawn.spawnMonster(this._monsterFactory, position, this._clock);
 
                     tile.monsterWalkOn(monster.id);
                     this._area.addMonster(monster);

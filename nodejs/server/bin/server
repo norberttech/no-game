@@ -32,7 +32,7 @@ const pool = new Pool({
     idleTimeoutMillis: 1000
 });
 let accounts = new PgsqlAccounts(pool);
-let characters = new PgsqlCharacters(pool, clock, logger);
+let characters = new PgsqlCharacters(pool, logger);
 
 let kernel = new Kernel(
     characters,
@@ -56,8 +56,7 @@ function exitHandler(err) {
 
     // prevent terminating server more than one time
     if (!server.isTerminated) {
-        server.terminate(() =>
-        {
+        server.terminate(() => {
             process.exit();
         });
     }

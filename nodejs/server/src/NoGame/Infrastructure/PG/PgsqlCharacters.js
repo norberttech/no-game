@@ -5,26 +5,22 @@ const Logger = require('nogame-common').Logger;
 const Characters = require('./../../Engine/Characters');
 const Player = require('./../../Engine/Player');
 const Position = require('./../../Engine/Map/Area/Position');
-const Clock = require('./../../Engine/Clock');
 const Pool = require('pg').Pool;
 
 class PgsqlCharacters extends Characters
 {
     /**
      * @param {Pool} pool
-     * @param {Clock} clock
      * @param {Logger} logger
      */
-    constructor(pool, clock, logger)
+    constructor(pool, logger)
     {
         super();
 
         Assert.instanceOf(pool, Pool);
-        Assert.instanceOf(clock, Clock);
         Assert.instanceOf(logger, Logger);
 
         this._pool = pool;
-        this._clock = clock;
         this._logger = logger;
     }
 
@@ -52,7 +48,6 @@ class PgsqlCharacters extends Characters
                         result.rows[0].experience,
                         result.rows[0].current_health,
                         result.rows[0].health, // replace with max_health,
-                        this._clock,
                         new Position(
                             result.rows[0].pos_x,
                             result.rows[0].pos_y
