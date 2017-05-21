@@ -224,6 +224,11 @@ export default class Protocol
             case ServerMessages.CHARACTER_DIED:
                     this._kernel.removeCharacter(message.data.id);
                 break;
+            case ServerMessages.CHARACTER_LOGOUT:
+                if (this._kernel.hasCharacter(message.data.id)) {
+                    this._kernel.removeCharacter(message.data.id);
+                }
+                break;
             case ServerMessages.MONSTER_MOVE:
             case ServerMessages.CHARACTER_MOVE:
                 if (this._kernel.hasCharacter(message.data.id)) {

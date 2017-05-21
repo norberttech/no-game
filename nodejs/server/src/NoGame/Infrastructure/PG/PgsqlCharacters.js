@@ -38,7 +38,7 @@ class PgsqlCharacters extends Characters
 
         return new Promise((resolve, reject) => {
             this._pool.query(
-                'SELECT * FROM nogame_character WHERE id = $1',
+                'SELECT * FROM nogame_character WHERE id = $1 ORDER BY id',
                 [characterId],
                 (err, result) => {
                     if (!result.rows.length) {

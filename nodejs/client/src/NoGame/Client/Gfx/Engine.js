@@ -135,6 +135,8 @@ export default class Engine
     stopDrawing()
     {
         this._draw = false;
+        this._tileAnimations.clear();
+        this._characters.clear();
         this._canvas.clear();
     }
 

@@ -82,4 +82,9 @@ export default class TileAnimations
 
         this._tileAnimations.delete(`${x}:${y}`);
     }
+
+    clear()
+    {
+        this._tileAnimations = new Map();
+    }
 }
