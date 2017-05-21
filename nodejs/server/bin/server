@@ -13,6 +13,7 @@ const IncomeQueue = require('./../src/NoGame/Server/MessageQueue/IncomeQueue');
 const Clock = require('./../src/NoGame/Engine/Clock');
 const GameLoop = require('./../src/NoGame/Server/GameLoop');
 const BunyanLogger = require('./../src/NoGame/Infrastructure/Logger/BunyanLogger');
+const NodeRandomizer = require('./../src/NoGame/Infrastructure/Node/NodeRandomizer');
 
 let parametersFilePath = __dirname + '/../config/parameters.json';
 
@@ -39,6 +40,7 @@ let kernel = new Kernel(
     Loader.loadMapArea(logger, "Tesaria", __dirname + '/../config/map/tesaria.json', clock),
     Loader.loadMonsterFactory(logger),
     clock,
+    new NodeRandomizer(),
     logger
 );
 kernel.boot();

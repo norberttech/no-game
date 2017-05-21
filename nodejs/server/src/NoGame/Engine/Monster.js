@@ -6,6 +6,7 @@ const Position = require('./Map/Area/Position');
 const MoveSpeed = require('nogame-common').MoveSpeed;
 const Tile = require('./Map/Area/Tile');
 const Clock = require('./Clock');
+const Randomizer = require('./Randomizer');
 
 class Monster
 {
@@ -204,16 +205,17 @@ class Monster
     /**
      * @param {int} defence
      * @param {Clock} clock
+     * @param {Randomizer} randomizer
      * @returns {int}
      */
-    meleeHit(defence, clock)
+    meleeHit(defence, clock, randomizer)
     {
         Assert.integer(defence);
         Assert.instanceOf(clock, Clock);
 
         this._lastAttack = clock.time();
 
-        return Math.round((this._attackPower * Math.random()) - (defence * Math.random()));
+        return Math.round((this._attackPower * randomizer.random()) - (defence * randomizer.random()));
     }
 
     /**

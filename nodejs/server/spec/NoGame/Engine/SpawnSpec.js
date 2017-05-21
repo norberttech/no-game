@@ -3,7 +3,7 @@ describe("Spawn", () => {
     const Spawn = require('./../../../src/NoGame/Engine/Spawn');
     const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
     const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
-    const TestKit = require('./../Integration/TestKit/TestKit');
+    const TestKit = require('../TestKit/TestKit');
 
     let monsterFactory = null;
     let clock = null;

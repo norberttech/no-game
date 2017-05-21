@@ -1,12 +1,13 @@
 'use strict';
 
-const {ExperienceCalculator} = require('nogame-common');
+const ExperienceCalculator = require('nogame-common').ExperienceCalculator;
+const MoveSpeed = require('nogame-common').MoveSpeed;
 const Assert = require('assert-js');
 const Tile = require('./Map/Area/Tile');
 const Monster = require('./Monster');
 const Position = require('./Map/Area/Position');
-const MoveSpeed = require('nogame-common').MoveSpeed;
 const Clock = require('./Clock');
+const Randomizer = require('./Randomizer');
 
 const BASE_ATTACK_DELAY = 3000;
 const BASE_DEFENCE = 4;
@@ -302,16 +303,18 @@ class Player
     /**
      * @param {int} defence
      * @param {Clock} clock
+     * @param {Randomizer} randomizer
      * @returns {int}
      */
-    meleeHit(defence, clock)
+    meleeHit(defence, clock, randomizer)
     {
         Assert.integer(defence);
         Assert.instanceOf(clock, Clock);
+        Assert.instanceOf(randomizer, Randomizer);
 
         this._lastAttack = clock.time();
 
-        return Math.round((this.attackPower * Math.random()) - (defence * Math.random()));
+        return Math.round((this.attackPower * randomizer.random()) - (defence * randomizer.random()));
     }
 }
 

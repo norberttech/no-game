@@ -1,10 +1,10 @@
 'use strict';
 
 const Assert = require('assert-js');
-const Area = require('./../../../../src/NoGame/Engine/Map/Area');
-const Position = require('./../../../../src/NoGame/Engine/Map/Area/Position');
-const Tile = require('./../../../../src/NoGame/Engine/Map/Area/Tile');
-const Item = require('./../../../../src/NoGame/Engine/Map/Area/Item');
+const Area = require('./../../../src/NoGame/Engine/Map/Area');
+const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
+const Tile = require('./../../../src/NoGame/Engine/Map/Area/Tile');
+const Item = require('./../../../src/NoGame/Engine/Map/Area/Item');
 
 class AreaFactory
 {

@@ -6,7 +6,7 @@ describe("Player", () => {
     const Item = require('./../../../src/NoGame/Engine/Map/Area/Item');
     const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
     const Utils = require('./../../../../common/src/NoGame/Common/Utils');
-    const TestKit = require('./../Integration/TestKit/TestKit');
+    const TestKit = require('../TestKit/TestKit');
 
     let clock = null;
 
@@ -44,7 +44,7 @@ describe("Player", () => {
 
         expect(player.isExhausted(clock)).to.be(false);
 
-        player.meleeHit(10, clock);
+        player.meleeHit(10, clock, new TestKit.ManualRandomizer(1));
 
         expect(player.isExhausted(clock)).to.be(true);
 
@@ -59,5 +59,11 @@ describe("Player", () => {
         player.damage(200);
 
         expect(player.health).to.be(0);
+    });
+
+    it ("calculate damage for defence using randomizer", () => {
+        let player = new Player("11111", "yaboomaster", 0, 100, 100, new Position(1, 1), new Position(1, 1));
+
+        expect(player.meleeHit(10, clock, new TestKit.ManualRandomizer(1))).to.be(10);
     });
 });

@@ -2,7 +2,7 @@ describe("Monster Factory", () => {
     const expect = require('expect.js');
     const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
     const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
-    const TestKit = require('./../Integration/TestKit/TestKit');
+    const TestKit = require('../TestKit/TestKit');
 
     let clock = null;
 

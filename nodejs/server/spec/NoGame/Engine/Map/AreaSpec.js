@@ -5,7 +5,7 @@ describe("Area", () => {
     const Tile = require('./../../../../src/NoGame/Engine/Map/Area/Tile');
     const Position = require('./../../../../src/NoGame/Engine/Map/Area/Position');
     const Player = require('./../../../../src/NoGame/Engine/Player');
-    const TestKit = require('./../../Integration/TestKit/TestKit');
+    const TestKit = require('../../TestKit/TestKit');
 
     let clock = null;
 

@@ -8,16 +8,18 @@ describe("Kernel", () => {
     const Item = require('./../../../src/NoGame/Engine/Map/Area/Item');
     const Player = require('./../../../src/NoGame/Engine/Player');
     const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
-    const TestKit = require('./../Integration/TestKit/TestKit');
+    const TestKit = require('../TestKit/TestKit');
 
     let clock = null;
     let area = null;
     let characters = null;
     let monsterFactory = null;
     let logger = null;
+    let randomizer = null;
 
     beforeEach (() =>{
         clock = new TestKit.ManualClock(new Date().getTime());
+        randomizer = new TestKit.ManualRandomizer(1);
         monsterFactory = new MonsterFactory(clock);
         characters = new TestKit.Characters();
         area = TestKit.AreaFactory.emptyWalkable(50, 50);
@@ -32,7 +34,7 @@ describe("Kernel", () => {
         monsterFactory.addTemplate("monster", 5, 123456, 50, 10, 500, 10);
         area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 5));
 
-        let kernel = new Kernel(characters, area, monsterFactory, clock, logger);
+        let kernel = new Kernel(characters, area, monsterFactory, clock, randomizer, logger);
 
         kernel.spawnMonsters((monster) => {
             spawnTimes++;
@@ -65,7 +67,7 @@ describe("Kernel", () => {
 
         monsterFactory.addTemplate("monster", 5, 123456, 50, 10, 500, 10);
         area.addSpawn(new Spawn("monster", 1, SPAWN_DURATION, new Position(10, 10), 1));
-        let kernel = new Kernel(characters, area, monsterFactory, clock, logger);
+        let kernel = new Kernel(characters, area, monsterFactory, clock, new TestKit.ManualRandomizer(1), logger);
 
         kernel.spawnMonsters((monster) => {
             let player = new Player("11111", "player", 0, 100, 100, new Position(12, 12), new Position(12, 12));
@@ -90,7 +92,7 @@ describe("Kernel", () => {
         const SPAWN_DURATION = 100;
         monsterFactory.addTemplate("monster", 5, 123456, 50, 10, 500, 10);
         area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 1));
-        let kernel = new Kernel(characters, area, monsterFactory, clock, logger);
+        let kernel = new Kernel(characters, area, monsterFactory, clock, new TestKit.ManualRandomizer(1), logger);
 
         kernel.spawnMonsters((monster) => {
             let player = new Player("11111", "player", 0, 100, 100, new Position(monster.position.x + 9, 10), new Position(10, 10));
@@ -110,7 +112,7 @@ describe("Kernel", () => {
 
         monsterFactory.addTemplate("monster", 5, 123456, 50, 10, 500, 10);
         area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 1));
-        let kernel = new Kernel(characters, area, monsterFactory, clock, logger);
+        let kernel = new Kernel(characters, area, monsterFactory, clock, new TestKit.ManualRandomizer(1), logger);
 
         kernel.spawnMonsters((monster) => {
             let player = new Player("11111", "player", 0, 100, 100, new Position(monster.position.x + 3, monster.position.y), new Position(10, 10));
@@ -125,5 +127,42 @@ describe("Kernel", () => {
         kernel.moveMonsters((monster) => { monsterMoves++; }, () => {});
 
         expect(monsterMoves).to.be(2);
+    });
+
+    it ("handles combat between player and monster", () => {
+        const SPAWN_DURATION = 100;
+        const MONSTER_DEFENCE = 5;
+        const MONSTER_HEALTH = 16;
+        let playerExperience = 0;
+        let firstDamage = 0;
+        let kill = false;
+
+        monsterFactory.addTemplate("monster", 5, 123456, MONSTER_HEALTH, 1, 500, MONSTER_DEFENCE);
+        area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 1));
+        let kernel = new Kernel(characters, area, monsterFactory, clock, new TestKit.ManualRandomizer(1), logger);
+
+        kernel.spawnMonsters((monster) => {
+            let player = new Player("11111", "player", 0, 100, 100, new Position(monster.position.x + 1, monster.position.y), new Position(10, 10));
+            kernel.login(player);
+            kernel.chooseMonstersAttackTarget((monster, player) => {});
+
+            kernel.playerAttack(player.id, monster.id);
+
+            kernel.runPlayersAttack(
+                (monster, damage) => { firstDamage = damage; }, () => {}, () => {}
+            );
+
+            clock.pushForward(3000);
+
+            kernel.runPlayersAttack(
+                () => {},() => {}, (monster) => { kill = true; }
+            );
+
+            playerExperience = monster.experience;
+        });
+
+        expect(firstDamage).to.be(15); // Player.BASE_ATTACK_POWER - MONSTER_DEFENCE
+        expect(kill).to.be(true);
+        expect(playerExperience).to.be(5);
     });
 });

@@ -5,6 +5,7 @@ const Logger = require('nogame-common').Logger;
 const Loader = require('./Loader');
 const Player = require('./Player');
 const Area = require('./Map/Area');
+const Randomizer = require('./Randomizer');
 const Clock = require('./Clock');
 const Position = require('./Map/Area/Position');
 const Characters = require('./Characters');
@@ -17,9 +18,10 @@ class Kernel
      * @param {Area} area
      * @param {MonsterFactory} monsterFactory
      * @param {Clock} clock
+     * @param {Randomizer} randomizer
      * @param {Logger} logger
      */
-    constructor(characters, area, monsterFactory, clock, logger)
+    constructor(characters, area, monsterFactory, clock, randomizer, logger)
     {
         Assert.instanceOf(area, Area);
         Assert.instanceOf(monsterFactory, MonsterFactory);
@@ -27,11 +29,11 @@ class Kernel
         Assert.instanceOf(characters, Characters);
         Assert.instanceOf(logger, Logger);
 
-        this._version = '1.0.0-DEV';
         this._loaded = false;
         this._area = area;
         this._monsterFactory = monsterFactory;
         this._logger = logger;
+        this._randomizer = randomizer;
         this._clock = clock;
         this._characters = characters;
     }
@@ -250,7 +252,7 @@ class Kernel
                 continue;
             }
 
-            let damagePower = monster.meleeHit(player.defence, this._clock);
+            let damagePower = monster.meleeHit(player.defence, this._clock, this._randomizer);
 
             if (damagePower > 0) {
                 let isDeadly = player.health <= damagePower;
@@ -292,7 +294,7 @@ class Kernel
                 continue ;
             }
 
-            let damagePower = player.meleeHit(monster.defence, this._clock);
+            let damagePower = player.meleeHit(monster.defence, this._clock, this._randomizer);
 
             if (damagePower > 0) {
                 monster.damage(damagePower, player.id);

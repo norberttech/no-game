@@ -5,7 +5,7 @@ describe("Monster", () => {
     const Item = require('./../../../src/NoGame/Engine/Map/Area/Item');
     const Player = require('./../../../src/NoGame/Engine/Player');
     const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
-    const TestKit = require('./../Integration/TestKit/TestKit');
+    const TestKit = require('../TestKit/TestKit');
 
     let clock = null;
 
@@ -46,7 +46,7 @@ describe("Monster", () => {
 
         expect(monster.isExhausted(clock)).to.be(false);
 
-        monster.meleeHit(10, clock);
+        monster.meleeHit(10, clock, new TestKit.ManualRandomizer(1));
 
         expect(monster.isExhausted(clock)).to.be(true);
 
@@ -91,5 +91,11 @@ describe("Monster", () => {
         monster.damage(50, '222222');
 
         expect(monster.killerId).to.be('222222');
+    });
+
+    it ("calculate damage for defence", () => {
+        let monster = new Monster("bobok", 100, 5, 20, 500, 5, 1, new Position(1, 1), "1234556789");
+
+        expect(monster.meleeHit(10, clock, new TestKit.ManualRandomizer(1))).to.be(10);
     });
 });
