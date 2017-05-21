@@ -61,4 +61,9 @@ export default class CharactersUI
             }
         }
     }
+
+    clear()
+    {
+        this._characters = [];
+    }
 }
