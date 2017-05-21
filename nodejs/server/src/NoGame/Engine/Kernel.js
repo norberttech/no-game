@@ -295,10 +295,17 @@ class Kernel
             let damagePower = player.meleeHit(monster.defence, this._clock);
 
             if (damagePower > 0) {
-                monster.damage(damagePower);
+                monster.damage(damagePower, player.id);
                 onMonsterDamage(monster, damagePower);
 
                 if (monster.isDead) {
+                    try {
+                        this._area.getPlayer(monster.killerId).earnExperience(monster.experience);
+                    } catch (error) {
+                        //player logged out
+                        player.earnExperience(monster.experience);
+                    }
+
                     onMonsterDied(monster);
                     this._area.removeMonster(monster.id);
                 }

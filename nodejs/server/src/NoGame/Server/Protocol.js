@@ -22,7 +22,8 @@ const LogoutMessage = require('./Network/LogoutMessage');
 const AreaMessage = require('./Network/AreaMessage');
 const TileMessage = require('./Network/TileMessage');
 const TilesMessage = require('./Network/TilesMessage');
-const MoveMessage = require('./Network/MoveMessage');
+const PlayerMoveMessage = require('./Network/PlayerMoveMessage');
+const PlayerEarnExperienceMessage = require('./Network/PlayerEarnExperienceMessage');
 const CharactersMessage = require('./Network/CharactersMessage');
 const CharacterLogout = require('./Network/CharacterLogoutMessage');
 const CharacterDiedMessage = require('./Network/CharacterDiedMessage');
@@ -198,6 +199,8 @@ class Protocol
      */
     playerParry(player)
     {
+        Assert.instanceOf(player, Player);
+
         let players = this._kernel.area.visiblePlayersFrom(player.position);
 
         this._broadcaster.sendToPlayers(players, (connection) => {
@@ -210,6 +213,8 @@ class Protocol
      */
     monsterParry(monster)
     {
+        Assert.instanceOf(monster, Monster);
+
         let players = this._kernel.area.visiblePlayersFrom(monster.position);
 
         this._broadcaster.sendToPlayers(players, (connection) => {
@@ -222,6 +227,17 @@ class Protocol
      */
     monsterDied(monster)
     {
+        Assert.instanceOf(monster, Monster);
+
+        try {
+            let killer = this._kernel.area.getPlayer(monster.killerId);
+            this._broadcaster.sendToPlayer(killer, () => {
+                return new PlayerEarnExperienceMessage(monster.experience);
+            });
+        } catch (error) {
+            // do nothing, player logged out, he does not earn any exp.
+        }
+
         let players = this._kernel.area.visiblePlayersFrom(monster.position);
 
         this._broadcaster.sendToPlayers(players, (connection) => {
@@ -323,12 +339,12 @@ class Protocol
         try {
             this._kernel.movePlayer(currentConnection.playerId, toPosition);
         } catch (error) {
-            currentConnection.send(new MoveMessage(player));
+            currentConnection.send(new PlayerMoveMessage(player));
             return ;
         }
 
         let messages = [];
-        messages.push(new MoveMessage(player));
+        messages.push(new PlayerMoveMessage(player));
         messages.push(new TilesMessage(
             area.visibleTilesFor(player.id)
         ));

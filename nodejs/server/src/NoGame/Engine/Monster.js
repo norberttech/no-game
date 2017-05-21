@@ -12,6 +12,7 @@ class Monster
     /**
      * @param {string} name
      * @param {int} health
+     * @param {int} experience
      * @param attackPower
      * @param {int} attackDelay
      * @param {int} defence
@@ -19,10 +20,11 @@ class Monster
      * @param {Position} spawnPosition
      * @param {string} spawnId
      */
-    constructor(name, health, attackPower, attackDelay, defence, spriteId, spawnPosition, spawnId)
+    constructor(name, health, experience, attackPower, attackDelay, defence, spriteId, spawnPosition, spawnId)
     {
         Assert.string(name);
         Assert.notEmpty(name);
+        Assert.integer(experience);
         Assert.integer(attackPower);
         Assert.integer(attackDelay);
         Assert.integer(defence);
@@ -32,7 +34,9 @@ class Monster
         Assert.string(spawnId);
 
         this._id = uuid.v4();
+        this._damages = new Map();
         this._name = name;
+        this._experience = experience;
         this._health = health;
         this._maxHealth = health;
         this._attackPower = attackPower;
@@ -79,17 +83,6 @@ class Monster
     }
 
     /**
-     * @param {Clock} clock
-     * @returns {boolean}
-     */
-    isMoving(clock)
-    {
-        Assert.instanceOf(clock, Clock);
-
-        return (clock.time() < this._moveEnds);
-    }
-
-    /**
      * @returns {Position}
      */
     get position()
@@ -130,6 +123,63 @@ class Monster
     }
 
     /**
+     * @returns {int}
+     */
+    get defence()
+    {
+        return this._defence;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get experience()
+    {
+        return this._experience;
+    }
+
+    /**
+     * @returns {string}
+     */
+    get attackedPlayerId()
+    {
+        if (this._attackedPlayerId === null) {
+            throw new Error(`Monster ${this.name} is not attacking anybody.`);
+        }
+
+        return this._attackedPlayerId;
+    }
+
+    /**
+     * @returns {string}
+     */
+    get killerId()
+    {
+        if (!this.isDead) {
+            throw new Error('Monster is not dead.');
+        }
+
+        let topDamage = 0;
+        let killer = null;
+
+        this._damages.forEach((damage, playerId) => {
+            if (damage >= topDamage) {
+                killer = playerId;
+            }
+        });
+
+        return killer;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isAttacking()
+    {
+        return this._attackedPlayerId !== null;
+    }
+
+    /**
      * @param {Clock} clock
      * @returns {boolean}
      */
@@ -141,11 +191,14 @@ class Monster
     }
 
     /**
-     * @returns {int}
+     * @param {Clock} clock
+     * @returns {boolean}
      */
-    get defence()
+    isMoving(clock)
     {
-        return this._defence;
+        Assert.instanceOf(clock, Clock);
+
+        return (clock.time() < this._moveEnds);
     }
 
     /**
@@ -165,12 +218,20 @@ class Monster
 
     /**
      * @param {int} damage
+     * @param {string} killerId
      */
-    damage(damage)
+    damage(damage, killerId)
     {
         Assert.greaterThan(0, damage);
+        Assert.string(killerId);
 
         this._health = this._health - damage;
+
+        if (this._damages.has(killerId)) {
+            this._damages.set(killerId, this._damages.get(killerId) + damage);
+        } else {
+            this._damages.set(killerId, damage);
+        }
 
         if (this._health < 0) {
             this._health = 0;
@@ -185,26 +246,6 @@ class Monster
         Assert.string(playerId);
 
         this._attackedPlayerId = playerId;
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    get isAttacking()
-    {
-        return this._attackedPlayerId !== null;
-    }
-
-    /**
-     * @returns {string}
-     */
-    get attackedPlayerId()
-    {
-        if (this._attackedPlayerId === null) {
-            throw `Monster ${this.name} is not attacking anybody.`;
-        }
-
-        return this._attackedPlayerId;
     }
 
     stopAttacking()

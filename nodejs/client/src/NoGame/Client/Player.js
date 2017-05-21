@@ -225,4 +225,15 @@ export default class Player
             this._attackedBy.delete(characterId);
         }
     }
+
+    /**
+     * @param {int} experience
+     */
+    earnExperience(experience)
+    {
+        Assert.integer(experience);
+
+        this._experience = this._experience + experience;
+        this._level = ExperienceCalculator.level(this._experience);
+    }
 }

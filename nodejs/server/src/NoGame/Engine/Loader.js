@@ -66,7 +66,6 @@ class Loader
 
     /**
      * @param {Logger} logger
-     * @param {Clock} clock
      * @returns {MonsterFactory}
      */
     static loadMonsterFactory(logger)
@@ -78,7 +77,8 @@ class Loader
         let monsterFactory = new MonsterFactory();
 
         logger.info('Loading "rat".');
-        monsterFactory.addTemplate("rat", 1001, 32, 50, 3000, 5);
+
+        monsterFactory.addTemplate("rat", 10, 1001, 32, 10, 3000, 5);
 
         logger.info("Monster factory loaded!");
 

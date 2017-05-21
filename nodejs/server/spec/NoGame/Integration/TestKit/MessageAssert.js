@@ -140,8 +140,8 @@ class MessageAssert
 
         let msg = MessageParser.parse(message);
 
-        if (msg.name !== ServerMessages.MOVE) {
-            throw Error(`${ServerMessages.MOVE} expected but got ${msg.name}`);
+        if (msg.name !== ServerMessages.PLAYER_MOVE) {
+            throw Error(`${ServerMessages.PLAYER_MOVE} expected but got ${msg.name}`);
         }
 
         return new MoveMessageAssertion(msg);
@@ -155,8 +155,8 @@ class MessageAssert
     {
         this.messageObject(message);
 
-        if (message.name !== ServerMessages.MOVE) {
-            throw Error(`${ServerMessages.MOVE} expected but got ${message.name}`);
+        if (message.name !== ServerMessages.PLAYER_MOVE) {
+            throw Error(`${ServerMessages.PLAYER_MOVE} expected but got ${message.name}`);
         }
 
         return new MoveMessageAssertion(message);

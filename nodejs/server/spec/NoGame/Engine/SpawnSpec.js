@@ -10,7 +10,7 @@ describe("Spawn", () => {
 
     beforeEach(() => {
         monsterFactory = new MonsterFactory(new TestKit.ManualClock(new Date().getTime()));
-        monsterFactory.addTemplate("rat", 1, 100, 5, 500, 5);
+        monsterFactory.addTemplate("rat", 4, 1, 100, 5, 500, 5);
         clock = new TestKit.ManualClock(0);
     });
 

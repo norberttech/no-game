@@ -29,8 +29,8 @@ describe("Kernel", () => {
         let spawnedMonster = null;
         let spawnTimes = 0;
 
-        monsterFactory.addTemplate("monster", 123456, 50, 10, 500, 10);
-        area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 5, clock));
+        monsterFactory.addTemplate("monster", 5, 123456, 50, 10, 500, 10);
+        area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 5));
 
         let kernel = new Kernel(characters, area, monsterFactory, clock, logger);
 
@@ -63,8 +63,8 @@ describe("Kernel", () => {
         let attacked = false;
         let attackedOnce = false;
 
-        monsterFactory.addTemplate("monster", 123456, 50, 10, 500, 10);
-        area.addSpawn(new Spawn("monster", 1, SPAWN_DURATION, new Position(10, 10), 1, clock));
+        monsterFactory.addTemplate("monster", 5, 123456, 50, 10, 500, 10);
+        area.addSpawn(new Spawn("monster", 1, SPAWN_DURATION, new Position(10, 10), 1));
         let kernel = new Kernel(characters, area, monsterFactory, clock, logger);
 
         kernel.spawnMonsters((monster) => {
@@ -88,8 +88,8 @@ describe("Kernel", () => {
     it ("monsters ignores players that are out of visible range", () => {
         let attacked = false;
         const SPAWN_DURATION = 100;
-        monsterFactory.addTemplate("monster", 123456, 50, 10, 500, 10);
-        area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 1, clock));
+        monsterFactory.addTemplate("monster", 5, 123456, 50, 10, 500, 10);
+        area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 1));
         let kernel = new Kernel(characters, area, monsterFactory, clock, logger);
 
         kernel.spawnMonsters((monster) => {
@@ -108,8 +108,8 @@ describe("Kernel", () => {
         const SPAWN_DURATION = 100;
         let monsterMoves = 0;
 
-        monsterFactory.addTemplate("monster", 123456, 50, 10, 500, 10);
-        area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 1, clock));
+        monsterFactory.addTemplate("monster", 5, 123456, 50, 10, 500, 10);
+        area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 1));
         let kernel = new Kernel(characters, area, monsterFactory, clock, logger);
 
         kernel.spawnMonsters((monster) => {

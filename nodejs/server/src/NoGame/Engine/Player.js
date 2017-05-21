@@ -1,5 +1,6 @@
 'use strict';
 
+const {ExperienceCalculator} = require('nogame-common');
 const Assert = require('assert-js');
 const Tile = require('./Map/Area/Tile');
 const Monster = require('./Monster');
@@ -36,6 +37,7 @@ class Player
         this._id = id;
         this._name = name;
         this._experience = experience;
+        this._level = ExperienceCalculator.level(experience);
         this._currentHealth = currentHealth;
         this._health = health;
         this._position = null;
@@ -71,6 +73,11 @@ class Player
         return this._experience;
     }
 
+    get level()
+    {
+        return this._level;
+    }
+
     /**
      * @returns {int}
      */
@@ -101,17 +108,6 @@ class Player
         this._currentHealth = this._health;
 
         // remove some of experience
-    }
-
-    /**
-     * @param {Clock} clock
-     * @returns {boolean}
-     */
-    isMoving(clock)
-    {
-        Assert.instanceOf(clock, Clock);
-
-        return (clock.time() < this._moveEnds);
     }
 
     /**
@@ -173,6 +169,28 @@ class Player
     get attackPower()
     {
         return BASE_ATTACK_POWER;
+    }
+
+    /**
+     * @param experience
+     */
+    earnExperience(experience)
+    {
+        Assert.integer(experience);
+
+        this._experience = this._experience + experience;
+        this._level = ExperienceCalculator.level(this._experience);
+    }
+
+    /**
+     * @param {Clock} clock
+     * @returns {boolean}
+     */
+    isMoving(clock)
+    {
+        Assert.instanceOf(clock, Clock);
+
+        return (clock.time() < this._moveEnds);
     }
 
     /**

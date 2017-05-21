@@ -12,7 +12,7 @@ describe("Monster Factory", () => {
 
     it("it creates monster from template", () => {
         let factory = new MonsterFactory(clock);
-        factory.addTemplate('rat', 1, 100, 5, 500, 5);
+        factory.addTemplate('rat', 5, 1, 100, 5, 500, 5);
 
         let monster = factory.create('rat', new Position(0, 0), "123123123");
 

@@ -52,6 +52,7 @@ server.listen(config.port);
 function exitHandler(err) {
     if (err) {
         logger.error(err.message);
+        logger.error(err.stack);
     }
 
     // prevent terminating server more than one time

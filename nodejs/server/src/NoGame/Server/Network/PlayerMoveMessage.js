@@ -5,7 +5,7 @@ const Message = require('nogame-common').NetworkMessage;
 const Player = require('./../../Engine/Player');
 const ServerMessages = require('nogame-common').ServerMessages;
 
-class MoveMessage extends Message
+class PlayerMoveMessage extends Message
 {
     /**
      * @param {Player} player
@@ -16,7 +16,7 @@ class MoveMessage extends Message
 
         Assert.instanceOf(player, Player);
 
-        this._name = ServerMessages.MOVE;
+        this._name = ServerMessages.PLAYER_MOVE;
         this._data = {
             x: player.position.x,
             y: player.position.y,
@@ -25,4 +25,4 @@ class MoveMessage extends Message
     }
 }
 
-module.exports = MoveMessage;
+module.exports = PlayerMoveMessage;

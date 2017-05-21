@@ -37,7 +37,7 @@ describe("Player", () => {
     });
 
     it ("is has attack delay", () => {
-        let monster = new Monster("bobok", 100, 50, 10, 5, 1, new Position(1, 1), "1234556789");
+        let monster = new Monster("bobok", 100, 5, 50, 10, 5, 1, new Position(1, 1), "1234556789");
         let player = new Player("1111", "yaboomaster", 0, 100, 100, new Position(1, 2), new Position(1, 2));
 
         player.attackMonster(monster.id);
