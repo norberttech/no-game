@@ -5,6 +5,7 @@ const Logger = require('nogame-common').Logger;
 const Loader = require('./Loader');
 const Player = require('./Player');
 const Area = require('./Map/Area');
+const Randomizer = require('./Randomizer');
 const Clock = require('./Clock');
 const Position = require('./Map/Area/Position');
 const Characters = require('./Characters');
@@ -17,9 +18,10 @@ class Kernel
      * @param {Area} area
      * @param {MonsterFactory} monsterFactory
      * @param {Clock} clock
+     * @param {Randomizer} randomizer
      * @param {Logger} logger
      */
-    constructor(characters, area, monsterFactory, clock, logger)
+    constructor(characters, area, monsterFactory, clock, randomizer, logger)
     {
         Assert.instanceOf(area, Area);
         Assert.instanceOf(monsterFactory, MonsterFactory);
@@ -27,11 +29,11 @@ class Kernel
         Assert.instanceOf(characters, Characters);
         Assert.instanceOf(logger, Logger);
 
-        this._version = '1.0.0-DEV';
         this._loaded = false;
         this._area = area;
         this._monsterFactory = monsterFactory;
         this._logger = logger;
+        this._randomizer = randomizer;
         this._clock = clock;
         this._characters = characters;
     }
@@ -80,7 +82,7 @@ class Kernel
                         continue ;
                     }
 
-                    let monster = spawn.spawnMonster(this._monsterFactory, position);
+                    let monster = spawn.spawnMonster(this._monsterFactory, position, this._clock);
 
                     tile.monsterWalkOn(monster.id);
                     this._area.addMonster(monster);
@@ -103,7 +105,7 @@ class Kernel
         Assert.isFunction(onMonsterStopAttack);
 
         for (let monster of this._area.monsters) {
-            if (monster.isMoving || !monster.isAttacking) {
+            if (monster.isMoving(this._clock) || !monster.isAttacking) {
                 continue ;
             }
 
@@ -134,7 +136,7 @@ class Kernel
             let destination = this._area.tile(newPosition);
 
             oldTile.monsterLeave();
-            monster.move(destination);
+            monster.move(destination, this._clock);
             onMonsterMove(monster, oldTile.position);
         }
     }
@@ -150,7 +152,7 @@ class Kernel
 
         let player = this._area.getPlayer(playerId);
 
-        if (player.isMoving) {
+        if (player.isMoving(this._clock)) {
             this._logger.error({msg: 'still moving', player: player});
             return;
         }
@@ -169,7 +171,7 @@ class Kernel
         }
 
         oldTile.playerLeave(playerId);
-        player.move(destination);
+        player.move(destination, this._clock);
     }
 
     /**
@@ -240,7 +242,7 @@ class Kernel
              * I don't think this would be most efficient way to handle monsters attacks
              * so I let Kernel to decide about everything
              */
-            if (!monster.isAttacking || monster.isExhausted) {
+            if (!monster.isAttacking || monster.isExhausted(this._clock)) {
                 continue;
             }
 
@@ -250,7 +252,7 @@ class Kernel
                 continue;
             }
 
-            let damagePower = monster.meleeHit(player.defence);
+            let damagePower = monster.meleeHit(player.defence, this._clock, this._randomizer);
 
             if (damagePower > 0) {
                 let isDeadly = player.health <= damagePower;
@@ -282,7 +284,7 @@ class Kernel
             /**
              * Check runMonstersAttackTurn for some explanations
              */
-            if (!player.isAttacking || player.isExhausted) {
+            if (!player.isAttacking || player.isExhausted(this._clock)) {
                 continue ;
             }
 
@@ -292,13 +294,20 @@ class Kernel
                 continue ;
             }
 
-            let damagePower = player.meleeHit(monster.defence);
+            let damagePower = player.meleeHit(monster.defence, this._clock, this._randomizer);
 
             if (damagePower > 0) {
-                monster.damage(damagePower);
+                monster.damage(damagePower, player.id);
                 onMonsterDamage(monster, damagePower);
 
                 if (monster.isDead) {
+                    try {
+                        this._area.getPlayer(monster.killerId).earnExperience(monster.experience);
+                    } catch (error) {
+                        //player logged out
+                        player.earnExperience(monster.experience);
+                    }
+
                     onMonsterDied(monster);
                     this._area.removeMonster(monster.id);
                 }

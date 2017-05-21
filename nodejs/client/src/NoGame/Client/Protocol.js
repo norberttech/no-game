@@ -137,6 +137,7 @@ export default class Protocol
                     new Player(
                         message.data.id,
                         message.data.name,
+                        message.data.experience,
                         message.data.health,
                         message.data.maxHealth,
                         message.data.position.x,
@@ -185,11 +186,14 @@ export default class Protocol
                     message.data.visibleTiles.y
                 );
                 break;
-            case ServerMessages.MOVE:
+            case ServerMessages.PLAYER_MOVE:
                 if (!this._kernel.player.isMovingTo(message.data.x, message.data.y)) {
                     this._kernel.clearWalkPath();
                     this._kernel.player.cancelMove();
                 }
+                break;
+            case ServerMessages.PLAYER_EARN_EXPERIENCE:
+                this._kernel.player.earnExperience()
                 break;
             case ServerMessages.CHARACTERS:
                 let characters = [];

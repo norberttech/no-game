@@ -1,7 +1,7 @@
 'use strict';
 
 const Assert = require('assert-js');
-const Clock = require('./../../../../src/NoGame/Engine/Clock');
+const Clock = require('./../../../src/NoGame/Engine/Clock');
 
 class ManualClock extends Clock
 {

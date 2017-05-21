@@ -105,7 +105,7 @@ class Area
         Assert.string(playerId);
 
         if (!this._characters.has(playerId)) {
-            throw `Player with id ${playerId} does not exists.`;
+            throw new Error(`Player with id ${playerId} does not exists.`);
         }
 
         return this._characters.get(playerId);

@@ -54,6 +54,22 @@ export default class PlayerUI
     /**
      * @returns {int}
      */
+    get experience()
+    {
+        return this._player.experience;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get level()
+    {
+        return this._player.level;
+    }
+
+    /**
+     * @returns {int}
+     */
     get x()
     {
         return this._player.position.x;

@@ -17,7 +17,7 @@
   "license": "GPL 3",
   "dependencies": {
     "nogame-common": "file:../common",
-    "assert-js": "0.6.0",
+    "assert-js": "0.7.0",
     "bufferutil": "^1.2.1",
     "bunyan": "^1.7.0",
     "json-loader": "^0.5.4",

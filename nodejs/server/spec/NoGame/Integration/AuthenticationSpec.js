@@ -1,5 +1,5 @@
 describe("Server - Authentication -", () => {
-    const TestKit = require('./TestKit/TestKit');
+    const TestKit = require('../TestKit/TestKit');
     const Kernel = require('./../../../src/NoGame/Engine/Kernel');
     const Account = require('./../../../src/NoGame/Engine/Account');
     const AccountCharacter = require('./../../../src/NoGame/Engine/Account/AccountCharacter');
@@ -12,7 +12,6 @@ describe("Server - Authentication -", () => {
     const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
     const MemoryLogger = require('./../../../src/NoGame/Infrastructure/Logger/MemoryLogger');
     const GameLoop = require('./../../../src/NoGame/Server/GameLoop');
-    const Clock = require('./../../../src/NoGame/Engine/Clock');
 
     const PORT = 3333;
     const HOST = `ws://127.0.0.1:${PORT}`;
@@ -24,12 +23,12 @@ describe("Server - Authentication -", () => {
     beforeEach((done) => {
         let area = TestKit.AreaFactory.emptyWalkable(10, 10);
         let logger = new MemoryLogger();
-        let clock = new Clock();
+        let clock = new TestKit.ManualClock(0);
         let incomeQueue = new IncomeQueue();
         let broadcaster = new Broadcaster();
         let accounts = new TestKit.Accounts();
         let characters = new TestKit.Characters();
-        let kernel = new Kernel(characters, area, new MonsterFactory(new Clock()), clock, logger);
+        let kernel = new Kernel(characters, area, new MonsterFactory(), clock, new TestKit.ManualRandomizer(1), logger);
 
         accounts.addAccount('user-01@nogame.com', 'password', new Account('1111111111', [
                 new AccountCharacter(CHAR_01_ID, 'Character 01')
@@ -39,8 +38,8 @@ describe("Server - Authentication -", () => {
                 new AccountCharacter(CHAR_02_ID, 'Character 01')
             ])
         );
-        characters.addCharacter(CHAR_01_ID, new Player(CHAR_01_ID, 'Character 01', 100, 100, clock, new Position(0, 0), new Position(0, 0)));
-        characters.addCharacter(CHAR_02_ID, new Player(CHAR_02_ID, 'Character 02', 100, 100, clock, new Position(0, 0), new Position(0, 0)));
+        characters.addCharacter(CHAR_01_ID, new Player(CHAR_01_ID, 'Character 01', 0, 100, 100, new Position(0, 0), new Position(0, 0)));
+        characters.addCharacter(CHAR_02_ID, new Player(CHAR_02_ID, 'Character 02', 0, 100, 100, new Position(0, 0), new Position(0, 0)));
 
         let protocol = new Protocol(kernel, accounts, characters, incomeQueue, broadcaster, new TestKit.Logger());
 

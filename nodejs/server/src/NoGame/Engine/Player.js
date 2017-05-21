@@ -1,11 +1,13 @@
 'use strict';
 
+const ExperienceCalculator = require('nogame-common').ExperienceCalculator;
+const MoveSpeed = require('nogame-common').MoveSpeed;
 const Assert = require('assert-js');
 const Tile = require('./Map/Area/Tile');
 const Monster = require('./Monster');
 const Position = require('./Map/Area/Position');
-const MoveSpeed = require('nogame-common').MoveSpeed;
 const Clock = require('./Clock');
+const Randomizer = require('./Randomizer');
 
 const BASE_ATTACK_DELAY = 3000;
 const BASE_DEFENCE = 4;
@@ -16,33 +18,34 @@ class Player
     /**
      * @param {string} id
      * @param {string} name
+     * @param {int} experience
      * @param {int} currentHealth
      * @param {int} health
-     * @param {Clock} clock
      * @param {Position} position
      * @param {Position} spawnPosition
      */
-    constructor(id, name, currentHealth, health, clock, position, spawnPosition)
+    constructor(id, name, experience, currentHealth, health, position, spawnPosition)
     {
         Assert.string(id);
         Assert.string(name);
         Assert.notEmpty(name);
+        Assert.integer(experience);
         Assert.greaterThan(0, currentHealth);
         Assert.greaterThan(0, health);
-        Assert.instanceOf(clock, Clock);
         Assert.instanceOf(position, Position);
         Assert.instanceOf(spawnPosition, Position);
 
         this._id = id;
+        this._name = name;
+        this._experience = experience;
+        this._level = ExperienceCalculator.level(experience);
         this._currentHealth = currentHealth;
         this._health = health;
         this._position = null;
         this._moveEnds = 0;
-        this._name = name;
         this._attackedBy = new Map();
         this._lastAttack = 0;
         this._attackedMonster = null;
-        this._clock = clock;
         this._position = position;
         this._spawnPosition = spawnPosition;
     }
@@ -61,6 +64,19 @@ class Player
     get name()
     {
         return this._name;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get experience()
+    {
+        return this._experience;
+    }
+
+    get level()
+    {
+        return this._level;
     }
 
     /**
@@ -93,14 +109,6 @@ class Player
         this._currentHealth = this._health;
 
         // remove some of experience
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    get isMoving()
-    {
-        return (this._clock.time() < this._moveEnds);
     }
 
     /**
@@ -165,23 +173,50 @@ class Player
     }
 
     /**
-     * @returns {boolean}
+     * @param experience
      */
-    get isExhausted()
+    earnExperience(experience)
     {
-        return (this._clock.time() < this._lastAttack + BASE_ATTACK_DELAY);
+        Assert.integer(experience);
+
+        this._experience = this._experience + experience;
+        this._level = ExperienceCalculator.level(this._experience);
     }
 
     /**
+     * @param {Clock} clock
+     * @returns {boolean}
+     */
+    isMoving(clock)
+    {
+        Assert.instanceOf(clock, Clock);
+
+        return (clock.time() < this._moveEnds);
+    }
+
+    /**
+     * @param {Clock} clock
+     * @returns {boolean}
+     */
+    isExhausted(clock)
+    {
+        Assert.instanceOf(clock, Clock);
+
+        return (clock.time() < this._lastAttack + BASE_ATTACK_DELAY);
+    }
+
+    /**
+     * @param {Clock} clock
      * @param {Tile} destination
      */
-    move(destination)
+    move(destination, clock)
     {
-        if (this.isMoving) {
+        if (this.isMoving(clock)) {
             return ;
         }
 
         Assert.instanceOf(destination, Tile);
+        Assert.instanceOf(clock, Clock);
 
         let distance = this._position.calculateDistanceTo(destination.position);
 
@@ -189,7 +224,7 @@ class Player
             throw `Can't move that far`;
         }
 
-        this._moveEnds = this._clock.time() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
+        this._moveEnds = clock.time() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
         this._position = destination.position;
         destination.playerWalkOn(this._id);
     }
@@ -267,15 +302,19 @@ class Player
 
     /**
      * @param {int} defence
+     * @param {Clock} clock
+     * @param {Randomizer} randomizer
      * @returns {int}
      */
-    meleeHit(defence)
+    meleeHit(defence, clock, randomizer)
     {
         Assert.integer(defence);
+        Assert.instanceOf(clock, Clock);
+        Assert.instanceOf(randomizer, Randomizer);
 
-        this._lastAttack = this._clock.time();
+        this._lastAttack = clock.time();
 
-        return Math.round((this.attackPower * Math.random()) - (defence * Math.random()));
+        return Math.round((this.attackPower * randomizer.random()) - (defence * randomizer.random()));
     }
 }
 

@@ -3,38 +3,34 @@
 const Assert = require('assert-js');
 const Monster = require('./Monster');
 const Position = require('./Map/Area/Position');
-const Clock = require('./Clock');
 
 class MonsterFactory
 {
-    /**
-     * @param {Clock} clock
-     */
-    constructor(clock)
+    constructor()
     {
-        Assert.instanceOf(clock, Clock);
-
         this._monsterTemplates = new Map();
-        this._clock = clock;
     }
 
     /**
      * @param {string} name
+     * @param {int} experience
      * @param {int} spriteId
      * @param {int} health
      * @param {int} attackPower
      * @param {int} attackDelay
      * @param {int} defence
      */
-    addTemplate(name, spriteId, health, attackPower, attackDelay, defence)
+    addTemplate(name, experience, spriteId, health, attackPower, attackDelay, defence)
     {
         Assert.string(name);
         Assert.integer(spriteId);
+        Assert.greaterThanOrEqual(0, experience);
         Assert.greaterThan(0, health);
         Assert.greaterThan(0, attackPower);
         Assert.greaterThan(0, attackDelay);
 
         this._monsterTemplates.set(name, {
+            experience: experience,
             spriteId: spriteId,
             health: health,
             attackPower: attackPower,
@@ -64,13 +60,13 @@ class MonsterFactory
         return new Monster(
             name,
             template.health,
+            template.experience,
             template.attackPower,
             template.attackDelay,
             template.defence,
             template.spriteId,
             position,
-            spawnId,
-            this._clock
+            spawnId
         );
     }
 }

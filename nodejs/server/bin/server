@@ -13,6 +13,7 @@ const IncomeQueue = require('./../src/NoGame/Server/MessageQueue/IncomeQueue');
 const Clock = require('./../src/NoGame/Engine/Clock');
 const GameLoop = require('./../src/NoGame/Server/GameLoop');
 const BunyanLogger = require('./../src/NoGame/Infrastructure/Logger/BunyanLogger');
+const NodeRandomizer = require('./../src/NoGame/Infrastructure/Node/NodeRandomizer');
 
 let parametersFilePath = __dirname + '/../config/parameters.json';
 
@@ -32,13 +33,14 @@ const pool = new Pool({
     idleTimeoutMillis: 1000
 });
 let accounts = new PgsqlAccounts(pool);
-let characters = new PgsqlCharacters(pool, clock, logger);
+let characters = new PgsqlCharacters(pool, logger);
 
 let kernel = new Kernel(
     characters,
     Loader.loadMapArea(logger, "Tesaria", __dirname + '/../config/map/tesaria.json', clock),
-    Loader.loadMonsterFactory(logger, clock),
+    Loader.loadMonsterFactory(logger),
     clock,
+    new NodeRandomizer(),
     logger
 );
 kernel.boot();
@@ -52,12 +54,12 @@ server.listen(config.port);
 function exitHandler(err) {
     if (err) {
         logger.error(err.message);
+        logger.error(err.stack);
     }
 
     // prevent terminating server more than one time
     if (!server.isTerminated) {
-        server.terminate(() =>
-        {
+        server.terminate(() => {
             process.exit();
         });
     }

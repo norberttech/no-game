@@ -5,11 +5,12 @@ const MessageAssert = require('./MessageAssert');
 const MessageParser = require('./MessageParser');
 const ManualGameLoop = require('./ManualGameLoop');
 const ManualClock = require('./ManualClock');
+const ManualRandomizer = require('./ManualRandomizer');
 const AreaFactory = require('./AreaFactory');
 const Player = require('./Player');
-const MemoryLogger = require('./../../../../src/NoGame/Infrastructure/Logger/MemoryLogger');
-const InMemoryAccounts = require('./../../../../src/NoGame/Infrastructure/InMemory/InMemoryAccounts');
-const InMemoryCharacters = require('./../../../../src/NoGame/Infrastructure/InMemory/InMemoryCharacters');
+const MemoryLogger = require('./../../../src/NoGame/Infrastructure/Logger/MemoryLogger');
+const InMemoryAccounts = require('./../../../src/NoGame/Infrastructure/InMemory/InMemoryAccounts');
+const InMemoryCharacters = require('./../../../src/NoGame/Infrastructure/InMemory/InMemoryCharacters');
 
 module.exports = {
     MessageFactory: MessageFactory,
@@ -21,5 +22,6 @@ module.exports = {
     Player: Player,
     Logger: MemoryLogger,
     Accounts: InMemoryAccounts,
-    Characters: InMemoryCharacters
+    Characters: InMemoryCharacters,
+    ManualRandomizer: ManualRandomizer,
 };

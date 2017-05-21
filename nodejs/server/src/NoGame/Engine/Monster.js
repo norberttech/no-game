@@ -6,24 +6,26 @@ const Position = require('./Map/Area/Position');
 const MoveSpeed = require('nogame-common').MoveSpeed;
 const Tile = require('./Map/Area/Tile');
 const Clock = require('./Clock');
+const Randomizer = require('./Randomizer');
 
 class Monster
 {
     /**
      * @param {string} name
      * @param {int} health
+     * @param {int} experience
      * @param attackPower
      * @param {int} attackDelay
      * @param {int} defence
      * @param {int} spriteId
      * @param {Position} spawnPosition
      * @param {string} spawnId
-     * @param {Clock} clock
      */
-    constructor(name, health, attackPower, attackDelay, defence, spriteId, spawnPosition, spawnId, clock)
+    constructor(name, health, experience, attackPower, attackDelay, defence, spriteId, spawnPosition, spawnId)
     {
         Assert.string(name);
         Assert.notEmpty(name);
+        Assert.integer(experience);
         Assert.integer(attackPower);
         Assert.integer(attackDelay);
         Assert.integer(defence);
@@ -31,10 +33,11 @@ class Monster
         Assert.integer(spriteId);
         Assert.instanceOf(spawnPosition, Position);
         Assert.string(spawnId);
-        Assert.instanceOf(clock, Clock);
 
         this._id = uuid.v4();
+        this._damages = new Map();
         this._name = name;
+        this._experience = experience;
         this._health = health;
         this._maxHealth = health;
         this._attackPower = attackPower;
@@ -46,7 +49,6 @@ class Monster
         this._attackedPlayerId = null;
         this._attackDelay = attackDelay;
         this._lastAttack = 0;
-        this._clock = clock;
     }
 
     /**
@@ -79,14 +81,6 @@ class Monster
     get name()
     {
         return this._name;
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    get isMoving()
-    {
-        return (this._clock.time() < this._moveEnds);
     }
 
     /**
@@ -130,14 +124,6 @@ class Monster
     }
 
     /**
-     * @returns {boolean}
-     */
-    get isExhausted()
-    {
-        return (this._clock.time() < this._lastAttack + this._attackDelay);
-    }
-
-    /**
      * @returns {int}
      */
     get defence()
@@ -146,26 +132,108 @@ class Monster
     }
 
     /**
-     * @param {int} defence
      * @returns {int}
      */
-    meleeHit(defence)
+    get experience()
     {
-        Assert.integer(defence)
+        return this._experience;
+    }
 
-        this._lastAttack = this._clock.time();
+    /**
+     * @returns {string}
+     */
+    get attackedPlayerId()
+    {
+        if (this._attackedPlayerId === null) {
+            throw new Error(`Monster ${this.name} is not attacking anybody.`);
+        }
 
-        return Math.round((this._attackPower * Math.random()) - (defence * Math.random()));
+        return this._attackedPlayerId;
+    }
+
+    /**
+     * @returns {string}
+     */
+    get killerId()
+    {
+        if (!this.isDead) {
+            throw new Error('Monster is not dead.');
+        }
+
+        let topDamage = 0;
+        let killer = null;
+
+        this._damages.forEach((damage, playerId) => {
+            if (damage >= topDamage) {
+                killer = playerId;
+            }
+        });
+
+        return killer;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    get isAttacking()
+    {
+        return this._attackedPlayerId !== null;
+    }
+
+    /**
+     * @param {Clock} clock
+     * @returns {boolean}
+     */
+    isExhausted(clock)
+    {
+        Assert.instanceOf(clock, Clock);
+
+        return (clock.time() < this._lastAttack + this._attackDelay);
+    }
+
+    /**
+     * @param {Clock} clock
+     * @returns {boolean}
+     */
+    isMoving(clock)
+    {
+        Assert.instanceOf(clock, Clock);
+
+        return (clock.time() < this._moveEnds);
+    }
+
+    /**
+     * @param {int} defence
+     * @param {Clock} clock
+     * @param {Randomizer} randomizer
+     * @returns {int}
+     */
+    meleeHit(defence, clock, randomizer)
+    {
+        Assert.integer(defence);
+        Assert.instanceOf(clock, Clock);
+
+        this._lastAttack = clock.time();
+
+        return Math.round((this._attackPower * randomizer.random()) - (defence * randomizer.random()));
     }
 
     /**
      * @param {int} damage
+     * @param {string} killerId
      */
-    damage(damage)
+    damage(damage, killerId)
     {
         Assert.greaterThan(0, damage);
+        Assert.string(killerId);
 
         this._health = this._health - damage;
+
+        if (this._damages.has(killerId)) {
+            this._damages.set(killerId, this._damages.get(killerId) + damage);
+        } else {
+            this._damages.set(killerId, damage);
+        }
 
         if (this._health < 0) {
             this._health = 0;
@@ -182,26 +250,6 @@ class Monster
         this._attackedPlayerId = playerId;
     }
 
-    /**
-     * @returns {boolean}
-     */
-    get isAttacking()
-    {
-        return this._attackedPlayerId !== null;
-    }
-
-    /**
-     * @returns {string}
-     */
-    get attackedPlayerId()
-    {
-        if (this._attackedPlayerId === null) {
-            throw `Monster ${this.name} is not attacking anybody.`;
-        }
-
-        return this._attackedPlayerId;
-    }
-
     stopAttacking()
     {
         this._attackedPlayerId = null;
@@ -209,22 +257,24 @@ class Monster
 
     /**
      * @param {Tile} destination
+     * @param {Clock} clock
      */
-    move(destination)
+    move(destination, clock)
     {
-        if (this.isMoving) {
+        if (this.isMoving(clock)) {
             return ;
         }
 
         Assert.instanceOf(destination, Tile);
+        Assert.instanceOf(clock, Clock);
 
         let distance = this.position.calculateDistanceTo(destination.position);
 
         if (distance >= 2) {
-            throw `Can't move that far`;
+            throw Error(`Can't move that far`);
         }
 
-        this._moveEnds = this._clock.time() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
+        this._moveEnds = clock.time() + MoveSpeed.calculateMoveTime(distance, destination.moveSpeedModifier);
         this._position = destination.position;
         destination.monsterWalkOn(this._id);
     }

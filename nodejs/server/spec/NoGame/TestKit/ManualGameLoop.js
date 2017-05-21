@@ -1,7 +1,7 @@
 'use strict';
 
 const Assert = require('assert-js');
-const GameLoop = require('./../../../../src/NoGame/Server/GameLoop');
+const GameLoop = require('./../../../src/NoGame/Server/GameLoop');
 
 class ManualGameLoop extends GameLoop
 {

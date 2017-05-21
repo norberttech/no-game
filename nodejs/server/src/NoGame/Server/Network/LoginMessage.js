@@ -19,6 +19,7 @@ class LoginMessage extends Message
         this._name = ServerMessages.LOGIN;
         this._data = {
             id: player.id,
+            experience: player.experience,
             name: player.name,
             health: player.health,
             maxHealth: player.maxHealth,

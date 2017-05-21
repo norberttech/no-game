@@ -23,7 +23,7 @@ class CharacterMoveMessage extends Message
         this._data = {
             id: player.id,
             name: player.name,
-            moveTime: player.moveEnds - new Date(),
+            moveTime: (player.moveEnds === 0) ? 0 : player.moveEnds - new Date(),
             type: 1,
             health: player.health,
             maxHealth: player.maxHealth,

@@ -7,11 +7,10 @@ import PlayerUI from './PlayerUI';
 import CharactersUI from './CharactersUI';
 import SpriteMap from './SpriteMap';
 import Mouse from './../Input/Mouse';
-import Directions from './../Directions';
 import Tile from './../Map/Tile';
 import Character from './../Character';
 import Assert from 'assert-js';
-import {AreaCalculator} from 'nogame-common'
+import {AreaCalculator} from 'nogame-common';
 import Position from './../Position';
 import Colors from './Colors';
 import TileAnimations from './Engine/TileAnimations';
@@ -149,6 +148,7 @@ export default class Engine
                     this._drawVisibleArea();
                     this._drawVisibleCharacters();
                     this._drawNames();
+                    this._drawStatistics();
                     this._drawMessages();
                     this._drawMousePointer();
                     this._drawTileAnimations();
@@ -283,6 +283,25 @@ export default class Engine
             centerSquarePosition.x,
             centerSquarePosition.y,
             new Size(0, 0)
+        );
+    }
+
+    _drawStatistics()
+    {
+        let font = new Font('Verdana', 'normal', 15, Colors.YELLOW);
+
+        this._canvas.text(
+            `Experience: ${this._player.experience}`,
+            font,
+            10,
+            10
+        );
+
+        this._canvas.text(
+            `Level: ${this._player.level}`,
+            font,
+            10,
+            35
         );
     }
 
