@@ -8,7 +8,7 @@ class ExperienceCalculator
      * @param {int} level
      * @returns {int}
      */
-    static requiredExp(level)
+    requiredExp(level)
     {
         Assert.integer(level);
 
@@ -23,7 +23,7 @@ class ExperienceCalculator
      * @param {int} exp
      * @returns {int}
      */
-    static level(exp)
+    level(exp)
     {
         Assert.integer(exp);
 
@@ -45,7 +45,7 @@ class ExperienceCalculator
      * @param {float} modifier
      * @returns {number}
      */
-    static loss(exp, modifier = 0.0)
+    loss(exp, modifier = 0.0)
     {
         Assert.integer(exp);
         Assert.number(modifier);
@@ -56,7 +56,7 @@ class ExperienceCalculator
 
         let expDifference = currentLevelExp - previousLevelExp;
 
-        let baseLoss = 1.55;
+        let baseLoss = 0.45;
         let loss = (baseLoss - modifier <= 0) ? 0 : baseLoss - modifier;
 
         return Math.ceil(expDifference * loss);

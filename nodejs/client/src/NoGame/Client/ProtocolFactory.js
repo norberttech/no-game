@@ -1,6 +1,7 @@
 'use strict';
 
 import Assert from 'assert-js';
+import {ExperienceCalculator} from 'nogame-common';
 import Protocol from './Protocol';
 import Connection from './Network/Connection';
 import ConnectionStub from './Stub/ConnectionStub';
@@ -31,7 +32,7 @@ export default class ProtocolFactory
             ? new ConnectionStub()
             : new Connection();
 
-        let protocol = new Protocol(kernel, this._ui, connection);
+        let protocol = new Protocol(kernel, this._ui, connection, new ExperienceCalculator());
 
         if (this._stubConnection) {
             connection.setProtocol(protocol);

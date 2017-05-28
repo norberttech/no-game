@@ -2,6 +2,7 @@
 
 const Assert = require('assert-js');
 const Logger = require('nogame-common').Logger;
+const ExperienceCalculator = require('nogame-common').ExperienceCalculator;
 const Loader = require('./Loader');
 const Player = require('./Player');
 const Area = require('./Map/Area');
@@ -19,14 +20,16 @@ class Kernel
      * @param {MonsterFactory} monsterFactory
      * @param {Clock} clock
      * @param {Randomizer} randomizer
+     * @param {ExperienceCalculator} expCalculator
      * @param {Logger} logger
      */
-    constructor(characters, area, monsterFactory, clock, randomizer, logger)
+    constructor(characters, area, monsterFactory, clock, randomizer, expCalculator, logger)
     {
         Assert.instanceOf(area, Area);
         Assert.instanceOf(monsterFactory, MonsterFactory);
         Assert.instanceOf(clock, Clock);
         Assert.instanceOf(characters, Characters);
+        Assert.instanceOf(expCalculator, ExperienceCalculator);
         Assert.instanceOf(logger, Logger);
 
         this._loaded = false;
@@ -35,6 +38,7 @@ class Kernel
         this._logger = logger;
         this._randomizer = randomizer;
         this._clock = clock;
+        this._expCalculator = expCalculator;
         this._characters = characters;
     }
 
@@ -264,7 +268,7 @@ class Kernel
                     onPlayerDied(player);
 
                     this._area.removeCharacter(player.id);
-                    player.die();
+                    player.die(this._expCalculator);
                     this._characters.save(player);
                 }
             } else {
@@ -302,10 +306,10 @@ class Kernel
 
                 if (monster.isDead) {
                     try {
-                        this._area.getPlayer(monster.killerId).earnExperience(monster.experience);
+                        this._area.getPlayer(monster.killerId).earnExperience(monster.experience, this._expCalculator);
                     } catch (error) {
                         //player logged out
-                        player.earnExperience(monster.experience);
+                        player.earnExperience(monster.experience, this._expCalculator);
                     }
 
                     onMonsterDied(monster);

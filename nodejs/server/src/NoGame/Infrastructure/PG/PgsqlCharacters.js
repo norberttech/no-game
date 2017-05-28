@@ -2,6 +2,7 @@
 
 const Assert = require('assert-js');
 const Logger = require('nogame-common').Logger;
+const ExperienceCalculator = require('nogame-common').ExperienceCalculator;
 const Characters = require('./../../Engine/Characters');
 const Player = require('./../../Engine/Player');
 const Position = require('./../../Engine/Map/Area/Position');
@@ -13,15 +14,17 @@ class PgsqlCharacters extends Characters
      * @param {Pool} pool
      * @param {Logger} logger
      */
-    constructor(pool, logger)
+    constructor(pool, logger, expCalculator)
     {
         super();
 
         Assert.instanceOf(pool, Pool);
         Assert.instanceOf(logger, Logger);
+        Assert.instanceOf(expCalculator, ExperienceCalculator);
 
         this._pool = pool;
         this._logger = logger;
+        this._expCalculator = expCalculator;
     }
 
     /**
@@ -42,10 +45,9 @@ class PgsqlCharacters extends Characters
                         return ;
                     }
 
-                    resolve(new Player(
+                    let player = new Player(
                         result.rows[0].id,
                         result.rows[0].name,
-                        result.rows[0].experience,
                         result.rows[0].current_health,
                         result.rows[0].health, // replace with max_health,
                         new Position(
@@ -56,7 +58,9 @@ class PgsqlCharacters extends Characters
                             result.rows[0].spawn_pos_x,
                             result.rows[0].spawn_pos_y
                         )
-                    ));
+                    );
+                    player.earnExperience(result.rows[0].experience, this._expCalculator);
+                    resolve(player);
                 }
             )
         });

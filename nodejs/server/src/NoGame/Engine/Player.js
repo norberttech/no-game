@@ -18,18 +18,16 @@ class Player
     /**
      * @param {string} id
      * @param {string} name
-     * @param {int} experience
      * @param {int} currentHealth
      * @param {int} health
      * @param {Position} position
      * @param {Position} spawnPosition
      */
-    constructor(id, name, experience, currentHealth, health, position, spawnPosition)
+    constructor(id, name, currentHealth, health, position, spawnPosition)
     {
         Assert.string(id);
         Assert.string(name);
         Assert.notEmpty(name);
-        Assert.integer(experience);
         Assert.greaterThan(0, currentHealth);
         Assert.greaterThan(0, health);
         Assert.instanceOf(position, Position);
@@ -37,12 +35,12 @@ class Player
 
         this._id = id;
         this._name = name;
-        this._experience = experience;
-        this._level = ExperienceCalculator.level(experience);
         this._currentHealth = currentHealth;
         this._health = health;
         this._position = null;
         this._moveEnds = 0;
+        this._experience = 0;
+        this._level = 1;
         this._attackedBy = new Map();
         this._lastAttack = 0;
         this._attackedMonster = null;
@@ -103,12 +101,22 @@ class Player
         return this._currentHealth === 0;
     }
 
-    die()
+    /**
+     * @param {ExperienceCalculator} calculator
+     */
+    die(calculator)
     {
+        Assert.instanceOf(calculator, ExperienceCalculator);
+
         this._position = this._spawnPosition;
         this._currentHealth = this._health;
+        this._experience = this._experience - calculator.loss(this._experience);
 
-        // remove some of experience
+        if (this._experience < 0) {
+            this._experience = 0;
+        }
+
+        this._level = calculator.level(this._experience);
     }
 
     /**
@@ -174,13 +182,15 @@ class Player
 
     /**
      * @param experience
+     * @param {ExperienceCalculator} calculator
      */
-    earnExperience(experience)
+    earnExperience(experience, calculator)
     {
         Assert.integer(experience);
+        Assert.instanceOf(calculator, ExperienceCalculator);
 
         this._experience = this._experience + experience;
-        this._level = ExperienceCalculator.level(this._experience);
+        this._level = calculator.level(this._experience);
     }
 
     /**
