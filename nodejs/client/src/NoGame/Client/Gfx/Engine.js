@@ -145,8 +145,9 @@ export default class Engine
             if (this._spriteMap.isLoaded() && null !== this._visibleTiles) {
                 if (null !== this._player && null !== this._tiles) {
                     this._canvas.clear();
-                    this._drawVisibleArea();
+                    this._drawGround();
                     this._drawVisibleCharacters();
+                    this._drawTileStack();
                     this._drawNames();
                     this._drawStatistics();
                     this._drawMessages();
@@ -191,7 +192,7 @@ export default class Engine
     /**
      * @private
      */
-    _drawVisibleArea()
+    _drawGround()
     {
         let areaTiles = {
             x: this._player.x - ((this._visibleTiles.x - 1) / 2),
@@ -209,11 +210,39 @@ export default class Engine
                 if (tile === undefined) {
                     this._canvas.drawBlankTile(tileX, tileY, animationOffset);
                 } else {
-                    for (let spriteId of tile.stack()) {
+                    let sprite = this._spriteMap.getSprite(tile.ground);
+                    this._canvas.drawSprite(tileX, tileY, sprite, animationOffset);
+                }
+            }
+        }
+    }
+
+    _drawTileStack()
+    {
+        let areaTiles = {
+            x: this._player.x - ((this._visibleTiles.x - 1) / 2),
+            y: this._player.y - ((this._visibleTiles.y - 1) / 2)
+        };
+
+        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+
+        for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
+            for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
+                let absoluteX = areaTiles.x + tileX;
+                let absoluteY = areaTiles.y + tileY;
+                let tile = this._tiles.get(`${absoluteX}:${absoluteY}`);
+
+                if (tile === undefined || !tile.stack.length) {
+                    continue ;
+                }
+
+                for (let spriteId of tile.stack) {
+                    if (this._spriteMap.hasSprite(spriteId)) {
                         let sprite = this._spriteMap.getSprite(spriteId);
                         this._canvas.drawSprite(tileX, tileY, sprite, animationOffset);
                     }
                 }
+
             }
         }
     }

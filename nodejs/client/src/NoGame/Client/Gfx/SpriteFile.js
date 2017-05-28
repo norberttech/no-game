@@ -11,21 +11,21 @@ export default class SpriteFile
     /**
      * @param {string} name
      * @param {string} src
-     * @param {integer} startId
-     * @param {integer} rows
-     * @param {integer} columns
+     * @param {int} startFrom
+     * @param {int} rows
+     * @param {int} columns
      */
-    constructor(name, src, startId, rows = 10, columns = 10)
+    constructor(name, src, startFrom, rows = 20, columns = 20)
     {
         Assert.string(name);
         Assert.string(src);
-        Assert.integer(startId);
+        Assert.integer(startFrom);
         Assert.integer(rows);
         Assert.integer(columns);
 
         this._name = name;
         this._src = src;
-        this._startId = startId;
+        this._startFrom = startFrom;
         this._size = rows * columns;
         this._rows = rows;
         this._columns = columns;
@@ -64,7 +64,7 @@ export default class SpriteFile
     {
         Assert.integer(id);
 
-        return this._startId <= id && id < (this._startId + this._size);
+        return this._startFrom <= id && id < (this._startFrom + this._size);
     }
 
     /**
@@ -79,7 +79,8 @@ export default class SpriteFile
             throw `Id "${id}" does not exists in sprite "${this._src}"`;
         }
 
-        let realId = id - 1; // to prevent using ID 0
+
+        let realId = id - this._startFrom - 1;
         let posX = Math.floor(realId % this._columns);
         let posY = Math.floor(realId / this._rows);
 

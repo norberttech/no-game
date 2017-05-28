@@ -30,7 +30,7 @@ In order to make it playable you gonna need to implement following features:
 
 One ugly square (player) is fighting with another ugly square (rat, monster) :P
 
-![alt tag](/resources/img/no-game.jpeg)
+![alt tag](/resources/img/no-game.png)
 
 # Setup
 

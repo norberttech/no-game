@@ -257,10 +257,21 @@ class Area
         Assert.instanceOf(position, Position);
 
         if (!this._tiles.has(position.toString())) {
-            throw `There is no tile on position ${position.toString()}`;
+            throw new Error(`There is no tile on position ${position.toString()}`);
         }
 
         return this._tiles.get(position.toString());
+    }
+
+    /**
+     * @param {Position} position
+     * @returns {boolean}
+     */
+    hasTile(position)
+    {
+        Assert.instanceOf(position, Position);
+
+        return this._tiles.has(position.toString());
     }
 
     /**

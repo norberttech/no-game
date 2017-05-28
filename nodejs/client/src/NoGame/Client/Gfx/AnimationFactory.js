@@ -13,7 +13,7 @@ export default class AnimationFactory
      */
     static bloodSplashAnimation()
     {
-        let frames = [41, 42, 43, 44, 45];
+        let frames = [100, 101, 102, 103, 104];
 
         return new LinearFrameAnimation(frames, 100, false);
     }
@@ -23,7 +23,7 @@ export default class AnimationFactory
      */
     static parryAnimation()
     {
-        let frames = [51, 52, 53, 54, 55];
+        let frames = [120, 121, 122, 123, 124];
 
         return new LinearFrameAnimation(frames, 100, false);
     }

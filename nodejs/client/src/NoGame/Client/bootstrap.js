@@ -44,7 +44,9 @@ if (window.document.readyState == 'loading') {
 function initialize()
 {
     let spriteMap = new SpriteMap();
-    spriteMap.add(new SpriteFile("grounds", "assets/sprites/grounds.png", 1));
+    spriteMap.add(new SpriteFile("grounds", "assets/sprites/grounds.png", 0));
+    spriteMap.add(new SpriteFile("walls", "assets/sprites/walls.png", 400));
+
     let mouse = new Mouse();
     let keyboard = new KeyBoard();
     let ui = new UserInterface(window.document, keyboard, mouse);

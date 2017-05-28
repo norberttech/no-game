@@ -158,7 +158,7 @@ class Server
      * @param {function} [callback]
      * @param {int} terminationTimeout
      */
-    terminate(callback = () => {}, terminationTimeout = 5000)
+    terminate(callback = () => {}, terminationTimeout = 500)
     {
         Assert.isFunction(callback);
         Assert.integer(terminationTimeout);

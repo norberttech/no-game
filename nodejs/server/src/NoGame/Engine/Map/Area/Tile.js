@@ -54,21 +54,6 @@ class Tile
     }
 
     /**
-     * @param {string} monsterId
-     */
-    monsterWalkOn(monsterId)
-    {
-        Assert.string(monsterId);
-
-        this._monster = monsterId;
-    }
-
-    monsterLeave()
-    {
-        this._monster = null;
-    }
-
-    /**
      * @returns {string}
      */
     get monster()
@@ -82,26 +67,6 @@ class Tile
     get isMonsterOn()
     {
         return this._monster !== null
-    }
-
-    /**
-     * @param playerId
-     */
-    playerWalkOn(playerId)
-    {
-        Assert.string(playerId);
-
-        this._characters.set(playerId, playerId);
-    }
-
-    /**
-     * @param {string} playerId
-     */
-    playerLeave(playerId)
-    {
-        Assert.string(playerId);
-
-        this._characters.delete(playerId);
     }
 
     /**
@@ -134,6 +99,59 @@ class Tile
     get moveSpeedModifier()
     {
         return this._moveSpeedModifier;
+    }
+
+    /**
+     * @returns {Array}
+     */
+    get stack()
+    {
+        return this._stack;
+    }
+
+    /**
+     * @param item
+     */
+    putOnStack(item)
+    {
+        Assert.instanceOf(item, Item);
+
+        this._stack.push(item);
+    }
+
+    /**
+     * @param {string} monsterId
+     */
+    monsterWalkOn(monsterId)
+    {
+        Assert.string(monsterId);
+
+        this._monster = monsterId;
+    }
+
+    monsterLeave()
+    {
+        this._monster = null;
+    }
+
+    /**
+     * @param playerId
+     */
+    playerWalkOn(playerId)
+    {
+        Assert.string(playerId);
+
+        this._characters.set(playerId, playerId);
+    }
+
+    /**
+     * @param {string} playerId
+     */
+    playerLeave(playerId)
+    {
+        Assert.string(playerId);
+
+        this._characters.delete(playerId);
     }
 }
 
