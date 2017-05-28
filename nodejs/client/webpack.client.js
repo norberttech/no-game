@@ -5,6 +5,7 @@ var ignore = new webpack.IgnorePlugin(new RegExp("\.md$"));
 module.exports = {
     context: __dirname + "/src/NoGame/Client",
     entry:   "./bootstrap.js",
+    devtool: 'source-map',
     output: {
         path: __dirname + "/build",
         filename: "client.js"

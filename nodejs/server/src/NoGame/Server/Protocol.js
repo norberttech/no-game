@@ -275,7 +275,7 @@ class Protocol
             .then((account) => {
                 connection.send(new LoginCharacterListMessage(account.characters));
             }).catch((e) => {
-                this._logger.debug(e.message);
+                this._logger.error(e.message);
                 connection.send(new LoginAccountNotFoundMessage());
             });
     }
@@ -313,7 +313,7 @@ class Protocol
                 )
             });
         }).catch((e) => {
-            this._logger.debug(e.message);
+            this._logger.error(e.message);
 
             connection.send(new LoginAccountNotFoundMessage());
         });

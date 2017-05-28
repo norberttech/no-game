@@ -33,6 +33,25 @@ export default class SpriteMap
      * @param {string} id
      * @returns {Sprite}
      */
+    hasSprite(id)
+    {
+        if (id <= 0) {
+            return false;
+        }
+
+        for (let spriteFile of this._spriteFiles.values()) {
+            if (spriteFile.hasId(id)) {
+                return true;
+            }
+        }
+
+        throw false;
+    }
+
+    /**
+     * @param {string} id
+     * @returns {Sprite}
+     */
     getSprite(id)
     {
         for (let spriteFile of this._spriteFiles.values()) {
@@ -41,7 +60,7 @@ export default class SpriteMap
             }
         }
 
-        throw `Sprite with id "${id}" does not exists.`;
+        throw new Error(`Sprite with id "${id}" does not exists.`);
     }
 
     /**

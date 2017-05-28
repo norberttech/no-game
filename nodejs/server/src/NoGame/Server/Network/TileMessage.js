@@ -22,9 +22,10 @@ class TileMessage extends Message
             x: tile.position.x,
             y: tile.position.y,
             canWalkOn: tile.canWalkOn,
-            stack: [
-                tile.ground.spriteId
-            ],
+            ground: tile.ground.spriteId,
+            stack: tile.stack.map((item) => {
+                return item.spriteId;
+            }),
             monster: tile.monster,
             players: tile.players,
             moveSpeedModifier: tile.moveSpeedModifier

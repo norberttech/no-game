@@ -193,7 +193,7 @@ export default class Protocol
                 }
                 break;
             case ServerMessages.PLAYER_EARN_EXPERIENCE:
-                this._kernel.player.earnExperience()
+                this._kernel.player.earnExperience(message.data.experience);
                 break;
             case ServerMessages.CHARACTERS:
                 let characters = [];
@@ -281,6 +281,7 @@ export default class Protocol
                         tileData.x,
                         tileData.y,
                         tileData.canWalkOn,
+                        tileData.ground,
                         tileData.stack,
                         tileData.moveSpeedModifier
                     );
@@ -293,6 +294,7 @@ export default class Protocol
                     message.data.x,
                     message.data.y,
                     message.data.canWalkOn,
+                    message.data.ground,
                     message.data.stack,
                     message.data.moveSpeedModifier
                 );

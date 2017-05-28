@@ -29,32 +29,51 @@ class Loader
 
         logger.info(`Loading map from ${mapPath}...`);
 
-        let areaData = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+        let mapData = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
 
-        let area = new Area(name, areaData.width, areaData.height);
+        let area = new Area(name, mapData.width, mapData.height);
 
-        let groundTiles = areaData.layers[0];
-        let groundsTileSet = areaData.tilesets[0];
+        let tileProperties = {};
 
-        let x = 0;
-        let y = 0;
+        mapData.tilesets.map((tileSet) => {
+            let props = [];
+            for (let tileId in tileSet.tileproperties) {
 
-        for (let sprite of groundTiles.data) {
-            if (x >= areaData.width) {
-                x = 0;
-                y++;
-            }
-            if (groundsTileSet.tileproperties[sprite - 1] === undefined) {
-                throw `Missing "blocking" property on tile ${x}:${y} - ${sprite}`;
+                if (!tileSet.tileproperties.hasOwnProperty(tileId)) {
+                    return ;
+                }
+
+                tileProperties[parseInt(tileSet.firstgid) + parseInt(tileId)] = tileSet.tileproperties[tileId];
             }
 
-            let tile = new Tile(
-                new Position(x, y),
-                new Item(sprite, groundsTileSet.tileproperties[sprite - 1].blocking)
-            );
-            area.addTile(tile);
+            return props;
+        });
 
-            x++;
+        for (let layer of mapData.layers) {
+            let x = 0;
+            let y = 0;
+
+            for (let sprite of layer.data) {
+                if (x >= layer.width) {
+                    x = 0;
+                    y++;
+                }
+
+                let blocking = (tileProperties[sprite] === undefined)
+                    ? false
+                    : tileProperties[sprite].blocking;
+
+                let position = new Position(x, y);
+                let item = new Item(sprite, blocking);
+
+                if (area.hasTile(position)) {
+                    area.tile(position).putOnStack(item)
+                } else {
+                    area.addTile(new Tile(position,item));
+                }
+
+                x++;
+            }
         }
 
         area.addSpawn(new Spawn("rat", 1, 10000, new Position(30, 12), 1, clock));
