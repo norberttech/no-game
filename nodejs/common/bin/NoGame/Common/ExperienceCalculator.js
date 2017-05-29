@@ -11,7 +11,7 @@ var ExperienceCalculator = function () {
         _classCallCheck(this, ExperienceCalculator);
     }
 
-    _createClass(ExperienceCalculator, null, [{
+    _createClass(ExperienceCalculator, [{
         key: 'requiredExp',
 
         /**
@@ -71,7 +71,7 @@ var ExperienceCalculator = function () {
 
             var expDifference = currentLevelExp - previousLevelExp;
 
-            var baseLoss = 1.55;
+            var baseLoss = 0.45;
             var loss = baseLoss - modifier <= 0 ? 0 : baseLoss - modifier;
 
             return Math.ceil(expDifference * loss);

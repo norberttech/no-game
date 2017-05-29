@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const ExperienceCalculator = require('nogame-common').ExperienceCalculator;
 const Kernel = require('./../src/NoGame/Engine/Kernel');
 const Loader = require('./../src/NoGame/Engine/Loader');
 const Server = require('./../src/NoGame/Server/Server');
@@ -32,15 +33,16 @@ const pool = new Pool({
     max: 10,
     idleTimeoutMillis: 1000
 });
+let expCalculator = new ExperienceCalculator();
 let accounts = new PgsqlAccounts(pool);
-let characters = new PgsqlCharacters(pool, logger);
-
+let characters = new PgsqlCharacters(pool, logger, expCalculator);
 let kernel = new Kernel(
     characters,
     Loader.loadMapArea(logger, "Tesaria", __dirname + '/../config/map/tesaria.json', clock),
     Loader.loadMonsterFactory(logger),
     clock,
     new NodeRandomizer(),
+    expCalculator,
     logger
 );
 kernel.boot();

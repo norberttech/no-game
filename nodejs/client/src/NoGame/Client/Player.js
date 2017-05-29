@@ -9,17 +9,15 @@ export default class Player
     /**
      * @param {string} id
      * @param {string} name
-     * @param {int} experience
      * @param {int} health
      * @param {int} maxHealth
      * @param {int} x
      * @param {int} y
      */
-    constructor(id, name, experience, health, maxHealth, x, y)
+    constructor(id, name, health, maxHealth, x, y)
     {
         Assert.string(id);
         Assert.string(name);
-        Assert.integer(experience);
         Assert.greaterThan(0, health);
         Assert.greaterThan(0, maxHealth);
         Assert.integer(x);
@@ -27,8 +25,8 @@ export default class Player
 
         this._id = id;
         this._name = name;
-        this._experience = experience;
-        this._level = ExperienceCalculator.level(experience);
+        this._experience = 0;
+        this._level = 1;
         this._health = health;
         this._maxHealth = maxHealth;
         this._moveFrom = new Position(x, y);
@@ -228,12 +226,14 @@ export default class Player
 
     /**
      * @param {int} experience
+     * @param {ExperienceCalculator} calculator
      */
-    earnExperience(experience)
+    earnExperience(experience, calculator)
     {
         Assert.integer(experience);
+        Assert.instanceOf(calculator, ExperienceCalculator);
 
         this._experience = this._experience + experience;
-        this._level = ExperienceCalculator.level(this._experience);
+        this._level = calculator.level(this._experience);
     }
 }

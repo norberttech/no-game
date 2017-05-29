@@ -2,6 +2,7 @@
 
 import Assert from 'assert-js';
 import {MoveSpeed} from 'nogame-common';
+import {ExperienceCalculator} from 'nogame-common';
 import {ServerMessages} from 'nogame-common';
 import Player from './Player';
 import Tile from './Map/Tile';
@@ -25,12 +26,14 @@ export default class Protocol
      * @param {Kernel} kernel
      * @param {UserInterface} ui
      * @param {Connection} connection
+     * @param {ExperienceCalculator} expCalculator
      */
-    constructor(kernel, ui, connection)
+    constructor(kernel, ui, connection, expCalculator)
     {
         Assert.instanceOf(kernel, Kernel);
         Assert.instanceOf(ui, UserInterface);
         Assert.instanceOf(connection, Connection);
+        Assert.instanceOf(expCalculator, ExperienceCalculator);
 
         this._kernel = kernel;
         this._ui = ui;
@@ -38,6 +41,7 @@ export default class Protocol
         this._onLogin = null;
         this._onLogout = null;
         this._onCharacterSay = null;
+        this._expCalculator = expCalculator;
     }
 
     /**
@@ -133,17 +137,17 @@ export default class Protocol
     {
         switch (message.name) {
             case ServerMessages.LOGIN:
-                this._kernel.login(
-                    new Player(
-                        message.data.id,
-                        message.data.name,
-                        message.data.experience,
-                        message.data.health,
-                        message.data.maxHealth,
-                        message.data.position.x,
-                        message.data.position.y
-                    )
+                let player = new Player(
+                    message.data.id,
+                    message.data.name,
+                    message.data.health,
+                    message.data.maxHealth,
+                    message.data.position.x,
+                    message.data.position.y
                 );
+                player.earnExperience(message.data.experience, this._expCalculator);
+                this._kernel.login(player);
+
                 this._isLoggedIn = true;
 
                 if (this._onLogin !== null) {
@@ -193,7 +197,7 @@ export default class Protocol
                 }
                 break;
             case ServerMessages.PLAYER_EARN_EXPERIENCE:
-                this._kernel.player.earnExperience(message.data.experience);
+                this._kernel.player.earnExperience(message.data.experience, this._expCalculator);
                 break;
             case ServerMessages.CHARACTERS:
                 let characters = [];

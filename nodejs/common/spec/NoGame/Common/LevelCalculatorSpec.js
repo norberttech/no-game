@@ -2,7 +2,8 @@ describe("Level Calculator", () => {
     const expect = require('expect.js');
     const ExperienceCalculator = require('./../../../src/NoGame/Common/ExperienceCalculator');
 
-    const LOSS_BASE_MODIFIER = 1.55;
+    const LOSS_BASE_MODIFIER = 0.45;
+    let calculator = new ExperienceCalculator();
     let levelExperience = {
         1: 0,
         2:  100,
@@ -19,8 +20,8 @@ describe("Level Calculator", () => {
     it("calculates exp required for next level", () => {
 
         for (let level in levelExperience) {
-            expect(ExperienceCalculator.requiredExp(parseInt(level))).to.be(levelExperience[level]);
-            expect(parseInt(level)).to.be(ExperienceCalculator.level(ExperienceCalculator.requiredExp(parseInt(level))));
+            expect(calculator.requiredExp(parseInt(level))).to.be(levelExperience[level]);
+            expect(parseInt(level)).to.be(calculator.level(calculator.requiredExp(parseInt(level))));
         }
     });
 
@@ -33,12 +34,16 @@ describe("Level Calculator", () => {
 
             let diff = levelExperience[level] - levelExperience[level - 1];
 
-            expect(ExperienceCalculator.loss(levelExperience[level])).to.be(diff * LOSS_BASE_MODIFIER)
+            expect(calculator.loss(levelExperience[level])).to.be(diff * LOSS_BASE_MODIFIER)
         }
+    });
+
+    it("calculates loss for level 1",() => {
+        expect(calculator.loss(100)).to.be(45);
     });
 
     it("calculates 0 loss when modifier bigger than base modifier",() => {
 
-        expect(ExperienceCalculator.loss(1500, LOSS_BASE_MODIFIER + 1)).to.be(0)
+        expect(calculator.loss(1500, LOSS_BASE_MODIFIER + 1)).to.be(0)
     });
 });

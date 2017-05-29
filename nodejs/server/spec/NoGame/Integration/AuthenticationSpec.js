@@ -28,7 +28,7 @@ describe("Server - Authentication -", () => {
         let broadcaster = new Broadcaster();
         let accounts = new TestKit.Accounts();
         let characters = new TestKit.Characters();
-        let kernel = new Kernel(characters, area, new MonsterFactory(), clock, new TestKit.ManualRandomizer(1), logger);
+        let kernel = new Kernel(characters, area, new MonsterFactory(), clock, new TestKit.ManualRandomizer(1), new TestKit.ExperienceCalculator(), logger);
 
         accounts.addAccount('user-01@nogame.com', 'password', new Account('1111111111', [
                 new AccountCharacter(CHAR_01_ID, 'Character 01')
@@ -38,8 +38,8 @@ describe("Server - Authentication -", () => {
                 new AccountCharacter(CHAR_02_ID, 'Character 01')
             ])
         );
-        characters.addCharacter(CHAR_01_ID, new Player(CHAR_01_ID, 'Character 01', 0, 100, 100, new Position(0, 0), new Position(0, 0)));
-        characters.addCharacter(CHAR_02_ID, new Player(CHAR_02_ID, 'Character 02', 0, 100, 100, new Position(0, 0), new Position(0, 0)));
+        characters.addCharacter(CHAR_01_ID, new Player(CHAR_01_ID, 'Character 01', 100, 100, new Position(0, 0), new Position(0, 0)));
+        characters.addCharacter(CHAR_02_ID, new Player(CHAR_02_ID, 'Character 02', 100, 100, new Position(0, 0), new Position(0, 0)));
 
         let protocol = new Protocol(kernel, accounts, characters, incomeQueue, broadcaster, new TestKit.Logger());
 

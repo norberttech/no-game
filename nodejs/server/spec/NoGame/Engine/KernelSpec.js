@@ -34,7 +34,7 @@ describe("Kernel", () => {
         monsterFactory.addTemplate("monster", 5, 123456, 50, 10, 500, 10);
         area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 5));
 
-        let kernel = new Kernel(characters, area, monsterFactory, clock, randomizer, logger);
+        let kernel = new Kernel(characters, area, monsterFactory, clock, randomizer, new TestKit.ExperienceCalculator(), logger);
 
         kernel.spawnMonsters((monster) => {
             spawnTimes++;
@@ -67,10 +67,10 @@ describe("Kernel", () => {
 
         monsterFactory.addTemplate("monster", 5, 123456, 50, 10, 500, 10);
         area.addSpawn(new Spawn("monster", 1, SPAWN_DURATION, new Position(10, 10), 1));
-        let kernel = new Kernel(characters, area, monsterFactory, clock, new TestKit.ManualRandomizer(1), logger);
+        let kernel = new Kernel(characters, area, monsterFactory, clock, new TestKit.ManualRandomizer(1), new TestKit.ExperienceCalculator(), logger);
 
         kernel.spawnMonsters((monster) => {
-            let player = new Player("11111", "player", 0, 100, 100, new Position(12, 12), new Position(12, 12));
+            let player = new Player("11111", "player", 100, 100, new Position(12, 12), new Position(12, 12));
             kernel.login(player);
 
             kernel.chooseMonstersAttackTarget((monster, player) => {
@@ -92,10 +92,10 @@ describe("Kernel", () => {
         const SPAWN_DURATION = 100;
         monsterFactory.addTemplate("monster", 5, 123456, 50, 10, 500, 10);
         area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 1));
-        let kernel = new Kernel(characters, area, monsterFactory, clock, new TestKit.ManualRandomizer(1), logger);
+        let kernel = new Kernel(characters, area, monsterFactory, clock, new TestKit.ManualRandomizer(1), new TestKit.ExperienceCalculator(), logger);
 
         kernel.spawnMonsters((monster) => {
-            let player = new Player("11111", "player", 0, 100, 100, new Position(monster.position.x + 9, 10), new Position(10, 10));
+            let player = new Player("11111", "player", 100, 100, new Position(monster.position.x + 9, 10), new Position(10, 10));
             kernel.login(player);
 
             kernel.chooseMonstersAttackTarget((monster, player) => {
@@ -112,10 +112,10 @@ describe("Kernel", () => {
 
         monsterFactory.addTemplate("monster", 5, 123456, 50, 10, 500, 10);
         area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 1));
-        let kernel = new Kernel(characters, area, monsterFactory, clock, new TestKit.ManualRandomizer(1), logger);
+        let kernel = new Kernel(characters, area, monsterFactory, clock, new TestKit.ManualRandomizer(1), new TestKit.ExperienceCalculator(), logger);
 
         kernel.spawnMonsters((monster) => {
-            let player = new Player("11111", "player", 0, 100, 100, new Position(monster.position.x + 3, monster.position.y), new Position(10, 10));
+            let player = new Player("11111", "player", 100, 100, new Position(monster.position.x + 3, monster.position.y), new Position(10, 10));
             kernel.login(player);
             kernel.chooseMonstersAttackTarget((monster, player) => {});
         });
@@ -139,10 +139,10 @@ describe("Kernel", () => {
 
         monsterFactory.addTemplate("monster", 5, 123456, MONSTER_HEALTH, 1, 500, MONSTER_DEFENCE);
         area.addSpawn(new Spawn("monster", 2, SPAWN_DURATION, new Position(10, 10), 1));
-        let kernel = new Kernel(characters, area, monsterFactory, clock, new TestKit.ManualRandomizer(1), logger);
+        let kernel = new Kernel(characters, area, monsterFactory, clock, new TestKit.ManualRandomizer(1), new TestKit.ExperienceCalculator(), logger);
 
         kernel.spawnMonsters((monster) => {
-            let player = new Player("11111", "player", 0, 100, 100, new Position(monster.position.x + 1, monster.position.y), new Position(10, 10));
+            let player = new Player("11111", "player", 100, 100, new Position(monster.position.x + 1, monster.position.y), new Position(10, 10));
             kernel.login(player);
             kernel.chooseMonstersAttackTarget((monster, player) => {});
 
@@ -155,7 +155,7 @@ describe("Kernel", () => {
             clock.pushForward(3000);
 
             kernel.runPlayersAttack(
-                () => {},() => {}, (monster) => { kill = true; }
+                () => {}, () => {}, (monster) => { kill = true; }
             );
 
             playerExperience = monster.experience;
