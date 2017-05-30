@@ -3,6 +3,7 @@
 import Assert from 'assert-js';
 import {ExperienceCalculator} from 'nogame-common';
 import Position from './Position';
+import Directions from './Directions';
 
 export default class Player
 {
@@ -35,6 +36,7 @@ export default class Player
         this._moveTime = 0;
         this._attackedBy = new Map();
         this._targetId = null;
+        this._direction = Directions.DOWN;
     }
 
     /**
@@ -120,6 +122,14 @@ export default class Player
     }
 
     /**
+     * @returns {int}
+     */
+    get direction()
+    {
+        return this._direction;
+    }
+
+    /**
      * @param {string} characterId
      */
     attack(characterId)
@@ -176,9 +186,12 @@ export default class Player
         Assert.integer(y);
         Assert.integer(moveTime);
 
+        let newPosition = new Position(x, y);
+
+        this._direction = this._position.direction(newPosition);
         this._moveTime = moveTime;
         this._moveFrom = this._position;
-        this._position = new Position(x, y);
+        this._position = newPosition;
         this._moveEnds = new Date().getTime() + moveTime;
     }
 

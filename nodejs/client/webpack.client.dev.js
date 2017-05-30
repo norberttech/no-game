@@ -8,5 +8,8 @@ new WebpackDevServer(webpack(config), {
     quiet: false,
     noInfo: false,
     historyApiFallback: true,
-    disableHostCheck: true
+    disableHostCheck: true,
+    watchOptions: {
+        poll: true
+    }
 }).listen(3003);

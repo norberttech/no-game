@@ -49,6 +49,20 @@ export default class CharactersUI
     }
 
     /**
+     * @param {int} x
+     * @param {int} y
+     * @return {CharacterUI}
+     */
+    character(x, y)
+    {
+        for (let character of this._characters) {
+            if (character.x === x && character.y === y) {
+                return character;
+            }
+        }
+    }
+
+    /**
      * @param {string} characterId
      * @param {string} text
      */

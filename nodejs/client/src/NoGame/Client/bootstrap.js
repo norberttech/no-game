@@ -46,6 +46,7 @@ function initialize()
     let spriteMap = new SpriteMap();
     spriteMap.add(new SpriteFile("grounds", "assets/sprites/grounds.png", 0));
     spriteMap.add(new SpriteFile("walls", "assets/sprites/walls.png", 400));
+    spriteMap.add(new SpriteFile("characters", "assets/sprites/characters.png", 800));
 
     let mouse = new Mouse();
     let keyboard = new KeyBoard();

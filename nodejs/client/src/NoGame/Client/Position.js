@@ -65,6 +65,32 @@ export default class Position
     }
 
     /**
+     * @param {Position} point
+     * @returns {number}
+     */
+    direction(point)
+    {
+        Assert.instanceOf(point, Position);
+
+        let xDiff = this._x - point.x;
+        let yDiff = this._y - point.y;
+
+        if (xDiff >= 1) {
+            return Directions.LEFT;
+        }
+
+        if (xDiff <= -1) {
+            return Directions.RIGHT;
+        }
+
+        if (yDiff >= 1) {
+            return Directions.UP;
+        }
+
+        return Directions.DOWN;
+    }
+
+    /**
      * @param {Position} position
      * @return {boolean}
      */
