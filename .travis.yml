@@ -15,7 +15,6 @@ install:
   - cd $TRAVIS_BUILD_DIR/nodejs/server && CC=gcc-5 CXX=g++-5 npm install
   - cd $TRAVIS_BUILD_DIR/nodejs/client && CC=gcc-5 CXX=g++-5 npm install
   - cd $TRAVIS_BUILD_DIR/nodejs/common && CC=gcc-5 CXX=g++-5 npm install
-  - cd $TRAVIS_BUILD_DIR/nodejs/common/node_modules && ls -la
 
 script:
   - cd $TRAVIS_BUILD_DIR/nodejs/server && npm test
