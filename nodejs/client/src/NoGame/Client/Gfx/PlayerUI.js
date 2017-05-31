@@ -4,6 +4,7 @@ import Assert from 'assert-js';
 import Player from './../Player';
 import Size from './Size';
 import MessageUI from './MessageUI';
+import Directions from './../Directions';
 
 export default class PlayerUI
 {
@@ -173,5 +174,19 @@ export default class PlayerUI
         let progress = Math.min((duration - (this._player.getMoveEnds() - new Date().getTime())) / duration, 1);
 
         return Math.round(distance * progress);
+    }
+
+    get outfitSpriteId()
+    {
+        switch (this._player.direction) {
+            case Directions.DOWN:
+                return 807;
+            case Directions.LEFT:
+                return 810;
+            case Directions.RIGHT:
+                return 804;
+            case Directions.UP:
+                return 801;
+        }
     }
 }

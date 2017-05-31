@@ -1,5 +1,7 @@
 'use strict';
 
+import Assert from 'assert-js';
+import {AreaCalculator} from 'nogame-common';
 import Canvas from './Canvas';
 import Size from './Size';
 import Font from './Font';
@@ -7,10 +9,7 @@ import PlayerUI from './PlayerUI';
 import CharactersUI from './CharactersUI';
 import SpriteMap from './SpriteMap';
 import Mouse from './../Input/Mouse';
-import Tile from './../Map/Tile';
 import Character from './../Character';
-import Assert from 'assert-js';
-import {AreaCalculator} from 'nogame-common';
 import Position from './../Position';
 import Colors from './Colors';
 import TileAnimations from './Engine/TileAnimations';
@@ -47,6 +46,14 @@ export default class Engine
     }
 
     /**
+     * @returns {TileAnimations}
+     */
+    get tileAnimations()
+    {
+        return this._tileAnimations;
+    }
+
+    /**
      * @param {int} x
      * @param {int} y
      */
@@ -67,14 +74,6 @@ export default class Engine
         return this._visibleTiles;
     }
 
-    /**
-     * @returns {TileAnimations}
-     */
-    get tileAnimations()
-    {
-        return this._tileAnimations;
-    }
-
     loadSprites()
     {
         this._spriteMap.load();
@@ -89,7 +88,7 @@ export default class Engine
     }
 
     /**
-     * @param {Character[]} characters
+     * @param {array<Character>} characters
      */
     setCharacters(characters)
     {
@@ -116,7 +115,7 @@ export default class Engine
     }
 
     /**
-     * @param {Tile[]} tiles
+     * @param {Map} tiles
      */
     setTiles(tiles)
     {
@@ -143,16 +142,19 @@ export default class Engine
     {
         if (this._draw) {
             if (this._spriteMap.isLoaded() && null !== this._visibleTiles) {
+
+                let centerSquarePosition = AreaCalculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
+                let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+
                 if (null !== this._player && null !== this._tiles) {
                     this._canvas.clear();
-                    this._drawGround();
-                    this._drawVisibleCharacters();
-                    this._drawTileStack();
-                    this._drawNames();
+                    this._drawGround(animationOffset);
+                    this._drawTileStack(animationOffset, centerSquarePosition);
+                    this._drawNames(animationOffset, centerSquarePosition);
                     this._drawStatistics();
-                    this._drawMessages();
-                    this._drawMousePointer();
-                    this._drawTileAnimations();
+                    this._drawMessages(animationOffset);
+                    this._drawMousePointer(animationOffset);
+                    this._drawTileAnimations(animationOffset);
                 }
             }
 
@@ -190,16 +192,34 @@ export default class Engine
     }
 
     /**
+     * @returns {Size}
      * @private
      */
-    _drawGround()
+    get _characterOffset()
     {
-        let areaTiles = {
+        let tileSize = this._canvas.calculateTileSize();
+
+        return new Size(- Math.round(tileSize.width * 0.25), - Math.round(tileSize.height * 0.25))
+    }
+
+    /**
+     * @returns {{x: int, y: int}}
+     */
+    get _areaTiles()
+    {
+        return {
             x: this._player.x - ((this._visibleTiles.x - 1) / 2),
             y: this._player.y - ((this._visibleTiles.y - 1) / 2)
         };
+    }
 
-        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+    /**
+     * @param {Size} animationOffset
+     * @private
+     */
+    _drawGround(animationOffset)
+    {
+        let areaTiles = this._areaTiles;
 
         for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
             for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
@@ -210,75 +230,130 @@ export default class Engine
                 if (tile === undefined) {
                     this._canvas.drawBlankTile(tileX, tileY, animationOffset);
                 } else {
-                    let sprite = this._spriteMap.getSprite(tile.ground);
+                    this._canvas.drawSprite(tileX, tileY, this._spriteMap.getSprite(tile.ground), animationOffset);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param {Size} animationOffset
+     * @param {{x: int, y: int}} centerSquarePosition
+     * @private
+     */
+    _drawTileStack(animationOffset, centerSquarePosition)
+    {
+        let areaTiles = this._areaTiles;
+
+        for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
+            for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
+                let absoluteX = areaTiles.x + tileX;
+                let absoluteY = areaTiles.y + tileY;
+
+                this._drawCharacter(
+                    tileX,
+                    tileY,
+                    absoluteX,
+                    absoluteY,
+                    animationOffset
+                );
+
+                this._drawPlayer(
+                    tileX,
+                    tileY,
+                    absoluteX,
+                    absoluteY,
+                    centerSquarePosition,
+                    animationOffset
+                );
+
+                this._drawTile(absoluteX, absoluteY, tileX, tileY, animationOffset);
+            }
+        }
+    }
+
+    /**
+     * @param {int} tileX
+     * @param {int} tileY
+     * @param {int} absoluteX
+     * @param {int} absoluteY
+     * @param {{x: int, y: int}} centerSquarePosition
+     * @param {Size} animationOffset
+     * @private
+     */
+    _drawPlayer(tileX, tileY, absoluteX, absoluteY, centerSquarePosition, animationOffset)
+    {
+        if (tileX === centerSquarePosition.x && tileY === centerSquarePosition.y) {
+            this._canvas.drawSprite(
+                centerSquarePosition.x,
+                centerSquarePosition.y,
+                this._spriteMap.getSprite(this._player.outfitSpriteId),
+                this._characterOffset
+            );
+
+            // we need to draw extra tile to prevent drawing player under tile on the left
+            this._drawTile(absoluteX-1, absoluteY, tileX-1, tileY, animationOffset);
+        }
+
+    }
+
+    /**
+     * @param {int} tileX
+     * @param {int} tileY
+     * @param {int} absoluteX
+     * @param {int} absoluteY
+     * @param {Size} animationOffset
+     * @private
+     */
+    _drawCharacter(tileX, tileY, absoluteX, absoluteY, animationOffset)
+    {
+        let character = this._characters.character(absoluteX, absoluteY);
+
+        if (character !== undefined) {
+            let color = character.isPlayer ? Colors.BLUE : Colors.GRAY;
+            let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
+
+            this._canvas.drawCharacter(
+                color,
+                tileX,
+                tileY,
+                offset.add(this._characterOffset)
+            );
+
+            // we need to draw extra tile to prevent drawing character under tile on the left
+            this._drawTile(absoluteX-1, absoluteY, tileX-1, tileY, animationOffset);
+        }
+    }
+
+    /**
+     * @param {int} absoluteX
+     * @param {int} absoluteY
+     * @param {int} tileX
+     * @param {int} tileY
+     * @param {Size} animationOffset
+     * @private
+     */
+    _drawTile(absoluteX, absoluteY, tileX, tileY, animationOffset)
+    {
+        let tile = this._tiles.get(`${absoluteX}:${absoluteY}`);
+
+        if (tile !== undefined && tile.stack.length) {
+            for (let spriteId of tile.stack) {
+                if (this._spriteMap.hasSprite(spriteId)) {
+                    let sprite = this._spriteMap.getSprite(spriteId);
                     this._canvas.drawSprite(tileX, tileY, sprite, animationOffset);
                 }
             }
         }
     }
 
-    _drawTileStack()
-    {
-        let areaTiles = {
-            x: this._player.x - ((this._visibleTiles.x - 1) / 2),
-            y: this._player.y - ((this._visibleTiles.y - 1) / 2)
-        };
-
-        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
-
-        for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
-            for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
-                let absoluteX = areaTiles.x + tileX;
-                let absoluteY = areaTiles.y + tileY;
-                let tile = this._tiles.get(`${absoluteX}:${absoluteY}`);
-
-                if (tile === undefined || !tile.stack.length) {
-                    continue ;
-                }
-
-                for (let spriteId of tile.stack) {
-                    if (this._spriteMap.hasSprite(spriteId)) {
-                        let sprite = this._spriteMap.getSprite(spriteId);
-                        this._canvas.drawSprite(tileX, tileY, sprite, animationOffset);
-                    }
-                }
-
-            }
-        }
-    }
-
     /**
+     * @param {Size} animationOffset
+     * @param {{x: int, y: int}} centerSquarePosition
      * @private
      */
-    _drawVisibleCharacters()
+    _drawNames(animationOffset, centerSquarePosition)
     {
-        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
-        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
-
-        for (let character of visibleCharacters) {
-            let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
-            let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
-            let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
-            let color = character.isPlayer ? Colors.BLUE : Colors.GRAY;
-
-            this._canvas.drawCharacter(color, relativeX, relativeY, offset);
-        }
-
-        let centerSquarePosition = AreaCalculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
-        this._canvas.drawCharacter(
-            Colors.GREEN,
-            centerSquarePosition.x,
-            centerSquarePosition.y,
-            new Size(0, 0)
-        );
-    }
-
-    /**
-     * @private
-     */
-    _drawNames()
-    {
-        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
         let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
         let font = new Font('Verdana', 'normal', 15);
 
@@ -287,22 +362,27 @@ export default class Engine
             let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
             let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
 
-            this._canvas.drawCharacterName(character.name, relativeX, relativeY, offset, font);
+            this._canvas.drawCharacterName(
+                character.name,
+                relativeX,
+                relativeY,
+                offset.add(this._characterOffset),
+                font
+            );
             this._canvas.drawHealthBar(
                 character.health,
                 character.maxHealth,
                 relativeX,
                 relativeY,
-                offset
+                offset.add(this._characterOffset)
             );
         }
 
-        let centerSquarePosition = AreaCalculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
         this._canvas.drawCharacterName(
             this._player.name,
             centerSquarePosition.x,
             centerSquarePosition.y,
-            new Size(0, 0),
+            this._characterOffset,
             font
         );
 
@@ -311,7 +391,7 @@ export default class Engine
             this._player.maxHealth,
             centerSquarePosition.x,
             centerSquarePosition.y,
-            new Size(0, 0)
+            this._characterOffset
         );
     }
 
@@ -334,14 +414,13 @@ export default class Engine
         );
     }
 
-    _drawTileAnimations()
+    /**
+     * @param {Size} animationOffset
+     * @private
+     */
+    _drawTileAnimations(animationOffset)
     {
-        let areaTiles = {
-            x: this._player.x - ((this._visibleTiles.x - 1) / 2),
-            y: this._player.y - ((this._visibleTiles.y - 1) / 2)
-        };
-
-        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+        let areaTiles = this._areaTiles;
 
         for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
             for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
@@ -375,9 +454,12 @@ export default class Engine
         }
     }
 
-    _drawMessages()
+    /**
+     * @param {Size} animationOffset
+     * @private
+     */
+    _drawMessages(animationOffset)
     {
-        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
         let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
         let font = new Font('Verdana', 'normal', 15, Colors.YELLOW);
 
@@ -409,13 +491,13 @@ export default class Engine
     }
 
     /**
+     * @param {Size} animationOffset
      * @private
      */
-    _drawMousePointer()
+    _drawMousePointer(animationOffset)
     {
         let position = this.getMouseRelativePosition();
 
-        let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
         let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
 
         for (let character of visibleCharacters) {
