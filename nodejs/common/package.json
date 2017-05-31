@@ -16,6 +16,7 @@
   "license": "GPL 3",
   "dependencies": {
     "assert-js": "0.7.0",
+    "diff": "^3.2.0",
     "pathfinding": "^0.4.17"
   },
   "main": "bin/common.js",
