@@ -4,6 +4,11 @@ node_js:
   - "7"
   - "8"
 
+matrix:
+  fast_finish: true
+  allow_failures:
+    - node_js: "8"
+
 addons:
   apt:
     sources:
@@ -13,9 +18,14 @@ addons:
     - g++-5
 
 install:
+  - cd $TRAVIS_BUILD_DIR/nodejs/common && CC=gcc-5 CXX=g++-5 npm install
   - cd $TRAVIS_BUILD_DIR/nodejs/server && CC=gcc-5 CXX=g++-5 npm install
   - cd $TRAVIS_BUILD_DIR/nodejs/client && CC=gcc-5 CXX=g++-5 npm install
-  - cd $TRAVIS_BUILD_DIR/nodejs/common && CC=gcc-5 CXX=g++-5 npm install
+
+before_script:
+  - cd $TRAVIS_BUILD_DIR/nodejs/common && npm doctor
+  - cd $TRAVIS_BUILD_DIR/nodejs/server && npm doctor
+  - cd $TRAVIS_BUILD_DIR/nodejs/client && npm doctor
 
 script:
   - cd $TRAVIS_BUILD_DIR/nodejs/common && npm test
