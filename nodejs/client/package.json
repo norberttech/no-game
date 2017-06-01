@@ -12,7 +12,8 @@
     "client:dev": "node webpack.client.dev.js"
   },
   "engines": {
-    "node": ">=7.9.0"
+    "node": ">=8.0.0",
+    "npm": ">=5.0.0"
   },
   "license": "GPL 3",
   "dependencies": {
