@@ -23,7 +23,7 @@ Vagrant.configure(2) do |config|
 
     config.vm.define :no_game, primary: true do |web|
         web.vm.box = "ubuntu/trusty64"
-        web.vm.network :private_network, ip: "10.0.0.200"
+        web.vm.network :private_network, ip: "10.1.1.200"
         web.ssh.forward_agent = true
 
         web.vm.provider :virtualbox do |v|
