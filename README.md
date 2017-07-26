@@ -1,7 +1,7 @@
 # NoGame [![Build Status](https://travis-ci.org/norzechowicz/no-game.svg?branch=master)](https://travis-ci.org/norzechowicz/no-game)
 
 This repository is a proof of concept of 2D mmorpg game engine&client written in JS (es6).
-It was made as a part of research done in my free time before paid project for my client. 
+It was made as a part of research done in my free time. 
 
 Following features are already implemented: 
 
