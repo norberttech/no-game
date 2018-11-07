@@ -1,7 +1,7 @@
 'use strict';
 
 const Assert = require('assert-js');
-const WebSocket = require('ws/lib/WebSocket');
+const WebSocket = require('ws');
 const Logger = require('nogame-common').Logger;
 const Message = require('nogame-common').NetworkMessage;
 const UUID = require('uuid');
@@ -97,10 +97,14 @@ class Connection
     {
         Assert.instanceOf(message, Message);
 
-        message.setIndex(this._index);
-        this._logSend(message);
-        this._socket.send(message.toString());
-        this._index++;
+        if (this._socket.readyState === WebSocket.OPEN) {
+            message.setIndex(this._index);
+
+            this._logSend(message);
+            this._socket.send(message.toString(), {}, () => {
+                this._index++;
+            });
+        }
     }
 
     disconnect()
