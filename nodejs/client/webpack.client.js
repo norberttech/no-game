@@ -10,6 +10,7 @@ module.exports = {
         path: __dirname + "/build",
         filename: "client.js"
     },
+    mode: "production",
     target: "web",
     node: {
         tls: "empty",
