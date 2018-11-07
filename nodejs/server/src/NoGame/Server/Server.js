@@ -1,5 +1,7 @@
 'use strict';
 
+let fs = require('fs');
+const https = require('https');
 const WebsocketServer = require('ws').Server;
 const Broadcaster = require('./Broadcaster');
 const Connection = require('./Network/Connection');
@@ -50,15 +52,21 @@ class Server
         Assert.isFunction(callback);
 
         this._gameLoop.start(1000 / 45, this.update.bind(this));
-        this._server = new WebsocketServer({
-            perMessageDeflate: false,
-            port: port,
+
+        const server = new https.createServer({
+            // TODO: Move to env variables.
+            cert: fs.readFileSync('/etc/ssl/nogame.local.crt', 'utf8'),
+            key: fs.readFileSync('/etc/ssl/nogame.local.key', 'utf8'),
             verifyClient: false
         });
 
+        this._server = new WebsocketServer({ server: server });
         this._server.on('connection', this.onConnection.bind(this));
-        this._logger.info(`Server is listening on port: ${port}`);
-        callback();
+
+        server.listen(port, () => {
+            this._logger.info(`Server is listening on port: ${port}`);
+            callback();
+        });
     }
 
     onConnection(socket) {

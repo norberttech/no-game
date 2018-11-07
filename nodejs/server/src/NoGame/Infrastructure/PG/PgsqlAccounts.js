@@ -5,7 +5,7 @@ const Accounts = require('./../../Engine/Accounts');
 const Account = require('./../../Engine/Account');
 const AccountCharacter = require('./../../Engine/Account/AccountCharacter');
 const Pool = require('pg').Pool;
-const Bcrypt = require('bcrypt');
+const BcryptJS = require('bcryptjs');
 
 class PgsqlAccounts extends Accounts
 {
@@ -62,7 +62,7 @@ class PgsqlAccounts extends Accounts
 
                     let hash = result.rows[0].password_hash.replace("$2y", "$2a");
 
-                    if (!Bcrypt.compareSync(rawPassword, hash)) {
+                    if (!BcryptJS.compareSync(rawPassword, hash)) {
                         reject(new Error(`Invalid password for login ${login}.`));
                         return ;
                     }

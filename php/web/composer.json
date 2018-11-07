@@ -59,7 +59,7 @@
         "db:reset:dev": [
             "bin/console d:d:d --force --env=dev --if-exists",
             "bin/console d:d:c --env=dev",
-            "bin/console d:m:m -n --env=dev"
+            "bin/console d:s:u --force -n"
         ]
     },
     "config": {

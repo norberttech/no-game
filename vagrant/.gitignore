@@ -1,2 +1,4 @@
 Vagrantfile
-/.vagrant/
+*.retry
+ansible/roles
+.vagrant

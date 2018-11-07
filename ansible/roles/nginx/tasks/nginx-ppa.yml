@@ -1,5 +1,0 @@
----
-- name: Add nginx PPA repo
-  apt_repository: >
-      repo=ppa:nginx/stable
-      update_cache=true

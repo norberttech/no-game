@@ -1,0 +1,50 @@
+---
+- src: git@github.com:iroquoisorg/ansible-role-env.git
+  name: env
+  version: "1.0.0"
+  scm: git
+
+- src: git@github.com:iroquoisorg/ansible-role-tools.git
+  name: tools
+  version: "1.0.0"
+  scm: git
+
+- src: git@github.com:iroquoisorg/ansible-role-openssl.git
+  name: openssl
+  version: "1.0.0"
+  scm: git
+
+- src: git@github.com:iroquoisorg/ansible-role-php7.git
+  name: php7
+  version: "1.0.0"
+  scm: git
+
+- src: git@github.com:iroquoisorg/ansible-role-composer.git
+  name: composer
+  version: "1.0.0"
+  scm: git
+
+- src: git@github.com:iroquoisorg/ansible-role-nginx.git
+  name: nginx
+  version: "1.0.0"
+  scm: git
+
+- src: git@github.com:iroquoisorg/ansible-role-php-fpm.git
+  name: php-fpm
+  version: "1.0.0"
+  scm: git
+
+- src: git@github.com:iroquoisorg/ansible-role-nginx_vhost.git
+  name: nginx_vhost
+  version: "1.0.0"
+  scm: git
+
+- src: git@github.com:iroquoisorg/ansible-role-postgresql.git
+  name: postgresql
+  version: "1.0.0"
+  scm: git
+
+- src: git@github.com:iroquoisorg/ansible-role-nodejs.git
+  name: nodejs
+  version: "1.0.0"
+  scm: git

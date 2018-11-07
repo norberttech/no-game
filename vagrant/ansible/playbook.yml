@@ -1,0 +1,117 @@
+---
+- name: Configure socialo vagrant dev env
+  hosts: all
+  become: yes
+  remote_user: vagrant
+  vars:
+    env_timezone: "UTC"
+    env_hostname: "nogame-dev-vagrant"
+    env_hosts:
+      - {ip: "127.0.0.1", host: "nogame.local"}
+    pg_version: 9.6
+    pg_users: [{name: "nogame", password: "nogame", permissions: "CREATEDB"}]
+    pg_databases: [{name: "nogame", owner: "nogame"}]
+
+    nginx_vhost_host: "nogame.local"
+    nginx_vhost_php: true
+    nginx_vhost:
+      servers:
+        - server_name: client.nogame.local
+          port: 443
+          ssl: true
+          ssl_cert: /etc/ssl/nogame.local.crt
+          ssl_key: /etc/ssl/nogame.local.key
+          error_log: true
+          access_log: true
+          web_root: "/var/www/nogame/nodejs/client/public"
+          locations:
+            - path: /
+              content: |
+                try_files $uri /index.html;
+        - server_name: nogame.local
+          port: 443
+          ssl: true
+          ssl_cert: /etc/ssl/nogame.local.crt
+          ssl_key: /etc/ssl/nogame.local.key
+          error_log: true
+          access_log: true
+          web_root: "/var/www/nogame/php/web/public"
+          locations:
+            - path: /
+              content: |
+                try_files $uri /app.php$is_args$args;
+            - path: "~ ^/(app|app_dev)\\.php(/|$)"
+              content: |
+                fastcgi_pass unix:{{ php_fpm_socket }};
+                fastcgi_split_path_info ^(.+\.php)(/.*)$;
+                include fastcgi_params;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+                fastcgi_param HTTPS on;
+                fastcgi_buffer_size 128k;
+                fastcgi_buffers 256 4k;
+                fastcgi_busy_buffers_size 256k;
+                fastcgi_temp_file_write_size 256k;
+                fastcgi_read_timeout 240;
+                fastcgi_intercept_errors on;
+
+    php_ini_lines:
+      - 'date.timezone = "UTC"'
+      - 'display_errors = On'
+      - 'error_reporting = -1'
+      - 'short_open_tag = 0'
+
+    php_http_connector: fpm
+    php_version: "7.2"
+    php_extensions:
+      - "php{{ php7_version }}-cli"
+      - "php{{ php7_version }}-gd"
+      - "php{{ php7_version }}-pgsql"
+      - "php{{ php7_version }}-curl"
+      - "php{{ php7_version }}-intl"
+      - "php{{ php7_version }}-dev"
+      - "php{{ php7_version }}-xml"
+      - "php{{ php7_version }}-mbstring"
+      - "php{{ php7_version }}-bcmath"
+      - "php{{ php7_version }}-fpm"
+      - "php{{ php7_version }}-soap"
+      - php-pear
+
+    openssl_cert_common_name: "nogame.local"
+    openssl_cert_alternate_names:
+      - "nogame.local"
+      - "client.nogame.local"
+      - "localhost"
+    openssl_cert_ips:
+      - "127.0.0.1"
+
+    openssl_ca_name: "NoGame Development CA"
+    openssl_cert_email: "contact@nogame.local"
+    openssl_cert_name: "nogame.local"
+    openssl_generate_ca: true
+
+    nodejs_branch: 11.x
+    nodejs_version: "11.*"
+
+  tasks:
+    - name: Install apt_key dependencies
+      apt:
+        name: '{{ item }}'
+      with_items: [python-urllib3, python-openssl, python-pyasn1, python-pip]
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution_release == 'trusty'
+
+    - name: Install apt_key dependencies
+      command: pip install ndg-httpsclient
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution_release == 'trusty'
+
+  roles:
+    - { role: "env" }
+    - { role: "tools" }
+    - { role: "openssl" }
+    - { role: "php7" }
+    - { role: "composer" }
+    - { role: "nginx" }
+    - { role: "nginx_vhost" }
+    - { role: "php-fpm" }
+    - { role: "postgresql" }
+    - { role: "nodejs" }

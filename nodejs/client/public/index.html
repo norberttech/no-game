@@ -52,8 +52,9 @@
     </div>
     <script>
 
+        // TODO: Prepare production version of this file that use compiled assets.
         window.Settings = {
-            host: "ws://" + window.location.hostname + ":8080"
+            host: "wss://" + window.location.hostname + ":8080"
         };
 
         var scriptNode = document.createElement("script");
