@@ -1,7 +1,7 @@
-import LoginMessage from './../../../../src/NoGame/Client/Network/LoginMessage';
-import MoveMessage from './../../../../src/NoGame/Client/Network/MoveMessage';
-import SayMessage from './../../../../src/NoGame/Client/Network/SayMessage';
-import Assert from "assert-js";
+const LoginMessage = require('./../../../../src/NoGame/Client/Network/LoginMessage');
+const MoveMessage = require('./../../../../src/NoGame/Client/Network/MoveMessage');
+const SayMessage = require('./../../../../src/NoGame/Client/Network/SayMessage');
+const Assert = require("assert-js");
 
 describe("Messages", () => {
     it("allows to stringify login message", () => {

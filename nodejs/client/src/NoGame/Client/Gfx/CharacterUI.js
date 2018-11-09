@@ -1,13 +1,13 @@
 'use strict';
 
-import AreaCalculator from './../../Common/AreaCalculator';
-import Assert from 'assert-js';
-import PlayerUI from './PlayerUI';
-import Character from './../Character';
-import Size from './Size';
-import MessageUI from './MessageUI';
+const AreaCalculator = require('./../../Common/AreaCalculator');
+const Assert = require('assert-js');
+const PlayerUI = require('./PlayerUI');
+const Character = require('./../Character');
+const Size = require('./Size');
+const MessageUI = require('./MessageUI');
 
-export default class CharacterUI
+class CharacterUI
 {
     /**
      * @param {Character} character
@@ -192,3 +192,5 @@ export default class CharacterUI
         return Math.round(distance * progress);
     }
 }
+
+module.exports = CharacterUI;

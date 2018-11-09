@@ -1,9 +1,9 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Animation from './Animation';
+const Assert = require('assert-js');
+const Animation = require('./Animation');
 
-export default class Stack
+class Stack
 {
     /**
      * @param {Animation[]} [animations]
@@ -50,3 +50,5 @@ export default class Stack
         return this.all.length;
     }
 }
+
+module.exports = Stack;

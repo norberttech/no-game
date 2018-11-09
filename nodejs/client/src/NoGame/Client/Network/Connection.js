@@ -1,9 +1,9 @@
 'use strict';
 
-import Assert from 'assert-js';
-import NetworkMessage from './../../Common/NetworkMessage';
+const Assert = require('assert-js');
+const NetworkMessage = require('./../../Common/NetworkMessage');
 
-export default class Connection
+class Connection
 {
     constructor()
     {
@@ -75,3 +75,5 @@ export default class Connection
         callback();
     }
 }
+
+module.exports = Connection;

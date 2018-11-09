@@ -1,5 +1,5 @@
-import Size from './../../../../src/NoGame/Client/Gfx/Size';
-import Assert from "assert-js";
+const Size = require('./../../../../src/NoGame/Client/Gfx/Size');
+const Assert = require("assert-js");
 
 describe("Gfx Size", () => {
     it("throws exception when created from invalid values", () => {

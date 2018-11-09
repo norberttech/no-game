@@ -1,10 +1,10 @@
 'use strict';
 
-import Assert from 'assert-js';
-import NetworkMessage from './../../Common/NetworkMessage';
-import ClientMessages from './../../Common/ClientMessages';
+const Assert = require('assert-js');
+const NetworkMessage = require('./../../Common/NetworkMessage');
+const ClientMessages = require('./../../Common/ClientMessages');
 
-export default class LoginCharacterMessage extends NetworkMessage
+class LoginCharacterMessage extends NetworkMessage
 {
     /**
      * @param {string} characterId
@@ -19,3 +19,5 @@ export default class LoginCharacterMessage extends NetworkMessage
         this._data = {characterId: characterId};
     }
 }
+
+module.exports = LoginCharacterMessages;

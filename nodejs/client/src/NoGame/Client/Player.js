@@ -1,11 +1,11 @@
 'use strict';
 
-import Assert from 'assert-js';
-import ExperienceCalculator from './../Common/ExperienceCalculator';
-import Position from './Position';
-import Directions from './Directions';
+const Assert = require('assert-js');
+const ExperienceCalculator = require('./../Common/ExperienceCalculator');
+const Position = require('./Position');
+const Directions = require('./Directions');
 
-export default class Player
+class Player
 {
     /**
      * @param {string} id
@@ -250,3 +250,5 @@ export default class Player
         this._level = calculator.level(this._experience);
     }
 }
+
+module.exports = Player;

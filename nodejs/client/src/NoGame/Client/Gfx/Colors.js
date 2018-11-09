@@ -15,4 +15,4 @@ const Colors = {
     LOOSE_HEALTH: '#F5350A'
 };
 
-export default Colors;
+module.exports = Colors;

@@ -1,8 +1,8 @@
 'use strict';
 
-import Assert from 'assert-js';
+const Assert = require('assert-js');
 
-export default class Tile
+class Tile
 {
     /**
      * @param {int} x
@@ -85,3 +85,5 @@ export default class Tile
         return this._moveSpeedModifier;
     }
 }
+
+module.exports = Tile;

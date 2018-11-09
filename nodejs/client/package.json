@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npm run client:test:unit && npm run test:dependencies",
     "test:dependencies": "madge --circular --warning src",
-    "client:test:unit": "mocha --reporter dot --compilers js:babel-core/register spec/NoGame/Client/* --recursive",
+    "client:test:unit": "mocha --reporter dot spec/NoGame/* --recursive",
     "client:build": "node_modules/.bin/webpack --config webpack.client.build.js --progress --color --display-modules",
     "client:dev": "node webpack.client.dev.js"
   },

@@ -1,10 +1,10 @@
 'use strict';
 
-import Assert from 'assert-js';
-import MoveAnimation from './MoveAnimation';
-import Font from './../Font';
+const Assert = require('assert-js');
+const MoveAnimation = require('./MoveAnimation');
+const Font = require('./../Font');
 
-export default class TextFadeOutAnimation extends MoveAnimation
+class TextFadeOutAnimation extends MoveAnimation
 {
     /**
      * @param {string} text
@@ -73,3 +73,5 @@ export default class TextFadeOutAnimation extends MoveAnimation
         return this._currentDistance >= this._distance;
     }
 }
+
+module.exports = TextFadeOutAnimation;

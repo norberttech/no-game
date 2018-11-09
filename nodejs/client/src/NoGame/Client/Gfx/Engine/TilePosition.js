@@ -12,4 +12,4 @@ const TilePosition = {
     BOTTOM_RIGHT: 8
 };
 
-export default TilePosition;
+module.exports = TilePosition;

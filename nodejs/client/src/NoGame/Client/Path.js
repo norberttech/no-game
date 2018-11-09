@@ -1,10 +1,10 @@
 'use strict';
 
-import Assert from 'assert-js';
-import PF from 'pathfinding';
-import Position from './Position';
+const Assert = require('assert-js');
+const PF = require('pathfinding');
+const Position = require('./Position');
 
-export default class Path
+class Path
 {
     /**
      * @param {Array} path
@@ -58,3 +58,5 @@ export default class Path
         return this._positions.length > 0;
     }
 }
+
+module.exports = Path;

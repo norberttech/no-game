@@ -1,9 +1,9 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Directions from './Directions';
+const Assert = require('assert-js');
+const Directions = require('./Directions');
 
-export default class Position
+class Position
 {
     /**
      * @param {int} x
@@ -101,3 +101,5 @@ export default class Position
         return position.x === this._x && position.y === this._y;
     }
 }
+
+module.exports = Position;

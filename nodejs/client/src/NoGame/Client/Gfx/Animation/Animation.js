@@ -1,11 +1,13 @@
 'use strict';
 
-import Assert from 'assert-js';
+const Assert = require('assert-js');
 
-export default class Animation
+class Animation
 {
     get isFinished()
     {
         throw `Method not implemented.`;
     }
 }
+
+module.exports = Animation;

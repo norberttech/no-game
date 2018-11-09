@@ -1,12 +1,12 @@
 'use strict';
 
-import Assert from 'assert-js';
-import KeyBoard from './Input/KeyBoard';
-import Mouse from './Input/Mouse';
-import Chat from './UserInterface/Chat';
-import CharacterList from './UserInterface/CharacterList';
+const Assert = require('assert-js');
+const KeyBoard = require('./Input/KeyBoard');
+const Mouse = require('./Input/Mouse');
+const Chat = require('./UserInterface/Chat');
+const CharacterList = require('./UserInterface/CharacterList');
 
-export default class UserInterface
+class UserInterface
 {
     /**
      * @param {HTMLDocument} doc
@@ -170,3 +170,5 @@ export default class UserInterface
         }
     }
 }
+
+module.exports = UserInterface;

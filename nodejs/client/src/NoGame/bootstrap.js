@@ -1,16 +1,16 @@
 "use strict";
 
-import Client from './Client';
-import Kernel from './Kernel';
-import PathFinder from './../Common/PathFinder';
-import UserInterface from './UserInterface';
-import Engine from './Gfx/Engine';
-import Canvas from './Gfx/Canvas';
-import SpriteMap from './Gfx/SpriteMap';
-import SpriteFile from './Gfx/SpriteFile';
-import KeyBoard from './Input/KeyBoard';
-import Mouse from './Input/Mouse';
-import ProtocolFactory from './ProtocolFactory';
+import Client from './Client/Client';
+import Kernel from './Client/Kernel';
+import PathFinder from './Common/PathFinder';
+import UserInterface from './Client/UserInterface';
+import Engine from './Client/Gfx/Engine';
+import Canvas from './Client/Gfx/Canvas';
+import SpriteMap from './Client/Gfx/SpriteMap';
+import SpriteFile from './Client/Gfx/SpriteFile';
+import KeyBoard from './Client/Input/KeyBoard';
+import Mouse from './Client/Input/Mouse';
+import ProtocolFactory from './Client/ProtocolFactory';
 
 window.location.getParameter = function(name) {
     let url = window.location.href;

@@ -1,10 +1,10 @@
 'use strict';
 
-import Assert from 'assert-js';
-import NetworkMessage from './../../Common/NetworkMessage';
-import ClientMessages from './../../Common/ClientMessages';
+const Assert = require('assert-js');
+const NetworkMessage = require('./../../Common/NetworkMessage');
+const ClientMessages = require('./../../Common/ClientMessages');
 
-export default class MoveMessage extends NetworkMessage
+class MoveMessage extends NetworkMessage
 {
     /**
      * @param {int} x
@@ -24,3 +24,5 @@ export default class MoveMessage extends NetworkMessage
         };
     }
 }
+
+module.exports = MoveMessage;

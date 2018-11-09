@@ -1,5 +1,5 @@
-import Assert from 'assert-js';
-import Position from './../../../../../src/NoGame/Client/Gfx/Sprite/Position';
+const Assert = require('assert-js');
+const Position = require('./../../../../../src/NoGame/Client/Gfx/Sprite/Position');
 
 describe("Gfx Size", () => {
 

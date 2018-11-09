@@ -1,23 +1,23 @@
 'use strict';
 
-import Assert from 'assert-js';
-import AreaCalculator from './../../Common/AreaCalculator';
-import Canvas from './Canvas';
-import Size from './Size';
-import Font from './Font';
-import PlayerUI from './PlayerUI';
-import CharactersUI from './CharactersUI';
-import SpriteMap from './SpriteMap';
-import Mouse from './../Input/Mouse';
-import Character from './../Character';
-import Position from './../Position';
-import Colors from './Colors';
-import TileAnimations from './Engine/TileAnimations';
-import TilePosition from './Engine/TilePosition';
-import FrameAnimation from './Animation/FrameAnimation';
-import MoveAnimation from './Animation/MoveAnimation';
+const Assert = require('assert-js');
+const AreaCalculator = require('./../../Common/AreaCalculator');
+const Canvas = require('./Canvas');
+const Size = require('./Size');
+const Font = require('./Font');
+const PlayerUI = require('./PlayerUI');
+const CharactersUI = require('./CharactersUI');
+const SpriteMap = require('./SpriteMap');
+const Mouse = require('./../Input/Mouse');
+const Character = require('./../Character');
+const Position = require('./../Position');
+const Colors = require('./Colors');
+const TileAnimations = require('./Engine/TileAnimations');
+const TilePosition = require('./Engine/TilePosition');
+const FrameAnimation = require('./Animation/FrameAnimation');
+const MoveAnimation = require('./Animation/MoveAnimation');
 
-export default class Engine
+class Engine
 {
     /**
      * @param {Canvas} canvas
@@ -523,3 +523,5 @@ export default class Engine
         );
     }
 }
+
+module.exports = Engine;

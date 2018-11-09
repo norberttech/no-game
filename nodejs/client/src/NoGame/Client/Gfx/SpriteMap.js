@@ -1,9 +1,9 @@
 'use strict';
 
-import Assert from 'assert-js';
-import SpriteFile from './SpriteFile';
+const Assert = require('assert-js');
+const SpriteFile = require('./SpriteFile');
 
-export default class SpriteMap
+class SpriteMap
 {
     constructor()
     {
@@ -77,3 +77,5 @@ export default class SpriteMap
         return true;
     }
 }
+
+module.exports = SpriteMap;

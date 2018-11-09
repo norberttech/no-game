@@ -8,4 +8,4 @@ let Keys = {
     EQUAL: 187
 };
 
-export default Keys;
+module.exports = Keys;

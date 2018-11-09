@@ -1,9 +1,8 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Animation from './Animation';
+const Animation = require('./Animation');
 
-export default class MoveAnimation extends Animation
+class MoveAnimation extends Animation
 {
     /**
      * @returns {int}
@@ -13,3 +12,5 @@ export default class MoveAnimation extends Animation
         throw `Method not implemented.`;
     }
 }
+
+module.exports = MoveAnimation;

@@ -1,26 +1,26 @@
 'use strict';
 
-import Assert from 'assert-js';
-import MoveSpeed from './../Common/MoveSpeed';
-import ExperienceCalculator from './../Common/ExperienceCalculator';
-import ServerMessages from './../Common/ServerMessages';
-import Player from './Player';
-import Tile from './Map/Tile';
-import Area from './Map/Area';
-import Position from './Position';
-import Character from './Character';
-import Kernel from './Kernel';
-import Connection from './Network/Connection';
-import LoginMessage from './Network/LoginMessage';
-import LoginCharacterMessage from './Network/LoginCharacterMessage';
-import SayMessage from './Network/SayMessage';
-import AttackMonsterMessage from './Network/AttackMonsterMessage';
-import MoveMessage from './Network/MoveMessage';
-import UserInterface from './UserInterface';
+const Assert = require('assert-js');
+const MoveSpeed = require('./../Common/MoveSpeed');
+const ExperienceCalculator = require('./../Common/ExperienceCalculator');
+const ServerMessages = require('./../Common/ServerMessages');
+const Player = require('./Player');
+const Tile = require('./Map/Tile');
+const Area = require('./Map/Area');
+const Position = require('./Position');
+const Character = require('./Character');
+const Kernel = require('./Kernel');
+const Connection = require('./Network/Connection');
+const LoginMessage = require('./Network/LoginMessage');
+const LoginCharacterMessage = require('./Network/LoginCharacterMessage');
+const SayMessage = require('./Network/SayMessage');
+const AttackMonsterMessage = require('./Network/AttackMonsterMessage');
+const MoveMessage = require('./Network/MoveMessage');
+const UserInterface = require('./UserInterface');
 
 const LATENCY_DELAY = 50;
 
-export default class Protocol
+class Protocol
 {
     /**
      * @param {Kernel} kernel
@@ -350,3 +350,5 @@ export default class Protocol
         this._onCharacterSay = callback;
     }
 }
+
+module.exports = Protocol;
