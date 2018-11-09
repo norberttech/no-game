@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const httpsServer = require('https');
 const ExperienceCalculator = require('nogame-common').ExperienceCalculator;
 const Kernel = require('./../src/NoGame/Engine/Kernel');
 const Loader = require('./../src/NoGame/Engine/Loader');
-const Server = require('./../src/NoGame/Server/Server');
+const GameServer = require('./../src/NoGame/Server/GameServer');
 const Pool = require('pg').Pool;
 const PgsqlAccounts = require('./../src/NoGame/Infrastructure/PG/PgsqlAccounts');
 const PgsqlCharacters = require('./../src/NoGame/Infrastructure/PG/PgsqlCharacters');
@@ -26,6 +27,7 @@ let logger = new BunyanLogger('server', config.logLevel);
 let broadcaster = new Broadcaster();
 let incomeQueue = new IncomeQueue();
 const pool = new Pool({
+    // TODO: Move to env vars
     user: 'nogame',
     password: 'nogame',
     host: 'localhost',
@@ -47,10 +49,19 @@ let kernel = new Kernel(
 );
 kernel.boot();
 
-
 let protocol = new Protocol(kernel, accounts, characters, incomeQueue, broadcaster, logger);
-let server = new Server(kernel, protocol, logger, new GameLoop(), broadcaster, incomeQueue);
-server.listen(config.port);
+let server = new GameServer(kernel, protocol, logger, new GameLoop(), broadcaster, incomeQueue);
+
+
+server.listen(
+    httpsServer.createServer({
+        // TODO: Move to env variables.
+        cert: fs.readFileSync('/etc/ssl/nogame.local.crt', 'utf8'),
+        key: fs.readFileSync('/etc/ssl/nogame.local.key', 'utf8'),
+        verifyClient: false
+    }),
+    config.port
+);
 
 
 function exitHandler(err) {

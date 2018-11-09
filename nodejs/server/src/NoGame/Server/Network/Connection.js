@@ -109,7 +109,7 @@ class Connection
 
     disconnect()
     {
-        this._socket.close();
+        this._socket.close(1000, "Connection closed.");
     }
 
     _logSend(entry)

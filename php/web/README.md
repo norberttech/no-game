@@ -1,4 +1,8 @@
-web
-===
+# NoGame homepage
 
-A Symfony project created on May 6, 2017, 4:23 pm.
+This is basically simple web page used to create and manage accounts.
+It allows users to:
+
+* Register new account
+* Create characters
+

@@ -1,4 +1,5 @@
 describe("Server - Moves -", () => {
+    const http = require('http');
     const TestKit = require('../TestKit/TestKit');
     const Kernel = require('./../../../src/NoGame/Engine/Kernel');
     const Account = require('./../../../src/NoGame/Engine/Account');
@@ -7,7 +8,7 @@ describe("Server - Moves -", () => {
     const Protocol = require('./../../../src/NoGame/Server/Protocol');
     const IncomeQueue = require('./../../../src/NoGame/Server/MessageQueue/IncomeQueue');
     const Broadcaster = require('./../../../src/NoGame/Server/Broadcaster');
-    const Server = require('./../../../src/NoGame/Server/Server');
+    const GameServer = require('./../../../src/NoGame/Server/GameServer');
     const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
     const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
     const MemoryLogger = require('./../../../src/NoGame/Infrastructure/Logger/MemoryLogger');
@@ -47,23 +48,27 @@ describe("Server - Moves -", () => {
 
         let protocol = new Protocol(kernel, accounts, characters, incomeQueue, broadcaster, new TestKit.Logger());
 
-        server = new Server(kernel, protocol, logger, new GameLoop(), broadcaster, incomeQueue);
-        server.listen(PORT, () => {
-            player = new TestKit.Player();
-            player.connect(HOST, () => {
-                player.send(TestKit.MessageFactory.login('user-01@nogame.com', 'password'));
-
-                player.expectMsg((message) => {
-                    TestKit.MessageAssert.characterListString(message);
-                    player.send(TestKit.MessageFactory.loginCharacter(CHAR_01_ID));
+        server = new GameServer(kernel, protocol, logger, new GameLoop(), broadcaster, incomeQueue);
+        server.listen(
+            http.createServer(),
+            PORT,
+            () => {
+                player = new TestKit.Player();
+                player.connect(HOST, () => {
+                    player.send(TestKit.MessageFactory.login('user-01@nogame.com', 'password'));
 
                     player.expectMsg((message) => {
-                        TestKit.MessageAssert.batchString(message);
-                        done(); // player logged in, testsuite can proceed
-                    });
-                })
-            });
-        });
+                        TestKit.MessageAssert.characterListString(message);
+                        player.send(TestKit.MessageFactory.loginCharacter(CHAR_01_ID));
+
+                        player.expectMsg((message) => {
+                            TestKit.MessageAssert.batchString(message);
+                            done(); // player logged in, testsuite can proceed
+                        });
+                    })
+                });
+            }
+        );
     });
 
     it("disconnects when trying to move as not logged in player", (done) => {

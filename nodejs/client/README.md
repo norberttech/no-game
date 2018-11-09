@@ -1,3 +1,5 @@
+[Back to readme](/README.md)
+
 # Important commands
 
 - ``$ npm run common:update`` - **Should be executed after any change in nogame common library**

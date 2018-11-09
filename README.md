@@ -35,4 +35,7 @@ One ugly square (player) is fighting with another ugly square (rat, monster) :P
 # Documentation
 
  * [Setup](/docs/setup.md)
+ * [NodeJS - Common](/nodejs/common/README.md)
+ * [NodeJS - Client](/nodejs/client/README.md)
+ * [NodeJS - Server](/nodejs/server/README.md)
 

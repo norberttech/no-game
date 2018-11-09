@@ -1,4 +1,5 @@
 describe("Server - Authentication -", () => {
+    const http = require('http');
     const TestKit = require('../TestKit/TestKit');
     const Kernel = require('./../../../src/NoGame/Engine/Kernel');
     const Account = require('./../../../src/NoGame/Engine/Account');
@@ -8,7 +9,7 @@ describe("Server - Authentication -", () => {
     const Protocol = require('./../../../src/NoGame/Server/Protocol');
     const IncomeQueue = require('./../../../src/NoGame/Server/MessageQueue/IncomeQueue');
     const Broadcaster = require('./../../../src/NoGame/Server/Broadcaster');
-    const Server = require('./../../../src/NoGame/Server/Server');
+    const GameServer = require('./../../../src/NoGame/Server/GameServer');
     const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
     const MemoryLogger = require('./../../../src/NoGame/Infrastructure/Logger/MemoryLogger');
     const GameLoop = require('./../../../src/NoGame/Server/GameLoop');
@@ -44,10 +45,14 @@ describe("Server - Authentication -", () => {
         let protocol = new Protocol(kernel, accounts, characters, incomeQueue, broadcaster, new TestKit.Logger());
 
         kernel.boot();
-        server = new Server(kernel, protocol, logger, new GameLoop(), broadcaster, incomeQueue);
-        server.listen(PORT, () => {
-            done();
-        });
+        server = new GameServer(kernel, protocol, logger, new GameLoop(), broadcaster, incomeQueue);
+        server.listen(
+            http.createServer(),
+            PORT,
+            () => {
+                done();
+            }
+        );
     });
 
     it("sends login, area, tiles and characters messages after successful login", (done) => {

@@ -49,6 +49,12 @@ class Player
                 clearTimeout(this._messageExpectation[index].timer);
                 this._messageExpectation[index].callback(this._messages[index]);
             }
+        };
+
+        this._connection.onerror = (event) => {
+            console.log('ERRROR');
+            console.log(event);
+            process.exit(1);
         }
     }
 

@@ -1,7 +1,6 @@
 'use strict';
 
-let fs = require('fs');
-const https = require('https');
+const HttpServer = require('http');
 const WebsocketServer = require('ws').Server;
 const Broadcaster = require('./Broadcaster');
 const Connection = require('./Network/Connection');
@@ -12,7 +11,7 @@ const GameLoop = require('./GameLoop');
 const Protocol = require('./Protocol');
 const Logger = require('nogame-common').Logger;
 
-class Server
+class GameServer
 {
     /**
      * @param {Kernel} kernel
@@ -40,30 +39,27 @@ class Server
         this._spawnTimer = 0;
         this._monsterThinkTimer = 0;
         this._isTerminated = false;
+        this._wsServer = null;
+        this._httpServer = null;
     }
 
     /**
+     * @param {HttpServer} httpServer
      * @param {int} [port]
      * @param {function} [callback]
      */
-    listen(port = 8080, callback = () => {})
+    listen(httpServer, port = 8080, callback = () => {})
     {
         Assert.integer(port);
         Assert.isFunction(callback);
 
         this._gameLoop.start(1000 / 45, this.update.bind(this));
 
-        const server = new https.createServer({
-            // TODO: Move to env variables.
-            cert: fs.readFileSync('/etc/ssl/nogame.local.crt', 'utf8'),
-            key: fs.readFileSync('/etc/ssl/nogame.local.key', 'utf8'),
-            verifyClient: false
-        });
+        this._httpServer = httpServer;
+        this._wsServer = new WebsocketServer({ server: this._httpServer });
+        this._wsServer.on('connection', this.onConnection.bind(this));
 
-        this._server = new WebsocketServer({ server: server });
-        this._server.on('connection', this.onConnection.bind(this));
-
-        server.listen(port, () => {
+        this._httpServer.listen(port, () => {
             this._logger.info(`Server is listening on port: ${port}`);
             callback();
         });
@@ -174,16 +170,19 @@ class Server
         this._isTerminated = true;
         this._logger.info("Server Terminate: Stopping game loop.");
         this._gameLoop.stop();
-        this._logger.info("Server Terminate: Closing WebServer.");
-        this._server.close();
         this._logger.info("Server Terminate: Saving Characters.");
+        this._logger.info("Server Terminate: Closing WebServer.");
 
         setTimeout(() => {
-            this._logger.info("Server Terminate: Terminated.");
-            callback();
-            // lets give server enough time to save all characters.
+            this._wsServer.close(() => {
+                this._logger.info("Websocket Server Terminate: Terminated.");
+                this._httpServer.close(() => {
+                    this._logger.info("Http Server Terminate: Terminated.");
+                    callback();
+                });
+            });
         }, terminationTimeout);
     }
 }
 
-module.exports = Server;
+module.exports = GameServer;
