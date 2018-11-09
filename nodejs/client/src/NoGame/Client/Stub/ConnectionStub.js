@@ -1,10 +1,8 @@
 'use strict';
 
 import Connection from './../Network/Connection';
-import {NetworkMessage} from 'nogame-common';
-import {ClientMessages} from 'nogame-common';
-import {ServerMessages} from 'nogame-common';
-import {AreaCalculator} from 'nogame-common';
+import ServerMessages from './../../Common/ServerMessages';
+import AreaCalculator from './../../Common/AreaCalculator';
 import UUID from 'uuid';
 
 const PLAYER_POS_X = 108;

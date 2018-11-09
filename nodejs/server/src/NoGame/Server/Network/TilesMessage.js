@@ -1,9 +1,9 @@
 'use strict';
 
 const Assert = require('assert-js');
-const Message = require('nogame-common').NetworkMessage;
+const Message = require('./../../../../src/NoGame/Common/NetworkMessage');
 const Tile = require('./../../Engine/Map/Area/Tile');
-const ServerMessages = require('nogame-common').ServerMessages;
+const ServerMessages = require('./../../../../src/NoGame/Common/ServerMessages');
 
 class TilesMessage extends Message
 {

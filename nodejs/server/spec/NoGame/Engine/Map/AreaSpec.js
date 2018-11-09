@@ -1,5 +1,5 @@
 describe("Area", () => {
-    const expect = require('expect.js');
+    const Assert = require('assert-js');
     const Area = require('./../../../../src/NoGame/Engine/Map/Area');
     const Item = require('./../../../../src/NoGame/Engine/Map/Area/Item');
     const Tile = require('./../../../../src/NoGame/Engine/Map/Area/Tile');
@@ -23,8 +23,11 @@ describe("Area", () => {
 
         area.addTile(grassTile);
 
-        expect(() => {area.addTile(grassTile);})
-            .to.throwError("Area \"test area\" already have a tile on position 0:0");
+        try {
+            area.addTile(grassTile);
+        } catch (e) {
+            Assert.equal(e.toString(), "Area \"test area\" already have a tile on position 0:0");
+        }
     });
 
     it ("can't take tile that position is out of area boundaries", () => {
@@ -33,8 +36,11 @@ describe("Area", () => {
         let grassTile = new Tile(new Position(25, 25), grass, stack);
         let area = new Area("test area", 10, 10);
 
-        expect(() => {area.addTile(grassTile);})
-            .to.throwError("Area \"test area\" boundaries are x: 10, y: 10. Tile position is 25:25");
+        try {
+            area.addTile(grassTile);
+        } catch (e) {
+            Assert.equal(e.toString(), "Area \"test area\" boundaries are x: 10, y: 10. Tile position is 25:25");
+        }
     });
 
     it ("throws error on attempt to spawn same player twice", () => {
@@ -44,8 +50,12 @@ describe("Area", () => {
         area.addTile(new Tile(new Position(0, 0), new Item(1)));
 
         area.loginPlayer(player);
-        expect(() => {area.loginPlayer(player);})
-            .to.throwError(`Player with id "${player.id}" is already present in area "test area"`);
+
+        try {
+            area.loginPlayer(player);
+        } catch (e) {
+            Assert.equal(e.toString(), `Player with id "${player.id}" is already present in area "test area"`);
+        }
     });
 
     it ("returns players except player with specific ID", () => {
@@ -61,7 +71,7 @@ describe("Area", () => {
         area.loginPlayer(player1);
         area.loginPlayer(player2);
 
-        expect(area.visiblePlayersFor(player1.id)).to.eql([player2]);
+        Assert.equal(area.visiblePlayersFor(player1.id)[0].id, player2.id);
     });
 
     it ("returns tiles visible by player", () => {
@@ -77,11 +87,11 @@ describe("Area", () => {
 
         let tiles = area.visibleTilesFor(player.id);
 
-        expect(tiles.length).to.be(221);
-        expect(tiles[0].position.x).to.be(42);
-        expect(tiles[0].position.y).to.be(44);
+        Assert.equal(tiles.length, 221);
+        Assert.equal(tiles[0].position.x, 42);
+        Assert.equal(tiles[0].position.y, 44);
 
-        expect(tiles[164].position.x).to.be(54);
-        expect(tiles[164].position.y).to.be(52);
+        Assert.equal(tiles[164].position.x, 54);
+        Assert.equal(tiles[164].position.y ,52);
     });
 });

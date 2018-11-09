@@ -1,7 +1,7 @@
 'use strict';
 
 import Assert from 'assert-js';
-import {ExperienceCalculator} from 'nogame-common';
+import ExperienceCalculator from './../Common/ExperienceCalculator';
 import Position from './Position';
 import Directions from './Directions';
 

@@ -1,7 +1,7 @@
 'use strict';
 
 import Assert from 'assert-js';
-import {AreaCalculator} from 'nogame-common';
+import AreaCalculator from './../../Common/AreaCalculator';
 import Canvas from './Canvas';
 import Size from './Size';
 import Font from './Font';

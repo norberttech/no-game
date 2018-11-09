@@ -1,7 +1,7 @@
 'use strict';
 
 const Assert = require('assert-js');
-const ClientMessages = require('nogame-common').ClientMessages;
+const ClientMessages = require('./../../../src/NoGame/Common/ClientMessages');
 
 class MessageFactory
 {

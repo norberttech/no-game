@@ -1,5 +1,5 @@
 describe("Player", () => {
-    const expect = require('expect.js');
+    const Assert = require('assert-js');
     const Player = require('./../../../src/NoGame/Engine/Player');
     const Monster = require('./../../../src/NoGame/Engine/Monster');
     const Tile = require('./../../../src/NoGame/Engine/Map/Area/Tile');
@@ -17,9 +17,11 @@ describe("Player", () => {
     it ("throws exception on attempt to move for a distance more than 1 square", () => {
         let player = new Player("1111", "yaboomaster", 100, 100, new Position(1, 1), new Position(1, 1));
 
-        expect(() => {
+        try {
             player.move(new Tile(new Position(1,3), new Item(0, false)), clock);
-        }).to.throwError("Can't move that far");
+        } catch (e) {
+            Assert.equal(e.toString(), "Can't move that far");
+        }
     });
 
     it ("moves to a different position with delay between moves", () => {
@@ -28,12 +30,12 @@ describe("Player", () => {
 
         player.move(new Tile(new Position(1,2), new Item(0, false)), clock);
         player.move(new Tile(new Position(2,2), new Item(0, false)), clock); // should not move here because is moving already
-        expect(player.isMoving(clock)).to.be(true);
-        expect(player.position.isEqualTo(new Position(1,2))).to.be(true);
+        Assert.true(player.isMoving(clock));
+        Assert.true(player.position.isEqualTo(new Position(1,2)));
 
         clock.pushForward(600);
 
-        expect(player.isMoving(clock)).to.be(false);
+        Assert.false(player.isMoving(clock));
     });
 
     it ("is has attack delay", () => {
@@ -42,15 +44,15 @@ describe("Player", () => {
 
         player.attackMonster(monster.id);
 
-        expect(player.isExhausted(clock)).to.be(false);
+        Assert.false(player.isExhausted(clock));
 
         player.meleeHit(10, clock, new TestKit.ManualRandomizer(1));
 
-        expect(player.isExhausted(clock)).to.be(true);
+        Assert.true(player.isExhausted(clock));
 
         clock.pushForward(3000);
 
-        expect(player.isExhausted(clock)).to.be(false);
+        Assert.false(player.isExhausted(clock));
     });
 
     it ("can't have negative health", () => {
@@ -58,13 +60,13 @@ describe("Player", () => {
 
         player.damage(200);
 
-        expect(player.health).to.be(0);
+        Assert.equal(player.health, 0);
     });
 
     it ("calculate damage for defence using randomizer", () => {
         let player = new Player("11111", "yaboomaster", 100, 100, new Position(1, 1), new Position(1, 1));
 
-        expect(player.meleeHit(10, clock, new TestKit.ManualRandomizer(1))).to.be(10);
+        Assert.equal(player.meleeHit(10, clock, new TestKit.ManualRandomizer(1)), 10);
     });
 
     it ("advance after earning enough experience", () => {
@@ -72,7 +74,7 @@ describe("Player", () => {
 
         player.earnExperience(100, new TestKit.ExperienceCalculator());
 
-        expect(player.level).to.be(2);
+        Assert.equal(player.level, 2);
     });
 
     it ("loss experience when die", () => {
@@ -81,6 +83,6 @@ describe("Player", () => {
 
         player.die(new TestKit.ExperienceCalculator());
 
-        expect(player.level).to.be(1);
+        Assert.equal(player.level, 1);
     });
 });

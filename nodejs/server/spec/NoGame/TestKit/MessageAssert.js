@@ -1,6 +1,6 @@
 'use strict';
 
-const ServerMessages = require('nogame-common').ServerMessages;
+const ServerMessages = require('./../../../src/NoGame/Common/ServerMessages');
 const MessageParser = require('./MessageParser');
 const MoveMessageAssertion = require('./Message/MoveMessageAssertion');
 

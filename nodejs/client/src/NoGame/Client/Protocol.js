@@ -1,9 +1,9 @@
 'use strict';
 
 import Assert from 'assert-js';
-import {MoveSpeed} from 'nogame-common';
-import {ExperienceCalculator} from 'nogame-common';
-import {ServerMessages} from 'nogame-common';
+import MoveSpeed from './../Common/MoveSpeed';
+import ExperienceCalculator from './../Common/ExperienceCalculator';
+import ServerMessages from './../Common/ServerMessages';
 import Player from './Player';
 import Tile from './Map/Tile';
 import Area from './Map/Area';

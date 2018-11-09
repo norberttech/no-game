@@ -1,8 +1,8 @@
 'use strict';
 
-const ExperienceCalculator = require('nogame-common').ExperienceCalculator;
-const MoveSpeed = require('nogame-common').MoveSpeed;
 const Assert = require('assert-js');
+const ExperienceCalculator = require('./../Common/ExperienceCalculator');
+const MoveSpeed = require('./../Common/MoveSpeed');
 const Tile = require('./Map/Area/Tile');
 const Monster = require('./Monster');
 const Position = require('./Map/Area/Position');

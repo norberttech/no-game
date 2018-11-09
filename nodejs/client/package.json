@@ -4,7 +4,6 @@
   "description": "",
   "private": true,
   "scripts": {
-    "common:update": "rm -r -f node_modules/nogame-common && npm install",
     "test": "npm run client:test:unit && npm run test:dependencies",
     "test:dependencies": "madge --circular --warning src",
     "client:test:unit": "mocha --reporter dot --compilers js:babel-core/register spec/NoGame/Client/* --recursive",
@@ -20,8 +19,7 @@
     "assert-js": "0.20.0",
     "json-loader": "^0.5.4",
     "markdown-loader": "^0.1.7",
-    "nogame-common": "file:../common",
-    "pathfinding": "^0.4.17",
+    "pathfinding": "^0.4.18",
     "uuid": "^2.0.1",
     "ws": "^6.1.0"
   },

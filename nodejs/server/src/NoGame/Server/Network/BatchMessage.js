@@ -1,8 +1,8 @@
 'use strict';
 
 const Assert = require('assert-js');
-const NetworkMessage = require('nogame-common').NetworkMessage;
-const ServerMessages = require('nogame-common').ServerMessages;
+const NetworkMessage = require('./../../Common/NetworkMessage');
+const ServerMessages = require('./../../Common/ServerMessages');
 
 class BatchMessage extends NetworkMessage
 {

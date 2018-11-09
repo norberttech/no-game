@@ -1,7 +1,7 @@
 'use strict';
 
 import Assert from 'assert-js';
-import {ExperienceCalculator} from 'nogame-common';
+import ExperienceCalculator from './../Common/ExperienceCalculator';
 import Protocol from './Protocol';
 import Connection from './Network/Connection';
 import ConnectionStub from './Stub/ConnectionStub';

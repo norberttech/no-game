@@ -1,7 +1,7 @@
 'use strict';
 
 import Assert from 'assert-js';
-import {NetworkMessage} from 'nogame-common';
+import NetworkMessage from './../../Common/NetworkMessage';
 
 export default class Connection
 {

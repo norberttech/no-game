@@ -2,7 +2,7 @@
 
 const bunyan = require('bunyan');
 const Assert = require('assert-js');
-const Logger = require('nogame-common').Logger;
+const Logger = require('./../../Common/Logger');
 
 class BunyanLogger extends Logger
 {

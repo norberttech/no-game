@@ -7,9 +7,9 @@ import Player from './Player';
 import Position from './Position';
 import Path from './Path';
 import Character from './Character';
-import {PathFinder} from 'nogame-common';
-import {PathFinderGrid} from 'nogame-common';
-import {AreaCalculator} from 'nogame-common';
+import PathFinder from './../Common/PathFinder';
+import PathFinderGrid from './../Common/PathFinderGrid';
+import AreaCalculator from './../Common/AreaCalculator';
 import AnimationFactory from './Gfx/AnimationFactory';
 
 export default class Kernel

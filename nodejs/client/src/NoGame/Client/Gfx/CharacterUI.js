@@ -1,6 +1,6 @@
 'use strict';
 
-import {AreaCalculator} from 'nogame-common';
+import AreaCalculator from './../../Common/AreaCalculator';
 import Assert from 'assert-js';
 import PlayerUI from './PlayerUI';
 import Character from './../Character';

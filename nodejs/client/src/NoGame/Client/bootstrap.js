@@ -2,7 +2,7 @@
 
 import Client from './Client';
 import Kernel from './Kernel';
-import {PathFinder} from 'nogame-common';
+import PathFinder from './../Common/PathFinder';
 import UserInterface from './UserInterface';
 import Engine from './Gfx/Engine';
 import Canvas from './Gfx/Canvas';

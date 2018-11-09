@@ -1,8 +1,8 @@
 'use strict';
 
 import Assert from 'assert-js';
-import {NetworkMessage} from 'nogame-common';
-import {ClientMessages} from 'nogame-common';
+import NetworkMessage from './../../Common/NetworkMessage';
+import ClientMessages from './../../Common/ClientMessages';
 
 export default class MoveMessage extends NetworkMessage
 {

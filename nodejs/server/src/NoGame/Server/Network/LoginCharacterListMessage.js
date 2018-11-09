@@ -2,8 +2,8 @@
 
 const Assert = require('assert-js');
 const AccountCharacter = require('./../../Engine/Account/AccountCharacter');
-const NetworkMessage = require('nogame-common').NetworkMessage;
-const ServerMessages = require('nogame-common').ServerMessages;
+const NetworkMessage = require('./../../Common/NetworkMessage');
+const ServerMessages = require('./../../Common/ServerMessages');
 
 class LoginCharacterListMessage extends NetworkMessage
 {
