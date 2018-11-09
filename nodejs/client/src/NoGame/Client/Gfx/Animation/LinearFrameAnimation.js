@@ -1,9 +1,9 @@
 'use strict';
 
-import Assert from 'assert-js';
-import FrameAnimation from './FrameAnimation';
+const Assert = require('assert-js');
+const FrameAnimation = require('./FrameAnimation');
 
-export default class LinearFrameAnimation extends FrameAnimation
+class LinearFrameAnimation extends FrameAnimation
 {
     /**
      * @param {[]} frames
@@ -53,3 +53,5 @@ export default class LinearFrameAnimation extends FrameAnimation
         return this._currentFrame === this._frames.length - 1;
     }
 }
+
+module.exports = LinearFrameAnimation;

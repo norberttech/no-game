@@ -1,3 +1,5 @@
+[Back to readme](/README.md)
+
 # NoGame homepage
 
 This is basically simple web page used to create and manage accounts.

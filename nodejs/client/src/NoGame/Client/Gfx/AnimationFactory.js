@@ -1,12 +1,12 @@
 'use strict';
 
-import Assert from 'assert-js';
-import LinearFrameAnimation from './Animation/LinearFrameAnimation';
-import TextFadeOutAnimation from './Animation/TextFadeOutAnimation';
-import Colors from './Colors';
-import Font from './Font';
+const Assert = require('assert-js');
+const LinearFrameAnimation = require('./Animation/LinearFrameAnimation');
+const TextFadeOutAnimation = require('./Animation/TextFadeOutAnimation');
+const Colors = require('./Colors');
+const Font = require('./Font');
 
-export default class AnimationFactory
+class AnimationFactory
 {
     /**
      * @returns {LinearFrameAnimation}
@@ -41,3 +41,5 @@ export default class AnimationFactory
         return new TextFadeOutAnimation(health.toString(), font, 50, 50, 5);
     }
 }
+
+module.exports = AnimationFactory;

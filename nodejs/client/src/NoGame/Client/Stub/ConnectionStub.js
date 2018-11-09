@@ -1,16 +1,14 @@
 'use strict';
 
-import Connection from './../Network/Connection';
-import {NetworkMessage} from 'nogame-common';
-import {ClientMessages} from 'nogame-common';
-import {ServerMessages} from 'nogame-common';
-import {AreaCalculator} from 'nogame-common';
-import UUID from 'uuid';
+const Connection = require('./../Network/Connection');
+const ServerMessages = require('./../../Common/ServerMessages');
+const AreaCalculator = require('./../../Common/AreaCalculator');
+const UUID = require('uuid');
 
 const PLAYER_POS_X = 108;
 const PLAYER_POS_Y = 106;
 
-export default class ConnectionStub extends Connection
+class ConnectionStub extends Connection
 {
     constructor()
     {
@@ -169,3 +167,5 @@ export default class ConnectionStub extends Connection
         return {data: JSON.stringify(message)};
     }
 }
+
+module.exports = ConnectionStub;

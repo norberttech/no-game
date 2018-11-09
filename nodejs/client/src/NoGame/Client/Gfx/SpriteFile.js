@@ -1,12 +1,12 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Size from './Size';
-import Sprite from './Sprite';
+const Assert = require('assert-js');
+const Size = require('./Size');
+const Sprite = require('./Sprite');
 
 const SINGLE_SPRITE_PX_SIZE = 128;
 
-export default class SpriteFile
+class SpriteFile
 {
     /**
      * @param {string} name
@@ -95,3 +95,5 @@ export default class SpriteFile
         return this._isLoaded;
     }
 }
+
+module.exports = SpriteFile;

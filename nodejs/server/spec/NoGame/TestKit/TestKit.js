@@ -11,7 +11,7 @@ const Player = require('./Player');
 const MemoryLogger = require('./../../../src/NoGame/Infrastructure/Logger/MemoryLogger');
 const InMemoryAccounts = require('./../../../src/NoGame/Infrastructure/InMemory/InMemoryAccounts');
 const InMemoryCharacters = require('./../../../src/NoGame/Infrastructure/InMemory/InMemoryCharacters');
-const ExperienceCalculator = require('nogame-common').ExperienceCalculator;
+const ExperienceCalculator = require('./../../../src/NoGame/Common/ExperienceCalculator');
 
 module.exports = {
     MessageFactory: MessageFactory,

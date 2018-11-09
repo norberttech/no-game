@@ -4,7 +4,7 @@ const Kernel = require('./../Engine/Kernel');
 const Assert = require('assert-js');
 const IncomeMessageQueue = require('./MessageQueue/IncomeQueue');
 const Broadcaster = require('./Broadcaster');
-const Logger = require('nogame-common').Logger;
+const Logger = require('./../Common/Logger');
 
 const Player = require('./../Engine/Player');
 const Monster = require('./../Engine/Monster');
@@ -13,7 +13,7 @@ const Accounts = require('./../Engine/Accounts');
 const Characters = require('./../Engine/Characters');
 const Position = require('./../Engine/Map/Area/Position');
 
-const ClientMessages = require('nogame-common').ClientMessages;
+const ClientMessages = require('./../Common/ClientMessages');
 const BatchMessage = require('./Network/BatchMessage');
 const LoginCharacterListMessage = require('./Network/LoginCharacterListMessage');
 const LoginAccountNotFoundMessage = require('./Network/LoginAccountNotFoundMessage');

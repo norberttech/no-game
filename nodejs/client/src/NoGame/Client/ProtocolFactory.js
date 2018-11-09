@@ -1,13 +1,13 @@
 'use strict';
 
-import Assert from 'assert-js';
-import {ExperienceCalculator} from 'nogame-common';
-import Protocol from './Protocol';
-import Connection from './Network/Connection';
-import ConnectionStub from './Stub/ConnectionStub';
-import UserInterface from './UserInterface';
+const Assert = require('assert-js');
+const ExperienceCalculator = require('./../Common/ExperienceCalculator');
+const Protocol = require('./Protocol');
+const Connection = require('./Network/Connection');
+const ConnectionStub = require('./Stub/ConnectionStub');
+const UserInterface = require('./UserInterface');
 
-export default class ProtocolFactory
+class ProtocolFactory
 {
     /**
      * @param {UserInterface} ui
@@ -41,3 +41,5 @@ export default class ProtocolFactory
         return protocol;
     }
 }
+
+module.exports = ProtocolFactory;

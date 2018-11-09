@@ -1,15 +1,15 @@
 describe("Area Calculator", () => {
-    const expect = require('expect.js');
+    const Assert = require('assert-js');
     const Calculator = require('./../../../src/NoGame/Common/AreaCalculator');
 
     it("it calculates center position", () => {
-        expect(Calculator.centerPosition(15, 11)).to.eql({x: 7, y: 5});
+        Assert.equal(Calculator.centerPosition(15, 11), {x: 7, y: 5});
     });
 
     it("it calculates visible tiles range", () => {
-        expect(Calculator.visibleTilesRange(50, 50, 15, 11).startX).to.eql(43);
-        expect(Calculator.visibleTilesRange(50, 50, 15, 11).endX).to.eql(57);
-        expect(Calculator.visibleTilesRange(50, 50, 15, 11).startY).to.eql(45);
-        expect(Calculator.visibleTilesRange(50, 50, 15, 11).endY).to.eql(55);
+        Assert.equal(Calculator.visibleTilesRange(50, 50, 15, 11).startX, 43);
+        Assert.equal(Calculator.visibleTilesRange(50, 50, 15, 11).endX, 57);
+        Assert.equal(Calculator.visibleTilesRange(50, 50, 15, 11).startY, 45);
+        Assert.equal(Calculator.visibleTilesRange(50, 50, 15, 11).endY, 55);
     });
 });

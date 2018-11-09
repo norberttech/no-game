@@ -1,5 +1,5 @@
 describe("Kernel", () => {
-    const expect = require('expect.js');
+    const Assert = require('assert-js');
     const Kernel = require('./../../../src/NoGame/Engine/Kernel');
     const MonsterFactory = require('./../../../src/NoGame/Engine/MonsterFactory');
     const Monster = require('./../../../src/NoGame/Engine/Monster');
@@ -56,8 +56,8 @@ describe("Kernel", () => {
             spawnedMonster = null;
         });
 
-        expect(spawnTimes).to.be(2);
-        expect(spawnedMonster.name).to.be('monster');
+        Assert.equal(spawnTimes, 2);
+        Assert.equal(spawnedMonster.name, 'monster');
     });
 
     it ("makes monster attack visible players", () => {
@@ -83,8 +83,8 @@ describe("Kernel", () => {
             });
         });
 
-        expect(attackedOnce).to.be(true);
-        expect(attacked).to.be(true);
+        Assert.true(attackedOnce);
+        Assert.true(attacked);
     });
 
     it ("monsters ignores players that are out of visible range", () => {
@@ -103,7 +103,7 @@ describe("Kernel", () => {
             });
         });
 
-        expect(attacked).to.be(false);
+        Assert.false(attacked);
     });
 
     it ("makes monster moves to attacked player", () => {
@@ -126,7 +126,7 @@ describe("Kernel", () => {
 
         kernel.moveMonsters((monster) => { monsterMoves++; }, () => {});
 
-        expect(monsterMoves).to.be(2);
+        Assert.equal(monsterMoves, 2);
     });
 
     it ("handles combat between player and monster", () => {
@@ -161,8 +161,8 @@ describe("Kernel", () => {
             playerExperience = monster.experience;
         });
 
-        expect(firstDamage).to.be(15); // Player.BASE_ATTACK_POWER - MONSTER_DEFENCE
-        expect(kill).to.be(true);
-        expect(playerExperience).to.be(5);
+        Assert.equal(firstDamage, 15); // Player.BASE_ATTACK_POWER - MONSTER_DEFENCE
+        Assert.true(kill);
+        Assert.equal(playerExperience, 5);
     });
 });

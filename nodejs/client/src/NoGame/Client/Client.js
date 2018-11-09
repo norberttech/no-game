@@ -1,17 +1,17 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Kernel from './Kernel';
-import Protocol from './Protocol';
-import Position from './Position';
-import Directions from './Directions';
-import Connection from './Network/Connection';
-import KeyBoard from './Input/KeyBoard';
-import Mouse from './Input/Mouse';
-import Keys from './Input/Keys';
-import ProtocolFactory from './ProtocolFactory';
+const Assert = require('assert-js');
+const Kernel = require('./Kernel');
+const Protocol = require('./Protocol');
+const Position = require('./Position');
+const Directions = require('./Directions');
+const Connection = require('./Network/Connection');
+const KeyBoard = require('./Input/KeyBoard');
+const Mouse = require('./Input/Mouse');
+const Keys = require('./Input/Keys');
+const ProtocolFactory = require('./ProtocolFactory');
 
-export default class Client
+class Client
 {
     /**
      * @param {string} serverAddress
@@ -201,3 +201,5 @@ export default class Client
         return this._kernel.player.position;
     }
 }
+
+module.exports = Client;

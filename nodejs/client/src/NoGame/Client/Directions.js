@@ -7,4 +7,4 @@ const Directions = {
     UP   : 3
 };
 
-export default Directions;
+module.exports = Directions;

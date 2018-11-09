@@ -9,7 +9,7 @@ const Assert = require('assert-js');
 const Kernel = require('./../Engine/Kernel');
 const GameLoop = require('./GameLoop');
 const Protocol = require('./Protocol');
-const Logger = require('nogame-common').Logger;
+const Logger = require('./../Common/Logger');
 
 class GameServer
 {

@@ -1,10 +1,10 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Player from './../Player';
-import Size from './Size';
+const Assert = require('assert-js');
+const Player = require('./../Player');
+const Size = require('./Size');
 
-export default class MessageUI
+class MessageUI
 {
     /**
      * @param {string} text
@@ -33,3 +33,5 @@ export default class MessageUI
         return this._text;
     }
 }
+
+module.exports = MessageUI;

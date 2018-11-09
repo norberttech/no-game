@@ -1,9 +1,9 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Colors from './Colors';
+const Assert = require('assert-js');
+const Colors = require('./Colors');
 
-export default class Font
+class Font
 {
     /**
      * @param {string} fontName
@@ -68,3 +68,4 @@ export default class Font
     }
 }
 
+module.exports = Font;

@@ -1,18 +1,18 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Engine from './Gfx/Engine';
-import Area from './Map/Area';
-import Player from './Player';
-import Position from './Position';
-import Path from './Path';
-import Character from './Character';
-import {PathFinder} from 'nogame-common';
-import {PathFinderGrid} from 'nogame-common';
-import {AreaCalculator} from 'nogame-common';
-import AnimationFactory from './Gfx/AnimationFactory';
+const Assert = require('assert-js');
+const Engine = require('./Gfx/Engine');
+const Area = require('./Map/Area');
+const Player = require('./Player');
+const Position = require('./Position');
+const Path = require('./Path');
+const Character = require('./Character');
+const PathFinder = require('./../Common/PathFinder');
+const PathFinderGrid = require('./../Common/PathFinderGrid');
+const AreaCalculator = require('./../Common/AreaCalculator');
+const AnimationFactory = require('./Gfx/AnimationFactory');
 
-export default class Kernel
+class Kernel
 {
     /**
      * @param {Engine} gfxEngine
@@ -371,3 +371,5 @@ export default class Kernel
         this._walkPath = null;
     }
 }
+
+module.exports = Kernel;

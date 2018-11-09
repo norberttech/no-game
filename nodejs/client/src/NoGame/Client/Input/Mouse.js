@@ -1,6 +1,6 @@
 'use strict';
 
-export default class Mouse
+class Mouse
 {
     constructor()
     {
@@ -52,3 +52,5 @@ export default class Mouse
         this._onClick();
     }
 }
+
+module.exports = Mouse;

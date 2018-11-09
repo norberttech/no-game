@@ -1,12 +1,12 @@
 'use strict';
 
-import Assert from 'assert-js';
-import PlayerUI from './PlayerUI';
-import Character from './../Character';
-import CharacterUI from './CharacterUI';
-import Size from './Size';
+const Assert = require('assert-js');
+const PlayerUI = require('./PlayerUI');
+const Character = require('./../Character');
+const CharacterUI = require('./CharacterUI');
+const Size = require('./Size');
 
-export default class CharactersUI
+class CharactersUI
 {
     constructor()
     {
@@ -81,3 +81,5 @@ export default class CharactersUI
         this._characters = [];
     }
 }
+
+module.exports = CharactersUI;

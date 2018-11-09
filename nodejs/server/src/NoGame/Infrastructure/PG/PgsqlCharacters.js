@@ -1,8 +1,8 @@
 'use strict';
 
 const Assert = require('assert-js');
-const Logger = require('nogame-common').Logger;
-const ExperienceCalculator = require('nogame-common').ExperienceCalculator;
+const Logger = require('./../../Common/Logger');
+const ExperienceCalculator = require('./../../Common/ExperienceCalculator');
 const Characters = require('./../../Engine/Characters');
 const Player = require('./../../Engine/Player');
 const Position = require('./../../Engine/Map/Area/Position');

@@ -1,10 +1,10 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Animation from './../Animation/Animation';
-import Stack from './../Animation/Stack';
+const Assert = require('assert-js');
+const Animation = require('./../Animation/Animation');
+const Stack = require('./../Animation/Stack');
 
-export default class TileAnimations
+class TileAnimations
 {
     constructor()
     {
@@ -88,3 +88,5 @@ export default class TileAnimations
         this._tileAnimations = new Map();
     }
 }
+
+module.exports = TileAnimations;

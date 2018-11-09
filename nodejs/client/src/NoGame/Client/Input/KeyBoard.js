@@ -1,6 +1,6 @@
 'use strict';
 
-export default class KeyBoard
+class KeyBoard
 {
     constructor()
     {
@@ -36,3 +36,5 @@ export default class KeyBoard
         return this._pressedKeys.get(keyCode);
     }
 }
+
+module.exports = KeyBoard;

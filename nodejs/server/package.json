@@ -5,7 +5,6 @@
   "main": "bin/server",
   "private": true,
   "scripts": {
-    "common:update": "rm -r -f node_modules/nogame-common && npm install",
     "test": "npm run server:test:unit && npm run server:test:integration && npm run test:dependencies",
     "test:dependencies": "madge --circular --warning src",
     "server:test:unit": "mocha --reporter dot spec/NoGame/Engine/* --recursive",
@@ -18,20 +17,18 @@
   },
   "license": "GPL 3",
   "dependencies": {
-    "assert-js": "0.7.0",
+    "assert-js": "0.20.0",
     "bcryptjs": "^2.4.3",
     "bunyan": "^1.7.0",
     "crypto-js": "^3.1.9-1",
     "faye-websocket": "^0.10.0",
     "markdown-loader": "^0.1.7",
-    "nogame-common": "file:../common",
-    "pathfinding": "^0.4.17",
+    "pathfinding": "^0.4.18",
     "pg": "^6.1.5",
     "uuid": "^2.0.1",
     "ws": "^6.1.0"
   },
   "devDependencies": {
-    "expect.js": "^0.3.1",
     "madge": "^3.3.0",
     "mocha": "^5.2.0"
   }

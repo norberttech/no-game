@@ -1,8 +1,8 @@
 'use strict';
 
-import Assert from 'assert-js';
+const Assert = require('assert-js');
 
-export default class Sprite
+class Sprite
 {
     /**
      * @param {Image} img
@@ -66,3 +66,5 @@ export default class Sprite
         return this._height;
     }
 }
+
+module.exports = Sprites;

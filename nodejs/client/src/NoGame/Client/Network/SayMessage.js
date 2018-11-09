@@ -1,10 +1,10 @@
 'use strict';
 
-import Assert from 'assert-js';
-import {NetworkMessage} from 'nogame-common';
-import {ClientMessages} from 'nogame-common';
+const Assert = require('assert-js');
+const NetworkMessage = require('./../../Common/NetworkMessage');
+const ClientMessages = require('./../../Common/ClientMessages');
 
-export default class SayMessage extends NetworkMessage
+class SayMessage extends NetworkMessage
 {
     /**
      * @param {string} message
@@ -19,3 +19,5 @@ export default class SayMessage extends NetworkMessage
         this._data = {message: message};
     }
 }
+
+module.exports = SayMessage;

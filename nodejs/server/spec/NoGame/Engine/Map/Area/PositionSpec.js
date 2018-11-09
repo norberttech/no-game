@@ -1,5 +1,5 @@
 describe("Position", () => {
-    const expect = require('expect.js');
+    const Assert = require('assert-js');
     const Position = require('./../../../../../src/NoGame/Engine/Map/Area/Position');
 
     it ("can be compared with other positoon", () => {
@@ -7,18 +7,18 @@ describe("Position", () => {
         let samePosition = new Position(10, 5);
         let otherPosition = new Position(4, 6);
 
-        expect(position.isEqualTo(samePosition)).to.be(true);
-        expect(position.isEqualTo(otherPosition)).to.be(false);
+        Assert.true(position.isEqualTo(samePosition));
+        Assert.false(position.isEqualTo(otherPosition));
     });
 
     it ("calculate distance to other position", () => {
         let position = new Position(1, 1);
 
-        expect(position.calculateDistanceTo(new Position(1,0))).to.be(1);
-        expect(position.calculateDistanceTo(new Position(2,0))).to.be(1.4);
-        expect(position.calculateDistanceTo(new Position(3,1))).to.be(2);
-        expect(position.calculateDistanceTo(new Position(3,0))).to.be(2.2);
-        expect(position.calculateDistanceTo(new Position(3,3))).to.be(2.8);
-        expect(position.calculateDistanceTo(new Position(2,4))).to.be(3.2);
+        Assert.equal(position.calculateDistanceTo(new Position(1,0)), 1);
+        Assert.equal(position.calculateDistanceTo(new Position(2,0)), 1.4);
+        Assert.equal(position.calculateDistanceTo(new Position(3,1)), 2);
+        Assert.equal(position.calculateDistanceTo(new Position(3,0)), 2.2);
+        Assert.equal(position.calculateDistanceTo(new Position(3,3)), 2.8);
+        Assert.equal(position.calculateDistanceTo(new Position(2,4)), 3.2);
     });
 });

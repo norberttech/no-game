@@ -1,10 +1,10 @@
 'use strict';
 
-import Tile from './Tile';
-import Positon from './../Position';
-import Assert from 'assert-js';
+const Tile = require('./Tile');
+const Positon = require('./../Position');
+const Assert = require('assert-js');
 
-export default class Area
+class Area
 {
     constructor(name)
     {
@@ -73,3 +73,5 @@ export default class Area
         return this._tiles.get(`${x}:${y}`);
     }
 }
+
+module.exports = Area;

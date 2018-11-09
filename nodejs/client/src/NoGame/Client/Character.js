@@ -1,9 +1,9 @@
 'use strict';
 
-import Position from './Position';
-import Assert from 'assert-js';
+const Position = require('./Position');
+const Assert = require('assert-js');
 
-export default class Character
+class Character
 {
     /**
      * @param {string} id
@@ -171,3 +171,5 @@ export default class Character
         return this._moveFrom;
     }
 }
+
+module.exports = Character;

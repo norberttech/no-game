@@ -1,8 +1,8 @@
 'use strict';
 
-import Assert from 'assert-js';
+const Assert = require('assert-js');
 
-export default class Size
+class Size
 {
     /**
      * @param {int} width
@@ -79,3 +79,5 @@ export default class Size
         return new Size(this._width - size.getWidth(), this._height - size.getHeight());
     }
 }
+
+module.exports = Size;

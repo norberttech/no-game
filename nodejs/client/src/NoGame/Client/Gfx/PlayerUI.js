@@ -1,12 +1,12 @@
 'use strict';
 
-import Assert from 'assert-js';
-import Player from './../Player';
-import Size from './Size';
-import MessageUI from './MessageUI';
-import Directions from './../Directions';
+const Assert = require('assert-js');
+const Player = require('./../Player');
+const Size = require('./Size');
+const MessageUI = require('./MessageUI');
+const Directions = require('./../Directions');
 
-export default class PlayerUI
+class PlayerUI
 {
     /**
      * @param {Player} player
@@ -190,3 +190,5 @@ export default class PlayerUI
         }
     }
 }
+
+module.exports = PlayerUI;

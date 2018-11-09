@@ -1,15 +1,15 @@
 'use strict';
 
-import Assert from 'assert-js';
-import SpriteMap from './SpriteMap';
-import Size from './Size';
-import Tile from './../Map/Tile';
-import Sprite from './Sprite';
-import Colors from './Colors';
-import Font from './Font';
-import TilePosition from './Engine/TilePosition';
+const Assert = require('assert-js');
+const SpriteMap = require('./SpriteMap');
+const Size = require('./Size');
+const Tile = require('./../Map/Tile');
+const Sprite = require('./Sprite');
+const Colors = require('./Colors');
+const Font = require('./Font');
+const TilePosition = require('./Engine/TilePosition');
 
-export default class Canvas
+class Canvas
 {
     /**
      * @param {HTMLCanvasElement} canvas
@@ -382,3 +382,5 @@ export default class Canvas
         return null !== this._visibleTiles;
     }
 }
+
+module.exports = Canvas;
