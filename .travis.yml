@@ -4,7 +4,7 @@ node_js:
   - "11"
 
 install:
-  - cd $TRAVIS_BUILD_DIR/nodejs/common && npm install && npm run build
+  - cd $TRAVIS_BUILD_DIR/nodejs/common && npm install
   - cd $TRAVIS_BUILD_DIR/nodejs/server && npm install
   - cd $TRAVIS_BUILD_DIR/nodejs/client && npm install
 
