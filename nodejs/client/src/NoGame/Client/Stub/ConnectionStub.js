@@ -52,7 +52,7 @@ export default class ConnectionStub extends Connection
 
         switch (message.constructor.name) {
             case 'LoginMessage':
-                this._onMessage(this._composeLoginMessage(message.data.username, 100, PLAYER_POS_X, PLAYER_POS_Y));
+                this._onMessage(this._composeLoginMessage(message.data.login, 1000, 100, PLAYER_POS_X, PLAYER_POS_Y));
                 this._onMessage(this._composeAreaMessage());
                 this._onMessage(this._composeTilesMessage(
                     PLAYER_POS_X - centerPosition.x,
@@ -76,18 +76,20 @@ export default class ConnectionStub extends Connection
 
     /**
      * @param {string} name
+     * @param {int} experience
      * @param {int} health
      * @param {int} x
      * @param {int} y
      * @returns {object}
      * @private
      */
-    _composeLoginMessage(name, health, x, y)
+    _composeLoginMessage(name, experience, health, x, y)
     {
         let message = {
             name: ServerMessages.LOGIN,
             data: {
                 id: UUID.v4(),
+                experience: experience,
                 name: name,
                 health: health,
                 maxHealth: health,
@@ -143,9 +145,8 @@ export default class ConnectionStub extends Connection
                     x: x,
                     y: y,
                     canWalkOn: true,
-                    stack: [
-                        1
-                    ],
+                    ground: 1,
+                    stack: [],
                     monster: [],
                     players: [],
                     moveSpeedModifier: 0

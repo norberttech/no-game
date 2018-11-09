@@ -3,7 +3,6 @@
 const Assert = require('assert-js');
 const Message = require('nogame-common').NetworkMessage;
 const Tile = require('./../../Engine/Map/Area/Tile');
-const Player = require('./../../Engine/Player');
 const ServerMessages = require('nogame-common').ServerMessages;
 
 class TilesMessage extends Message
