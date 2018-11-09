@@ -1,13 +1,7 @@
 sudo: false
 language: node_js
 node_js:
-  - "7"
-  - "8"
-
-matrix:
-  fast_finish: true
-  allow_failures:
-    - node_js: "8"
+  - "11"
 
 addons:
   apt:
@@ -21,11 +15,6 @@ install:
   - cd $TRAVIS_BUILD_DIR/nodejs/common && CC=gcc-5 CXX=g++-5 npm install
   - cd $TRAVIS_BUILD_DIR/nodejs/server && CC=gcc-5 CXX=g++-5 npm install
   - cd $TRAVIS_BUILD_DIR/nodejs/client && CC=gcc-5 CXX=g++-5 npm install
-
-before_script:
-  - cd $TRAVIS_BUILD_DIR/nodejs/common && npm doctor
-  - cd $TRAVIS_BUILD_DIR/nodejs/server && npm doctor
-  - cd $TRAVIS_BUILD_DIR/nodejs/client && npm doctor
 
 script:
   - cd $TRAVIS_BUILD_DIR/nodejs/common && npm test
