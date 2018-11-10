@@ -20,4 +20,4 @@ class LoginCharacterMessage extends NetworkMessage
     }
 }
 
-module.exports = LoginCharacterMessages;
+module.exports = LoginCharacterMessage;
