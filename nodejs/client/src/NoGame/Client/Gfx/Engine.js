@@ -16,6 +16,7 @@ const TileAnimations = require('./Engine/TileAnimations');
 const TilePosition = require('./Engine/TilePosition');
 const FrameAnimation = require('./Animation/FrameAnimation');
 const MoveAnimation = require('./Animation/MoveAnimation');
+const DrawingTimer = require('./Engine/DrawingTimer');
 
 class Engine
 {
@@ -42,6 +43,7 @@ class Engine
         this._visibleTiles = null;
         this._hiddenTiles = 1;
         this._draw = false;
+        this._drawingTimer = new DrawingTimer(30);
         this._tileAnimations = new TileAnimations();
     }
 
@@ -128,6 +130,7 @@ class Engine
     {
         this._draw = true;
         this.draw();
+        this._drawingTimer.start();
     }
 
     stopDrawing()
@@ -136,27 +139,31 @@ class Engine
         this._tileAnimations.clear();
         this._characters.clear();
         this._canvas.clear();
+        this._drawingTimer.stop();
     }
 
     draw()
     {
         if (this._draw) {
-            if (this._spriteMap.isLoaded() && null !== this._visibleTiles) {
+            this._drawingTimer.draw(() => {
+                if (this._spriteMap.isLoaded() && null !== this._visibleTiles) {
 
-                let centerSquarePosition = AreaCalculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
-                let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+                    let centerSquarePosition = AreaCalculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
+                    let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
 
-                if (null !== this._player && null !== this._tiles) {
-                    this._canvas.clear();
-                    this._drawGround(animationOffset);
-                    this._drawTileStack(animationOffset, centerSquarePosition);
-                    this._drawNames(animationOffset, centerSquarePosition);
-                    this._drawStatistics();
-                    this._drawMessages(animationOffset);
-                    this._drawMousePointer(animationOffset);
-                    this._drawTileAnimations(animationOffset);
+                    if (null !== this._player && null !== this._tiles) {
+                        this._canvas.clear();
+                        this._drawGround(animationOffset);
+                        this._drawTileStack(animationOffset, centerSquarePosition);
+                        this._drawNames(animationOffset, centerSquarePosition);
+                        this._drawFPS();
+                        this._drawStatistics();
+                        this._drawMessages(animationOffset);
+                        this._drawMousePointer(animationOffset);
+                        this._drawTileAnimations(animationOffset);
+                    }
                 }
-            }
+            });
 
             this._animationLoop(this.draw.bind(this));
         }
@@ -221,8 +228,8 @@ class Engine
     {
         let areaTiles = this._areaTiles;
 
-        for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
-            for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
+        for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
+            for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
                 let absoluteX = areaTiles.x + tileX;
                 let absoluteY = areaTiles.y + tileY;
                 let tile = this._tiles.get(`${absoluteX}:${absoluteY}`);
@@ -241,6 +248,7 @@ class Engine
      * @param {{x: int, y: int}} centerSquarePosition
      * @private
      */
+
     _drawTileStack(animationOffset, centerSquarePosition)
     {
         let areaTiles = this._areaTiles;
@@ -291,8 +299,10 @@ class Engine
                 this._characterOffset
             );
 
-            // we need to draw extra tile to prevent drawing player under tile on the left
-            this._drawTile(absoluteX-1, absoluteY, tileX-1, tileY, animationOffset);
+            this._drawTile(absoluteX - 1, absoluteY, tileX - 1, tileY, animationOffset);
+            this._drawTile(absoluteX - 2, absoluteY, tileX - 2, tileY, animationOffset);
+            this._drawTile(absoluteX - 1, absoluteY + 1, tileX - 1, tileY + 1, animationOffset);
+            this._drawTile(absoluteX + 1, absoluteY - 1, tileX + 1, tileY - 1, animationOffset);
         }
 
     }
@@ -319,9 +329,6 @@ class Engine
                 tileY,
                 offset.add(this._characterOffset)
             );
-
-            // we need to draw extra tile to prevent drawing character under tile on the left
-            this._drawTile(absoluteX-1, absoluteY, tileX-1, tileY, animationOffset);
         }
     }
 
@@ -392,6 +399,18 @@ class Engine
             centerSquarePosition.x,
             centerSquarePosition.y,
             this._characterOffset
+        );
+    }
+
+    _drawFPS()
+    {
+        let font = new Font('Verdana', 'normal', 15, Colors.YELLOW);
+
+        this._canvas.text(
+            `${this._drawingTimer.fps} FPS`,
+            font,
+            500,
+            10
         );
     }
 
