@@ -1,7 +1,7 @@
 'use strict';
 
 const Assert = require('assert-js');
-const RelativePosition = require('./RelativePosition');
+const RelativePosition = require('./Tile/RelativePosition');
 
 class VisibleTiles
 {

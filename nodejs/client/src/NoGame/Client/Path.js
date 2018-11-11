@@ -2,7 +2,7 @@
 
 const Assert = require('assert-js');
 const PF = require('pathfinding');
-const AbsolutePosition = require('./AbsolutePosition');
+const AbsolutePosition = require('./Tile/AbsolutePosition');
 
 class Path
 {

@@ -1,6 +1,6 @@
 'use strict';
 
-const AbsolutePosition = require('./AbsolutePosition');
+const AbsolutePosition = require('./Tile/AbsolutePosition');
 const Assert = require('assert-js');
 
 class Character

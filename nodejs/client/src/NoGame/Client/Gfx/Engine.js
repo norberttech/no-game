@@ -10,7 +10,7 @@ const CharactersUI = require('./CharactersUI');
 const SpriteMap = require('./SpriteMap');
 const Mouse = require('./../Input/Mouse');
 const Character = require('./../Character');
-const AbsolutePosition = require('./../AbsolutePosition');
+const AbsolutePosition = require('./../Tile/AbsolutePosition');
 const Colors = require('./Colors');
 const TileAnimations = require('./Engine/TileAnimations');
 const TilePosition = require('./Engine/TilePosition');
@@ -18,7 +18,7 @@ const FrameAnimation = require('./Animation/FrameAnimation');
 const MoveAnimation = require('./Animation/MoveAnimation');
 const DrawingTimer = require('./Engine/DrawingTimer');
 const VisibleTiles = require('./../VisibleTiles');
-const RelativePosition = require('./../RelativePosition');
+const RelativePosition = require('./../Tile/RelativePosition');
 
 const VISIBLE_TILES_MARGIN_SIZE = 1;
 

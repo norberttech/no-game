@@ -1,7 +1,7 @@
 'use strict';
 
 const Assert = require('assert-js');
-const Directions = require('./Directions');
+const Directions = require('./../Directions');
 
 class AbsolutePosition
 {

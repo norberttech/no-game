@@ -2,7 +2,7 @@
 
 const Assert = require('assert-js');
 const ExperienceCalculator = require('./../Common/ExperienceCalculator');
-const AbsolutePosition = require('./AbsolutePosition');
+const AbsolutePosition = require('./Tile/AbsolutePosition');
 const Directions = require('./Directions');
 
 class Player

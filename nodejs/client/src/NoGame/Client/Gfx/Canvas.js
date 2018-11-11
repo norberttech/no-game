@@ -7,7 +7,7 @@ const Colors = require('./Colors');
 const Font = require('./Font');
 const TilePosition = require('./Engine/TilePosition');
 const VisibleTiles = require('./../VisibleTiles');
-const RelativePosition = require('./../RelativePosition');
+const RelativePosition = require('./../Tile/RelativePosition');
 
 class Canvas
 {
