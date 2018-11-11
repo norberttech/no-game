@@ -250,6 +250,15 @@ class Engine
             }
 
             this._drawTile(relativeTilePosition, animationOffset);
+
+            this._canvas.textTile(
+                relativeTilePosition.toString,
+                new Font('Verdana', 'normal', 9, Colors.YELLOW),
+                relativeTilePosition,
+                animationOffset,
+                new Size(0, 0),
+                TilePosition.TOP_LEFT
+            )
         });
     }
 

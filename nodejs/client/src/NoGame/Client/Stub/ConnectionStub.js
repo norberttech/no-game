@@ -4,9 +4,10 @@ const Connection = require('./../Network/Connection');
 const ServerMessages = require('./../../Common/ServerMessages');
 const AreaCalculator = require('./../../Common/AreaCalculator');
 const UUID = require('uuid');
+const MapStub = require('./MapStub');
 
-const PLAYER_POS_X = 108;
-const PLAYER_POS_Y = 106;
+const PLAYER_POS_X = 42;
+const PLAYER_POS_Y = 13;
 const MONSTER_ID = UUID.v4();
 
 class ConnectionStub extends Connection
@@ -16,6 +17,8 @@ class ConnectionStub extends Connection
         super();
         this._onMessage = null;
         this._protocol = null;
+        this._mapStub = new MapStub();
+        this._mapStub.initialize();
     }
 
     setProtocol(protocol)
@@ -141,24 +144,24 @@ class ConnectionStub extends Connection
 
         for (let x = startX; x <= endX; x++) {
             for (let y = startY; y <= endY; y++) {
-                let stack = [];
-                let monsters = [];
-
-                if (y === PLAYER_POS_Y - 1) {
-                    stack = [426];
-                }
-
-                if (x === PLAYER_POS_X - 4 && y === PLAYER_POS_Y) {
-                    monsters = [MONSTER_ID];
-                }
+//                let stack = [];
+//                let monsters = [];
+//
+//                if (y === PLAYER_POS_Y - 1) {
+//                    stack = [426];
+//                }
+//
+//                if (x === PLAYER_POS_X - 4 && y === PLAYER_POS_Y) {
+//                    monsters = [MONSTER_ID];
+//                }
 
                 message.data.tiles.push({
                     x: x,
                     y: y,
                     canWalkOn: true,
-                    ground: 1,
-                    stack: stack,
-                    monster: monsters,
+                    ground: this._mapStub.getGround(x, y),
+                    stack: this._mapStub.getStack(x, y),
+                    monster: [],
                     players: [],
                     moveSpeedModifier: 0
                 });

@@ -83,6 +83,11 @@ class RelativePosition
     {
         return RelativePosition.createCenter(this._visibleTiles);
     }
+
+    get toString()
+    {
+        return `${this._x}:${this._y}`;
+    }
 }
 
 module.exports = RelativePosition;
