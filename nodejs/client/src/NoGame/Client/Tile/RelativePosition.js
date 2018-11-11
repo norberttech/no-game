@@ -51,6 +51,16 @@ class RelativePosition
     }
 
     /**
+     * @param {int} x
+     * @param {int} y
+     * @returns {RelativePosition}
+     */
+    jumpBy(x, y)
+    {
+        return new RelativePosition(this._x + x, this.y + y, this._visibleTiles);
+    }
+
+    /**
      * @returns {int}
      */
     get x()
@@ -84,7 +94,19 @@ class RelativePosition
         return RelativePosition.createCenter(this._visibleTiles);
     }
 
-    get toString()
+    /**
+     * @param {RelativePosition} position
+     * @returns {boolean}
+     */
+    isEqual(position)
+    {
+        return this._x === position.x && this._y === position.y;
+    }
+
+    /**
+     * @returns {string}
+     */
+    toString()
     {
         return `${this._x}:${this._y}`;
     }

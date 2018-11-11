@@ -22,6 +22,16 @@ class VisibleTiles
     }
 
     /**
+     * @param {int} x
+     * @param {int} y
+     * @returns {RelativePosition}
+     */
+    newPosition(x, y)
+    {
+        return new RelativePosition(x, y, this);
+    }
+
+    /**
      * @returns {int}
      */
     get sizeX()
@@ -62,8 +72,8 @@ class VisibleTiles
      */
     each(callback)
     {
-        for (let relativeTileX = 0; relativeTileX < this._sizeX; relativeTileX++) {
-            for (let relativeTileY = 0; relativeTileY < this._sizeY; relativeTileY++) {
+        for (let relativeTileY = 0; relativeTileY < this._sizeY; relativeTileY++) {
+            for (let relativeTileX = 0; relativeTileX < this._sizeX; relativeTileX++) {
                 callback(new RelativePosition(relativeTileX, relativeTileY, this));
             }
         }

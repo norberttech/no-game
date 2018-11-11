@@ -251,14 +251,23 @@ class Engine
 
             this._drawTile(relativeTilePosition, animationOffset);
 
-            this._canvas.textTile(
-                relativeTilePosition.toString,
-                new Font('Verdana', 'normal', 9, Colors.YELLOW),
-                relativeTilePosition,
-                animationOffset,
-                new Size(0, 0),
-                TilePosition.TOP_LEFT
-            )
+            // TODO: make this optional, rendered only on demand and only in test mode.
+//            this._canvas.textTile(
+//                relativeTilePosition.toString(),
+//                new Font('Verdana', 'normal', 10, Colors.YELLOW),
+//                relativeTilePosition,
+//                animationOffset,
+//                new Size(0, 20),
+//                TilePosition.TOP_LEFT
+//            );
+//            this._canvas.textTile(
+//                relativeTilePosition.toAbsolute(this._player).toString(),
+//                new Font('Verdana', 'normal', 10, Colors.YELLOW),
+//                relativeTilePosition,
+//                animationOffset,
+//                new Size(0, 40),
+//                TilePosition.TOP_LEFT
+//            );
         });
     }
 
