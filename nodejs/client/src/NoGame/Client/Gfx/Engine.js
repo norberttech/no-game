@@ -223,9 +223,9 @@ class Engine
             );
 
             if (tile === undefined) {
-                this._canvas.drawBlankTile(relativeTilePosition.x, relativeTilePosition.y, animationOffset);
+                this._canvas.drawBlankTile(relativeTilePosition, animationOffset);
             } else {
-                this._canvas.drawSprite(relativeTilePosition.x, relativeTilePosition.y, this._spriteMap.getSprite(tile.ground), animationOffset);
+                this._canvas.drawSprite(relativeTilePosition, this._spriteMap.getSprite(tile.ground), animationOffset);
             }
         });
     }
@@ -262,8 +262,7 @@ class Engine
     _drawPlayer(relativeTilePosition, animationOffset)
     {
         this._canvas.drawSprite(
-            relativeTilePosition.x,
-            relativeTilePosition.y,
+            relativeTilePosition,
             this._spriteMap.getSprite(this._playerUI.outfitSpriteId),
             this._characterOffset
         );
@@ -284,8 +283,7 @@ class Engine
 
             this._canvas.drawCharacter(
                 color,
-                relativeTilePosition.x,
-                relativeTilePosition.y,
+                relativeTilePosition,
                 offset.add(this._characterOffset)
             );
         }
@@ -305,7 +303,7 @@ class Engine
             for (let spriteId of tile.stack) {
                 if (this._spriteMap.hasSprite(spriteId)) {
                     let sprite = this._spriteMap.getSprite(spriteId);
-                    this._canvas.drawSprite(relativeTilePosition.x, relativeTilePosition.y, sprite, animationOffset);
+                    this._canvas.drawSprite(relativeTilePosition, sprite, animationOffset);
                 }
             }
         }
@@ -327,16 +325,14 @@ class Engine
 
                 this._canvas.drawCharacterName(
                     character.name,
-                    relativeTilePosition.x,
-                    relativeTilePosition.y,
+                    relativeTilePosition,
                     offset.add(this._characterOffset),
                     font
                 );
                 this._canvas.drawHealthBar(
                     character.health,
                     character.maxHealth,
-                    relativeTilePosition.x,
-                    relativeTilePosition.y,
+                    relativeTilePosition,
                     offset.add(this._characterOffset)
                 );
             }
@@ -344,8 +340,7 @@ class Engine
 
         this._canvas.drawCharacterName(
             this._playerUI.name,
-            this._visibleTiles.centerPosition.x,
-            this._visibleTiles.centerPosition.y,
+            this._visibleTiles.centerPosition,
             this._characterOffset,
             font
         );
@@ -353,8 +348,7 @@ class Engine
         this._canvas.drawHealthBar(
             this._playerUI.health,
             this._playerUI.maxHealth,
-            this._visibleTiles.centerPosition.x,
-            this._visibleTiles.centerPosition.y,
+            this._visibleTiles.centerPosition,
             this._characterOffset
         );
     }
@@ -406,15 +400,14 @@ class Engine
 
                     if (animation instanceof FrameAnimation) {
                         let sprite = this._spriteMap.getSprite(animation.frame);
-                        this._canvas.drawSprite(relativeTilePosition.x, relativeTilePosition.y, sprite, animationOffset);
+                        this._canvas.drawSprite(relativeTilePosition, sprite, animationOffset);
                     }
 
                     if (animation instanceof MoveAnimation) {
                         this._canvas.textTile(
                             animation.text,
                             animation.font,
-                            relativeTilePosition.x,
-                            relativeTilePosition.y,
+                            relativeTilePosition,
                             animationOffset,
                             new Size(-10, -animation.distance),
                             TilePosition.TOP_RIGHT
@@ -444,8 +437,7 @@ class Engine
                     this._canvas.drawCharacterMessage(
                         message.getText(),
                         messageIndex,
-                        relativeTilePosition.x,
-                        relativeTilePosition.y,
+                        relativeTilePosition,
                         offset,
                         font
                     );
@@ -459,8 +451,7 @@ class Engine
             this._canvas.drawCharacterMessage(
                 message.getText(),
                 playerMessageIndex,
-                this._visibleTiles.centerPosition.x,
-                this._visibleTiles.centerPosition.y,
+                this._visibleTiles.centerPosition,
                 new Size(0,0 ),
                 font
             );
@@ -483,20 +474,17 @@ class Engine
                 if (this._playerUI.isAttacking(character.id)) {
                     this._canvas.drawPointer(
                         Colors.RED,
-                        relativeTilePosition.x,
-                        relativeTilePosition.y,
+                        relativeTilePosition,
                         offset
                     );
                 }
             }
         });
 
-        let position = this.mouseRelativePosition;
 
         this._canvas.drawPointer(
             Colors.BLUE,
-            position.x,
-            position.y,
+            this.mouseRelativePosition,
             animationOffset
         );
     }

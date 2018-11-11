@@ -7,6 +7,7 @@ const Colors = require('./Colors');
 const Font = require('./Font');
 const TilePosition = require('./Engine/TilePosition');
 const VisibleTiles = require('./../VisibleTiles');
+const RelativePosition = require('./../RelativePosition');
 
 class Canvas
 {
@@ -42,19 +43,17 @@ class Canvas
     }
 
     /**
-     * @param {int} relativeTileX
-     * @param {int} relativeTileY
+     * @param {RelativePosition} position
      * @param {Sprite} sprite
      * @param {Size} offset
      */
-    drawSprite(relativeTileX, relativeTileY, sprite, offset)
+    drawSprite(position, sprite, offset)
     {
         if (!this._canDraw()) {
             return ;
         }
 
-        Assert.integer(relativeTileX);
-        Assert.integer(relativeTileY);
+        Assert.instanceOf(position, RelativePosition);
         Assert.instanceOf(sprite, Sprite);
 
         let tileSize = this.calculateTileSize();
@@ -65,8 +64,8 @@ class Canvas
             sprite.offsetY(),
             sprite.width(),
             sprite.height(),
-            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth(),
-            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight(),
+            tileSize.getWidth() * (position.x - this._visibleTiles.marginSize) + offset.getWidth(),
+            tileSize.getHeight() * (position.y - this._visibleTiles.marginSize) + offset.getHeight(),
             tileSize.getWidth(),
             tileSize.getHeight()
         );
@@ -74,18 +73,16 @@ class Canvas
 
     /**
      * @param color
-     * @param relativeTileX
-     * @param relativeTileY
+     * @param {RelativePosition} position
      * @param offset
      */
-    drawPointer(color, relativeTileX, relativeTileY, offset)
+    drawPointer(color, position, offset)
     {
         if (!this._canDraw()) {
             return ;
         }
 
-        Assert.integer(relativeTileX);
-        Assert.integer(relativeTileY);
+        Assert.instanceOf(position, RelativePosition);
 
         let tileSize = this.calculateTileSize();
 
@@ -93,8 +90,8 @@ class Canvas
         this._context.lineWidth = 2;
         this._context.strokeStyle = color;
         this._context.rect(
-            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth(),
-            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight(),
+            tileSize.getWidth() * (position.x - this._visibleTiles.marginSize) + offset.getWidth(),
+            tileSize.getHeight() * (position.y - this._visibleTiles.marginSize) + offset.getHeight(),
             tileSize.getWidth(),
             tileSize.getHeight()
         );
@@ -103,26 +100,24 @@ class Canvas
     }
 
     /**
-     * @param {int} relativeTileX
-     * @param {int} relativeTileY
+     * @param {RelativePosition} position
      * @param {Size} offset
      */
-    drawBlankTile(relativeTileX, relativeTileY, offset)
+    drawBlankTile(position, offset)
     {
         if (!this._canDraw()) {
             return ;
         }
 
-        Assert.integer(relativeTileX);
-        Assert.integer(relativeTileY);
+        Assert.instanceOf(position, RelativePosition);
 
         let tileSize = this.calculateTileSize();
 
         this._context.fillStyle = Colors.BLACK;
 
         this._context.fillRect(
-            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getHeight(),
-            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight(),
+            tileSize.getWidth() * (position.x - this._visibleTiles.marginSize) + offset.getHeight(),
+            tileSize.getHeight() * (position.y - this._visibleTiles.marginSize) + offset.getHeight(),
             tileSize.getWidth(),
             tileSize.getWidth()
         );
@@ -131,12 +126,13 @@ class Canvas
     /**
      * @param {int} health
      * @param {int} maxHealth
-     * @param {int} relativeTileX
-     * @param {int} relativeTileY
-     * @param {Size} offset
+     * @param {RelativePosition} position
+     * @param {Size} [offset]
      */
-    drawHealthBar(health, maxHealth, relativeTileX, relativeTileY, offset = new Size(0, 0))
+    drawHealthBar(health, maxHealth, position, offset = new Size(0, 0))
     {
+        Assert.instanceOf(position, RelativePosition);
+
         let percentage = health / maxHealth;
         let tileSize = this.calculateTileSize();
         let color = Colors.HP_GREEN;
@@ -154,8 +150,8 @@ class Canvas
         this._context.beginPath();
         this._context.fillStyle = Colors.BLACK;
         this._context.fillRect(
-            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth() ,
-            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight() - 15,
+            tileSize.getWidth() * (position.x - this._visibleTiles.marginSize) + offset.getWidth() ,
+            tileSize.getHeight() * (position.y - this._visibleTiles.marginSize) + offset.getHeight() - 15,
             tileSize.getWidth(),
             10
         );
@@ -164,8 +160,8 @@ class Canvas
         this._context.beginPath();
         this._context.fillStyle = color;
         this._context.fillRect(
-            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth() ,
-            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight() - 15,
+            tileSize.getWidth() * (position.x - this._visibleTiles.marginSize) + offset.getWidth() ,
+            tileSize.getHeight() * (position.y - this._visibleTiles.marginSize) + offset.getHeight() - 15,
             tileSize.getWidth() * percentage,
             10
         );
@@ -175,8 +171,8 @@ class Canvas
         this._context.lineWidth = 1;
         this._context.strokeStyle = Colors.BLACK;
         this._context.rect(
-            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth(),
-            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight() - 15,
+            tileSize.getWidth() * (position.x - this._visibleTiles.marginSize) + offset.getWidth(),
+            tileSize.getHeight() * (position.y - this._visibleTiles.marginSize) + offset.getHeight() - 15,
             tileSize.getWidth() * percentage + 1,
             10
         );
@@ -187,73 +183,70 @@ class Canvas
     /**
      * @param {string} text
      * @param {int} index
-     * @param {int} relativeTileX
-     * @param {int} relativeTileY
+     * @param {RelativePosition} position
      * @param {Size} offset
      * @param {Font} font
      */
-    drawCharacterMessage(text, index, relativeTileX, relativeTileY, offset = new Size(0, 0), font)
+    drawCharacterMessage(text, index, position, offset = new Size(0, 0), font)
     {
+        Assert.instanceOf(position, RelativePosition);
+
         let tileSize = this.calculateTileSize();
         let topOffset = -(index * (font.size + 8));
 
         this.text(
             text,
             font,
-            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth() + this._calculateTextTileOffset(text, font, tileSize),
-            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight() - 60 + topOffset
+            tileSize.getWidth() * (position.x - this._visibleTiles.marginSize) + offset.getWidth() + this._calculateTextTileOffset(text, font, tileSize),
+            tileSize.getHeight() * (position.y - this._visibleTiles.marginSize) + offset.getHeight() - 60 + topOffset
         );
     }
 
     /**
      * @param {string} name
-     * @param {int} relativeTileX
-     * @param {int} relativeTileY
+     * @param {RelativePosition} position
      * @param {Size} offset
      * @param {Font} font
      */
-    drawCharacterName(name, relativeTileX, relativeTileY, offset, font)
+    drawCharacterName(name, position, offset, font)
     {
         if (!this._canDraw()) {
             return ;
         }
 
         Assert.string(name);
-        Assert.integer(relativeTileX);
-        Assert.integer(relativeTileY);
+        Assert.instanceOf(position, RelativePosition);
         Assert.instanceOf(offset, Size);
         Assert.instanceOf(font, Font);
 
-        if (relativeTileY < (this._visibleTiles.sizeY - this._visibleTiles.marginSize)
-            && relativeTileX < (this._visibleTiles.sizeX - this._visibleTiles.marginSize)
-            && relativeTileX > 0) {
+        if (position.y < (this._visibleTiles.sizeY - this._visibleTiles.marginSize)
+            && position.x < (this._visibleTiles.sizeX - this._visibleTiles.marginSize)
+            && position.x > 0) {
 
             let tileSize = this.calculateTileSize();
 
             this.text(
                 name,
                 font,
-                tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth() + this._calculateTextTileOffset(name, font, tileSize),
-                tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight() - 38
+                tileSize.getWidth() * (position.x - this._visibleTiles.marginSize) + offset.getWidth() + this._calculateTextTileOffset(name, font, tileSize),
+                tileSize.getHeight() * (position.y - this._visibleTiles.marginSize) + offset.getHeight() - 38
             );
         }
     }
 
     /**
      * @param {string} color
-     * @param {int} relativeTileX
-     * @param {int} relativeTileY
+     * @param {RelativePosition} position
      * @param {Size} offset
      */
-    drawCharacter(color, relativeTileX, relativeTileY, offset)
+    drawCharacter(color, position, offset)
     {
         if (!this._canDraw()) {
             return ;
         }
 
         Assert.string(color);
-        Assert.integer(relativeTileX);
-        Assert.integer(relativeTileY);
+        Assert.instanceOf(position, RelativePosition);
         Assert.instanceOf(offset, Size);
 
         let tileSize = this.calculateTileSize();
@@ -261,8 +254,8 @@ class Canvas
         this._context.fillStyle = color;
 
         this._context.fillRect(
-            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth(),
-            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight(),
+            tileSize.getWidth() * (position.x - this._visibleTiles.marginSize) + offset.getWidth(),
+            tileSize.getHeight() * (position.y - this._visibleTiles.marginSize) + offset.getHeight(),
             tileSize.getWidth(),
             tileSize.getHeight()
         );
@@ -271,27 +264,25 @@ class Canvas
     /**
      * @param {string} text
      * @param {Font} font
-     * @param {int} relativeTileX
-     * @param {int} relativeTileY
+     * @param {RelativePosition} position
      * @param {Size} offset
      * @param {Size} textOffset
-     * @param {int} position
+     * @param {int} positionOnTile
      */
-    textTile(text, font, relativeTileX, relativeTileY, offset, textOffset, position)
+    textTile(text, font, position, offset, textOffset, positionOnTile)
     {
         Assert.string(text);
         Assert.instanceOf(font, Font);
-        Assert.integer(relativeTileX);
-        Assert.integer(relativeTileY);
+        Assert.instanceOf(position, RelativePosition);
         Assert.instanceOf(offset, Size);
         Assert.instanceOf(textOffset, Size);
-        Assert.integer(position);
+        Assert.integer(positionOnTile);
 
         let tileSize = this.calculateTileSize();
 
         let positionOffset = new Size(0, 0);
 
-        switch (position) {
+        switch (positionOnTile) {
             case TilePosition.TOP_LEFT:
                 break;
             case TilePosition.TOP_MIDDLE:
@@ -301,15 +292,15 @@ class Canvas
                 positionOffset = new Size(tileSize.width, 0);
                 break;
             default:
-                throw `Tile position ${position} not implemented yet`;
+                throw `Tile position ${positionOnTile} not implemented yet`;
                 break;
         }
 
         this.text(
             text,
             font,
-            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth() + textOffset.getWidth() + positionOffset.getWidth(),
-            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight() + textOffset.height + positionOffset.getHeight()
+            tileSize.getWidth() * (position.x - this._visibleTiles.marginSize) + offset.getWidth() + textOffset.getWidth() + positionOffset.getWidth(),
+            tileSize.getHeight() * (position.y - this._visibleTiles.marginSize) + offset.getHeight() + textOffset.height + positionOffset.getHeight()
         );
     }
 
@@ -354,7 +345,7 @@ class Canvas
 
     /**
      * @param {string} text
-     * @param {Font§} font
+     * @param {Font} font
      * @param {Size} tileSize
      * @returns {number}
      * @private
