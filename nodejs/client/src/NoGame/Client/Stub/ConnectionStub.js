@@ -144,17 +144,6 @@ class ConnectionStub extends Connection
 
         for (let x = startX; x <= endX; x++) {
             for (let y = startY; y <= endY; y++) {
-//                let stack = [];
-//                let monsters = [];
-//
-//                if (y === PLAYER_POS_Y - 1) {
-//                    stack = [426];
-//                }
-//
-//                if (x === PLAYER_POS_X - 4 && y === PLAYER_POS_Y) {
-//                    monsters = [MONSTER_ID];
-//                }
-
                 message.data.tiles.push({
                     x: x,
                     y: y,
