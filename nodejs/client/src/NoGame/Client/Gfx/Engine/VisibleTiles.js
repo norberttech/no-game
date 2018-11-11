@@ -1,6 +1,7 @@
 'use strict';
 
 const Assert = require('assert-js');
+const RelativePosition = require('./RelativePosition');
 
 class VisibleTiles
 {
@@ -46,6 +47,26 @@ class VisibleTiles
     get marginSize()
     {
         return this._marginSize;
+    }
+
+    /**
+     * @return {RelativePosition}
+     */
+    get centerPosition()
+    {
+        return RelativePosition.createCenter(this);
+    }
+
+    /**
+     * @param {function} callback
+     */
+    each(callback)
+    {
+        for (let relativeTileX = 0; relativeTileX < this._sizeX; relativeTileX++) {
+            for (let relativeTileY = 0; relativeTileY < this._sizeY; relativeTileY++) {
+                callback(new RelativePosition(relativeTileX, relativeTileY, this));
+            }
+        }
     }
 }
 
