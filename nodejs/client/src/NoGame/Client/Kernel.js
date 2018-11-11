@@ -4,7 +4,7 @@ const Assert = require('assert-js');
 const Engine = require('./Gfx/Engine');
 const Area = require('./Map/Area');
 const Player = require('./Player');
-const Position = require('./Position');
+const AbsolutePosition = require('./AbsolutePosition');
 const RelativePosition = require('./RelativePosition');
 const Path = require('./Path');
 const Character = require('./Character');
@@ -75,7 +75,7 @@ class Kernel
     }
 
     /**
-     * @returns {Position}
+     * @returns {AbsolutePosition}
      */
     get nextWalkPathPosition()
     {
@@ -165,7 +165,7 @@ class Kernel
             this._walkPath = new Path(
                 this._pathFinder.findPath(centerPosition.x, centerPosition.y, relativePosition.x, relativePosition.y, grid),
                 this._player.position,
-                new Position(centerPosition.x, centerPosition.y)
+                new AbsolutePosition(centerPosition.x, centerPosition.y)
             );
         } catch (e) {
             return ;

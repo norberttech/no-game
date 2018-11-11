@@ -7,7 +7,7 @@ const ServerMessages = require('./../Common/ServerMessages');
 const Player = require('./Player');
 const Tile = require('./Map/Tile');
 const Area = require('./Map/Area');
-const Position = require('./Position');
+const AbsolutePosition = require('./AbsolutePosition');
 const Character = require('./Character');
 const Kernel = require('./Kernel');
 const Connection = require('./Network/Connection');
@@ -101,11 +101,11 @@ class Protocol
     }
 
     /**
-     * @param {Position} position
+     * @param {AbsolutePosition} position
      */
     move(position)
     {
-        Assert.instanceOf(position, Position);
+        Assert.instanceOf(position, AbsolutePosition);
 
         if (this._kernel.canMoveTo(position.x, position.y)) {
 

@@ -3,7 +3,7 @@
 const Assert = require('assert-js');
 const Kernel = require('./Kernel');
 const Protocol = require('./Protocol');
-const Position = require('./Position');
+const AbsolutePosition = require('./AbsolutePosition');
 const Directions = require('./Directions');
 const Connection = require('./Network/Connection');
 const KeyBoard = require('./Input/KeyBoard');
@@ -179,7 +179,7 @@ class Client
     }
 
     /**
-     * @param {Position} position
+     * @param {AbsolutePosition} position
      * @private
      */
     _move(position)
@@ -193,7 +193,7 @@ class Client
 
 
     /**
-     * @returns {Position}
+     * @returns {AbsolutePosition}
      * @private
      */
     _playerPosition()

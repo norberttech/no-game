@@ -2,7 +2,7 @@
 
 const Assert = require('assert-js');
 const Player = require('./Player');
-const Position = require('./Position');
+const AbsolutePosition = require('./AbsolutePosition');
 const VisibleTiles = require('./VisibleTiles');
 const AreaCalculator = require('./../Common/AreaCalculator');
 
@@ -38,13 +38,13 @@ class RelativePosition
 
     /**
      * @param {Player} player
-     * @returns {Position}
+     * @returns {AbsolutePosition}
      */
     toAbsolute(player)
     {
         Assert.instanceOf(player, Player);
 
-        return new Position(
+        return new AbsolutePosition(
             player.position.x + this._x - this.center.x,
             player.position.y + this._y - this.center.y,
         )

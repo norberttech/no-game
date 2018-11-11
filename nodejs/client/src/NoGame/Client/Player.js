@@ -2,7 +2,7 @@
 
 const Assert = require('assert-js');
 const ExperienceCalculator = require('./../Common/ExperienceCalculator');
-const Position = require('./Position');
+const AbsolutePosition = require('./AbsolutePosition');
 const Directions = require('./Directions');
 
 class Player
@@ -30,8 +30,8 @@ class Player
         this._level = 1;
         this._health = health;
         this._maxHealth = maxHealth;
-        this._moveFrom = new Position(x, y);
-        this._position = new Position(x, y);
+        this._moveFrom = new AbsolutePosition(x, y);
+        this._position = new AbsolutePosition(x, y);
         this._moveEnds = new Date().getTime();
         this._moveTime = 0;
         this._attackedBy = new Map();
@@ -98,7 +98,7 @@ class Player
     }
 
     /**
-     * @returns {Position}
+     * @returns {AbsolutePosition}
      */
     get position()
     {
@@ -106,7 +106,7 @@ class Player
     }
 
     /**
-     * @returns {Position}
+     * @returns {AbsolutePosition}
      */
     get movingFromPosition()
     {
@@ -156,7 +156,7 @@ class Player
      */
     isMovingTo(x, y)
     {
-        return this._position.isEqual(new Position(x, y));
+        return this._position.isEqual(new AbsolutePosition(x, y));
     }
 
     /**
@@ -186,7 +186,7 @@ class Player
         Assert.integer(y);
         Assert.integer(moveTime);
 
-        let newPosition = new Position(x, y);
+        let newPosition = new AbsolutePosition(x, y);
 
         this._direction = this._position.direction(newPosition);
         this._moveTime = moveTime;

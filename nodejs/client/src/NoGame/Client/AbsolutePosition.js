@@ -3,7 +3,7 @@
 const Assert = require('assert-js');
 const Directions = require('./Directions');
 
-class Position
+class AbsolutePosition
 {
     /**
      * @param {int} x
@@ -44,7 +44,7 @@ class Position
 
     /**
      * @param {int} direction
-     * @returns {Position}
+     * @returns {AbsolutePosition}
      */
     next(direction)
     {
@@ -52,25 +52,25 @@ class Position
 
         switch (direction) {
             case Directions.RIGHT:
-                return new Position(this._x + 1, this._y);
+                return new AbsolutePosition(this._x + 1, this._y);
             case Directions.LEFT:
-                return new Position(this._x - 1, this._y);
+                return new AbsolutePosition(this._x - 1, this._y);
             case Directions.DOWN:
-                return new Position(this._x, this._y + 1);
+                return new AbsolutePosition(this._x, this._y + 1);
             case Directions.UP:
-                return new Position(this._x, this._y - 1);
+                return new AbsolutePosition(this._x, this._y - 1);
             default:
                 throw `Unknown direction`;
         }
     }
 
     /**
-     * @param {Position} point
+     * @param {AbsolutePosition} point
      * @returns {number}
      */
     direction(point)
     {
-        Assert.instanceOf(point, Position);
+        Assert.instanceOf(point, AbsolutePosition);
 
         let xDiff = this._x - point.x;
         let yDiff = this._y - point.y;
@@ -91,15 +91,15 @@ class Position
     }
 
     /**
-     * @param {Position} position
+     * @param {AbsolutePosition} position
      * @return {boolean}
      */
     isEqual(position)
     {
-        Assert.instanceOf(position, Position);
+        Assert.instanceOf(position, AbsolutePosition);
 
         return position.x === this._x && position.y === this._y;
     }
 }
 
-module.exports = Position;
+module.exports = AbsolutePosition;

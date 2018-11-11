@@ -1,6 +1,6 @@
 'use strict';
 
-const Position = require('./Position');
+const AbsolutePosition = require('./AbsolutePosition');
 const Assert = require('assert-js');
 
 class Character
@@ -26,8 +26,8 @@ class Character
         this._name = name;
         this._type = type;
         this._moves = [];
-        this._moveFrom = new Position(x, y);
-        this._position = new Position(x, y);
+        this._moveFrom = new AbsolutePosition(x, y);
+        this._position = new AbsolutePosition(x, y);
         this._moveTime = 0;
         this._moveEnds = new Date().getTime();
         this._health = health;
@@ -143,12 +143,12 @@ class Character
         if (this._moves.length === 0) {
             this._moveTime = moveTime;
             this._moveFrom = this._position;
-            this._position = new Position(x, y);
+            this._position = new AbsolutePosition(x, y);
             this._moveEnds = new Date().getTime() + moveTime;
         } else {
             this._moves.push({
                 moveFrom: this._position,
-                position: new Position(x, y),
+                position: new AbsolutePosition(x, y),
                 moveTime: moveTime,
                 moveEnds: new Date().getTime() + moveTime
             });
@@ -156,7 +156,7 @@ class Character
     }
 
     /**
-     * @returns {Position}
+     * @returns {AbsolutePosition}
      */
     get position()
     {
@@ -164,7 +164,7 @@ class Character
     }
 
     /**
-     * @returns {Position}
+     * @returns {AbsolutePosition}
      */
     get movingFromPosition()
     {

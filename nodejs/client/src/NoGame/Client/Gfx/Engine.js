@@ -10,7 +10,7 @@ const CharactersUI = require('./CharactersUI');
 const SpriteMap = require('./SpriteMap');
 const Mouse = require('./../Input/Mouse');
 const Character = require('./../Character');
-const Position = require('./../Position');
+const AbsolutePosition = require('./../AbsolutePosition');
 const Colors = require('./Colors');
 const TileAnimations = require('./Engine/TileAnimations');
 const TilePosition = require('./Engine/TilePosition');
@@ -188,13 +188,13 @@ class Engine
     }
 
     /**
-     * @returns {Position}
+     * @returns {AbsolutePosition}
      */
     get mouseAbsolutePosition()
     {
         let relativePosition = this.mouseRelativePosition;
 
-        return new Position(
+        return new AbsolutePosition(
             this._playerUI.absoluteX - (this._visibleTiles.centerPosition.x - relativePosition.x),
             this._playerUI.absoluteY - (this._visibleTiles.centerPosition.y - relativePosition.y)
         );
