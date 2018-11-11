@@ -6,7 +6,7 @@ const Sprite = require('./Sprite');
 const Colors = require('./Colors');
 const Font = require('./Font');
 const TilePosition = require('./Engine/TilePosition');
-const VisibleTiles = require('./Engine/VisibleTiles');
+const VisibleTiles = require('./../VisibleTiles');
 
 class Canvas
 {

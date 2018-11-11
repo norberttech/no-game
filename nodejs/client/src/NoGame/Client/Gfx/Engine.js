@@ -17,7 +17,8 @@ const TilePosition = require('./Engine/TilePosition');
 const FrameAnimation = require('./Animation/FrameAnimation');
 const MoveAnimation = require('./Animation/MoveAnimation');
 const DrawingTimer = require('./Engine/DrawingTimer');
-const VisibleTiles = require('./Engine/VisibleTiles');
+const VisibleTiles = require('./../VisibleTiles');
+const RelativePosition = require('./../RelativePosition');
 
 const VISIBLE_TILES_MARGIN_SIZE = 1;
 
@@ -42,6 +43,7 @@ class Engine
         this._mouse = mouse;
         this._area = null;
         this._player = null;
+        this._playerUI = null;
         this._characters = new CharactersUI();
         this._visibleTiles = null;
         this._draw = false;
@@ -88,7 +90,8 @@ class Engine
      */
     setPlayer(player)
     {
-        this._player = new PlayerUI(player);
+        this._player = player;
+        this._playerUI = new PlayerUI(player);
     }
 
     /**
@@ -98,7 +101,7 @@ class Engine
     {
         Assert.containsOnly(characters, Character);
 
-        this._characters.updateCharacters(characters, this._player);
+        this._characters.updateCharacters(characters, this._playerUI);
     }
 
     /**
@@ -106,7 +109,7 @@ class Engine
      */
     playerSay(message)
     {
-        this._player.say(message);
+        this._playerUI.say(message);
     }
 
     /**
@@ -150,9 +153,9 @@ class Engine
             this._drawingTimer.draw(() => {
                 if (this._spriteMap.isLoaded() && null !== this._visibleTiles) {
 
-                    let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
+                    let animationOffset = this._playerUI.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
 
-                    if (null !== this._player && null !== this._area) {
+                    if (null !== this._playerUI && null !== this._area) {
                         this._canvas.clear();
                         this._drawGround(animationOffset);
                         this._drawTileStack(animationOffset);
@@ -191,8 +194,8 @@ class Engine
         let relativePosition = this.mouseRelativePosition;
 
         return new Position(
-            this._player.absoluteX - (this._visibleTiles.centerPosition.x - relativePosition.x),
-            this._player.absoluteY - (this._visibleTiles.centerPosition.y - relativePosition.y)
+            this._playerUI.absoluteX - (this._visibleTiles.centerPosition.x - relativePosition.x),
+            this._playerUI.absoluteY - (this._visibleTiles.centerPosition.y - relativePosition.y)
         );
     }
 
@@ -215,8 +218,8 @@ class Engine
     {
         this.visibleTiles.each((relativeTilePosition) => {
             let tile = this._area.tile(
-                this._player.toAbsoluteX(relativeTilePosition.x, this._visibleTiles),
-                this._player.toAbsoluteY(relativeTilePosition.y, this._visibleTiles)
+                relativeTilePosition.toAbsolute(this._player).x,
+                relativeTilePosition.toAbsolute(this._player).y
             );
 
             if (tile === undefined) {
@@ -234,55 +237,47 @@ class Engine
     _drawTileStack(animationOffset)
     {
         this.visibleTiles.each((relativeTilePosition) => {
-            let absoluteTileX = this._player.toAbsoluteX(relativeTilePosition.x, this._visibleTiles);
-            let absoluteTileY = this._player.toAbsoluteY(relativeTilePosition.y, this._visibleTiles);
-
             this._drawCharacter(
-                relativeTilePosition.x,
-                relativeTilePosition.y,
-                absoluteTileX,
-                absoluteTileY,
+                relativeTilePosition,
                 animationOffset
             );
 
             if (relativeTilePosition.isCenter) {
                 this._drawPlayer(
-                    relativeTilePosition.x,
-                    relativeTilePosition.y,
+                    relativeTilePosition,
                     animationOffset
                 );
             }
 
-            this._drawTile(absoluteTileX, absoluteTileY, relativeTilePosition.x, relativeTilePosition.y, animationOffset);
+            this._drawTile(relativeTilePosition, animationOffset);
         });
     }
 
     /**
-     * @param {int} relativeTileX
-     * @param {int} relativeTileY
+     * @param {RelativePosition} relativeTilePosition
      * @param {Size} animationOffset
      * @private
      */
-    _drawPlayer(relativeTileX, relativeTileY, animationOffset)
+    _drawPlayer(relativeTilePosition, animationOffset)
     {
         this._canvas.drawSprite(
-            relativeTileX,
-            relativeTileY,
-            this._spriteMap.getSprite(this._player.outfitSpriteId),
+            relativeTilePosition.x,
+            relativeTilePosition.y,
+            this._spriteMap.getSprite(this._playerUI.outfitSpriteId),
             this._characterOffset
         );
     }
 
     /**
-     * @param {int} relativeTileX
-     * @param {int} relativeTileY
-     * @param {int} absoluteTileX
-     * @param {int} absoluteTileY
+     * @param {RelativePosition} relativeTilePosition
      * @param {Size} animationOffset
      * @private
      */
-    _drawCharacter(relativeTileX, relativeTileY, absoluteTileX, absoluteTileY, animationOffset)
+    _drawCharacter(relativeTilePosition, animationOffset)
     {
+        let absoluteTileX = relativeTilePosition.toAbsolute(this._player).x;
+        let absoluteTileY = relativeTilePosition.toAbsolute(this._player).y;
+
         let character = this._characters.character(absoluteTileX, absoluteTileY);
 
         if (character !== undefined) {
@@ -291,30 +286,28 @@ class Engine
 
             this._canvas.drawCharacter(
                 color,
-                relativeTileX,
-                relativeTileY,
+                relativeTilePosition.x,
+                relativeTilePosition.y,
                 offset.add(this._characterOffset)
             );
         }
     }
 
     /**
-     * @param {int} absoluteTileX
-     * @param {int} absoluteTileY
-     * @param {int} relativeTileX
-     * @param {int} relativeTileY
+     * @param {RelativePosition} relativeTilePosition
      * @param {Size} animationOffset
      * @private
      */
-    _drawTile(absoluteTileX, absoluteTileY, relativeTileX, relativeTileY, animationOffset)
+    _drawTile(relativeTilePosition, animationOffset)
     {
-        let tile = this._area.tile(absoluteTileX, absoluteTileY);
+        let absolutePosition = relativeTilePosition.toAbsolute(this._player);
+        let tile = this._area.tile(absolutePosition.x, absolutePosition.y);
 
         if (tile !== undefined && tile.stack.length) {
             for (let spriteId of tile.stack) {
                 if (this._spriteMap.hasSprite(spriteId)) {
                     let sprite = this._spriteMap.getSprite(spriteId);
-                    this._canvas.drawSprite(relativeTileX, relativeTileY, sprite, animationOffset);
+                    this._canvas.drawSprite(relativeTilePosition.x, relativeTilePosition.y, sprite, animationOffset);
                 }
             }
         }
@@ -351,7 +344,7 @@ class Engine
         }
 
         this._canvas.drawCharacterName(
-            this._player.name,
+            this._playerUI.name,
             this._visibleTiles.centerPosition.x,
             this._visibleTiles.centerPosition.y,
             this._characterOffset,
@@ -359,8 +352,8 @@ class Engine
         );
 
         this._canvas.drawHealthBar(
-            this._player.health,
-            this._player.maxHealth,
+            this._playerUI.health,
+            this._playerUI.maxHealth,
             this._visibleTiles.centerPosition.x,
             this._visibleTiles.centerPosition.y,
             this._characterOffset
@@ -384,14 +377,14 @@ class Engine
         let font = new Font('Verdana', 'normal', 15, Colors.YELLOW);
 
         this._canvas.text(
-            `Experience: ${this._player.experience}`,
+            `Experience: ${this._playerUI.experience}`,
             font,
             10,
             10
         );
 
         this._canvas.text(
-            `Level: ${this._player.level}`,
+            `Level: ${this._playerUI.level}`,
             font,
             10,
             35
@@ -406,8 +399,8 @@ class Engine
     {
         for (let relativeTileX = 0; relativeTileX < this._visibleTiles.sizeX; relativeTileX++) {
             for (let relativeTileY = 0; relativeTileY < this._visibleTiles.sizeY; relativeTileY++) {
-                let absoluteX = this._player.toAbsoluteX(relativeTileX, this._visibleTiles);
-                let absoluteY = this._player.toAbsoluteY(relativeTileY, this._visibleTiles);
+                let absoluteX = this._playerUI.toAbsoluteX(relativeTileX, this._visibleTiles);
+                let absoluteY = this._playerUI.toAbsoluteY(relativeTileY, this._visibleTiles);
 
                 if (this._tileAnimations.has(absoluteX, absoluteY)) {
                     let animationStack = this._tileAnimations.get(absoluteX, absoluteY);
@@ -458,7 +451,7 @@ class Engine
         }
 
         let playerMessageIndex = 0;
-        for (let message of this._player.messages) {
+        for (let message of this._playerUI.messages) {
             this._canvas.drawCharacterMessage(
                 message.getText(),
                 playerMessageIndex,
@@ -486,7 +479,7 @@ class Engine
             let relativeY = character.getRelativeY(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
             let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
 
-            if (this._player.isAttacking(character.id)) {
+            if (this._playerUI.isAttacking(character.id)) {
                 this._canvas.drawPointer(
                     Colors.RED,
                     relativeX,

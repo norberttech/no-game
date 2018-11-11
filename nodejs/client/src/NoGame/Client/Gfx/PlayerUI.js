@@ -5,7 +5,7 @@ const Player = require('./../Player');
 const Size = require('./Size');
 const MessageUI = require('./MessageUI');
 const Directions = require('./../Directions');
-const VisibleTiles = require('./Engine/VisibleTiles');
+const VisibleTiles = require('./../VisibleTiles');
 
 class PlayerUI
 {

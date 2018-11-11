@@ -1,8 +1,10 @@
 'use strict';
 
 const Assert = require('assert-js');
-const VisibleTiles = require('./../Engine/VisibleTiles');
-const AreaCalculator = require('./../../../Common/AreaCalculator');
+const Player = require('./Player');
+const Position = require('./Position');
+const VisibleTiles = require('./VisibleTiles');
+const AreaCalculator = require('./../Common/AreaCalculator');
 
 class RelativePosition
 {
@@ -35,6 +37,20 @@ class RelativePosition
     }
 
     /**
+     * @param {Player} player
+     * @returns {Position}
+     */
+    toAbsolute(player)
+    {
+        Assert.instanceOf(player, Player);
+
+        return new Position(
+            player.position.x + this._x - this.center.x,
+            player.position.y + this._y - this.center.y,
+        )
+    }
+
+    /**
      * @returns {int}
      */
     get x()
@@ -58,6 +74,14 @@ class RelativePosition
         let centerPosition = AreaCalculator.centerPosition(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
 
         return centerPosition.x === this._x && centerPosition.y === this._y;
+    }
+
+    /**
+     * @returns {RelativePosition}
+     */
+    get center()
+    {
+        return RelativePosition.createCenter(this._visibleTiles);
     }
 }
 
