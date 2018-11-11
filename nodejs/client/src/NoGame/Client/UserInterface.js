@@ -124,7 +124,7 @@ class UserInterface
     bindMouse()
     {
         this._gameCanvas.addEventListener("mousemove", (event) => {
-            this._mouse.setPosition(
+            this._mouse.setPixelPosition(
                 event.pageX - this._gameCanvas.offsetLeft,
                 event.pageY - this._gameCanvas.offsetTop
             );

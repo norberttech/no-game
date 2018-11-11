@@ -28,11 +28,11 @@ class Connection
 
         this._socket.onopen = () => {
             onOpen(this)
-        }
+        };
 
         this._socket.onmessage = (message) => {
             onMessage(message, this)
-        }
+        };
 
         this._socket.onerror = (event) => {
             onError(event);

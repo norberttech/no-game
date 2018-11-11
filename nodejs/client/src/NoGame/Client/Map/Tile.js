@@ -1,6 +1,7 @@
 'use strict';
 
 const Assert = require('assert-js');
+const AbsolutePosition = require('./../Tile/AbsolutePosition');
 
 class Tile
 {
@@ -43,6 +44,14 @@ class Tile
     get y()
     {
         return this._y;
+    }
+
+    /**
+     * @returns {AbsolutePosition}
+     */
+    get position()
+    {
+        return new AbsolutePosition(this._x, this._y);
     }
 
     /**

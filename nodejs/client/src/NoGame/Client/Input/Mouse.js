@@ -10,19 +10,19 @@ class Mouse
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {int} pixelPositionX
+     * @param {int} pixelPositionY
      */
-    setPosition(x, y)
+    setPixelPosition(pixelPositionX, pixelPositionY)
     {
-        this._x = x;
-        this._y = y;
+        this._x = pixelPositionX;
+        this._y = pixelPositionY;
     }
 
     /**
      * @returns {int}
      */
-    get x()
+    get pixelPositionX()
     {
         return Math.floor(this._x);
     }
@@ -30,7 +30,7 @@ class Mouse
     /**
      * @returns {int}
      */
-    get y()
+    get pixelPositionY()
     {
         return Math.floor(this._y);
     }

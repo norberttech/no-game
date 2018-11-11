@@ -3,7 +3,7 @@
 const Assert = require('assert-js');
 const Kernel = require('./Kernel');
 const Protocol = require('./Protocol');
-const Position = require('./Position');
+const AbsolutePosition = require('./Tile/AbsolutePosition');
 const Directions = require('./Directions');
 const Connection = require('./Network/Connection');
 const KeyBoard = require('./Input/KeyBoard');
@@ -125,7 +125,7 @@ class Client
 
     _onMouseClick()
     {
-        let mouseAbsolutePosition = this._kernel.gfx.getMouseAbsolutePosition();
+        let mouseAbsolutePosition = this._kernel.gfx.mouseAbsolutePosition;
 
         for (let character of this._kernel.characters) {
             if (character.position.isEqual(mouseAbsolutePosition) && character.isMonster) {
@@ -135,7 +135,7 @@ class Client
         }
 
         this._kernel.clearWalkPath();
-        this._kernel.setWalkPath(this._kernel.gfx.getMouseRelativePosition());
+        this._kernel.setWalkPath(this._kernel.gfx.mouseRelativePosition);
     }
 
     /**
@@ -179,7 +179,7 @@ class Client
     }
 
     /**
-     * @param {Position} position
+     * @param {AbsolutePosition} position
      * @private
      */
     _move(position)
@@ -191,9 +191,8 @@ class Client
         this._protocol.move(position);
     }
 
-
     /**
-     * @returns {Position}
+     * @returns {AbsolutePosition}
      * @private
      */
     _playerPosition()

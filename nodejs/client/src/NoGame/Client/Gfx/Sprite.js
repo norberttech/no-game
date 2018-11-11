@@ -67,4 +67,4 @@ class Sprite
     }
 }
 
-module.exports = Sprites;
+module.exports = Sprite;

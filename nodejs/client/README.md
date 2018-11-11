@@ -13,3 +13,13 @@
 In order to develop client without server launched (just to work on UI for example) you can open client url with
 [https://client.nogame.local/?test=test](https://client.nogame.local/?test=test) test parameter.
 This will initialize client with stub connection protocol (put anything into credentials to login).
+
+* [Dictionary](/nodejs/client/docs/dictionary.md)
+
+# Debugging
+
+In order to debug client in browser in test mode type following code in browser console:
+
+```
+console.log(nogameClient._kernel._gfxEngine._visibleTiles);
+```

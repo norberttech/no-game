@@ -4,7 +4,8 @@ const Assert = require('assert-js');
 const Engine = require('./Gfx/Engine');
 const Area = require('./Map/Area');
 const Player = require('./Player');
-const Position = require('./Position');
+const AbsolutePosition = require('./Tile/AbsolutePosition');
+const RelativePosition = require('./Tile/RelativePosition');
 const Path = require('./Path');
 const Character = require('./Character');
 const PathFinder = require('./../Common/PathFinder');
@@ -74,7 +75,7 @@ class Kernel
     }
 
     /**
-     * @returns {Position}
+     * @returns {AbsolutePosition}
      */
     get nextWalkPathPosition()
     {
@@ -125,17 +126,15 @@ class Kernel
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {AbsolutePosition} position
      * @param {int} moveTime
      */
-    move(x, y, moveTime)
+    move(position, moveTime)
     {
-        Assert.integer(x);
-        Assert.integer(y);
+        Assert.instanceOf(position, AbsolutePosition);
         Assert.integer(moveTime);
 
-        this.player.startMovingTo(x, y, moveTime);
+        this.player.startMovingTo(position, moveTime);
     }
 
     clearWalkPath()
@@ -144,13 +143,13 @@ class Kernel
     }
 
     /**
-     * @param {Position} position
+     * @param {RelativePosition} relativePosition
      */
-    setWalkPath(position)
+    setWalkPath(relativePosition)
     {
-        let visibleTiles = this._gfxEngine.getVisibleTiles();
-        let grid = new PathFinderGrid(visibleTiles.x, visibleTiles.y);
-        let centerPosition = AreaCalculator.centerPosition(visibleTiles.x, visibleTiles.y);
+        let visibleTiles = this._gfxEngine.visibleTiles;
+        let grid = new PathFinderGrid(visibleTiles.sizeX, visibleTiles.sizeY);
+        let centerPosition = AreaCalculator.centerPosition(visibleTiles.sizeX, visibleTiles.sizeY);
 
         for (let tile of this._area.tiles().values()) {
             grid.addTile(
@@ -162,9 +161,9 @@ class Kernel
 
         try {
             this._walkPath = new Path(
-                this._pathFinder.findPath(centerPosition.x, centerPosition.y, position.x, position.y, grid),
+                this._pathFinder.findPath(centerPosition.x, centerPosition.y, relativePosition.x, relativePosition.y, grid),
                 this._player.position,
-                new Position(centerPosition.x, centerPosition.y)
+                new AbsolutePosition(centerPosition.x, centerPosition.y)
             );
         } catch (e) {
             return ;
@@ -262,13 +261,12 @@ class Kernel
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {AbsolutePosition} position
      * @return {boolean}
      */
-    canMoveTo(x, y)
+    canMoveTo(position)
     {
-        return this._area.canWalkOn(x, y);
+        return this._area.canWalkOn(position);
     }
 
     /**
@@ -279,7 +277,7 @@ class Kernel
         Assert.instanceOf(area, Area);
 
         this._area = area;
-        this._gfxEngine.setTiles(this._area.tiles());
+        this._gfxEngine.setArea(this._area);
     }
 
     /**
@@ -290,16 +288,14 @@ class Kernel
         Assert.integer(newValue);
 
         this._gfxEngine.tileAnimations.add(
-            this.player.position.x,
-            this.player.position.y,
+            this.player.position,
             AnimationFactory.bloodSplashAnimation()
         );
 
         let hpDifference = this.player.health - newValue;
 
         this._gfxEngine.tileAnimations.add(
-            this._player.position.x,
-            this._player.position.y,
+            this.player.position,
             AnimationFactory.healthFadeOut(hpDifference)
         );
 
@@ -318,16 +314,14 @@ class Kernel
         let character = this.getCharacter(id);
 
         this._gfxEngine.tileAnimations.add(
-            character.position.x,
-            character.position.y,
+            character.position,
             AnimationFactory.bloodSplashAnimation()
         );
 
         let hpDifference = character.health - newValue;
 
         this._gfxEngine.tileAnimations.add(
-            character.position.x,
-            character.position.y,
+            character.position,
             AnimationFactory.healthFadeOut(hpDifference)
         );
 
@@ -338,8 +332,7 @@ class Kernel
     playerParry()
     {
         this._gfxEngine.tileAnimations.add(
-            this.player.position.x,
-            this.player.position.y,
+            this.player.position,
             AnimationFactory.parryAnimation()
         );
     }
@@ -354,8 +347,7 @@ class Kernel
         let character = this.getCharacter(id);
 
         this._gfxEngine.tileAnimations.add(
-            character.position.x,
-            character.position.y,
+            character.position,
             AnimationFactory.parryAnimation()
         );
     }

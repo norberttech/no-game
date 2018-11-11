@@ -2,25 +2,25 @@
 
 const Assert = require('assert-js');
 const PF = require('pathfinding');
-const Position = require('./Position');
+const AbsolutePosition = require('./Tile/AbsolutePosition');
 
 class Path
 {
     /**
      * @param {Array} path
-     * @param {Position} playerPosition
-     * @param {Position} centerPosition
+     * @param {AbsolutePosition} playerPosition
+     * @param {AbsolutePosition} centerPosition
      */
     constructor(path, playerPosition, centerPosition)
     {
         Assert.array(path);
-        Assert.instanceOf(playerPosition, Position);
-        Assert.instanceOf(centerPosition, Position);
+        Assert.instanceOf(playerPosition, AbsolutePosition);
+        Assert.instanceOf(centerPosition, AbsolutePosition);
 
         this._positions = [];
 
         for (let relativePosition of path) {
-            let position = new Position(
+            let position = new AbsolutePosition(
                 relativePosition.x - centerPosition.x + playerPosition.x,
                 relativePosition.y - centerPosition.y + playerPosition.y
             );
@@ -43,7 +43,7 @@ class Path
     }
 
     /**
-     * @returns {Position}
+     * @returns {AbsolutePosition}
      */
     get nextPosition()
     {

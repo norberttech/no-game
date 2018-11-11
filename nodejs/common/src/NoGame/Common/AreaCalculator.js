@@ -28,7 +28,8 @@ class AreaCalculator
     }
 
     /**
-     * Remember that tiles starts from zero. 15 - 1 = 14; 14 / 2 = 7.
+     * Remember that tiles starts from zero.
+     * 17 - 1 = 16; 16 / 2 = 8.
      * So center tile will be eight tile from zero tile.
      *
      * @param {int} tilesX

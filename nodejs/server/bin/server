@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const httpsServer = require('https');
-const ExperienceCalculator = require('./../src/NoGame/Common/ExperienceCalculator').ExperienceCalculator;
+const ExperienceCalculator = require('./../src/NoGame/Common/ExperienceCalculator');
 const Kernel = require('./../src/NoGame/Engine/Kernel');
 const Loader = require('./../src/NoGame/Engine/Loader');
 const GameServer = require('./../src/NoGame/Server/GameServer');

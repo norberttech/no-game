@@ -1,10 +1,8 @@
 'use strict';
 
 const Assert = require('assert-js');
-const PlayerUI = require('./PlayerUI');
 const Character = require('./../Character');
 const CharacterUI = require('./CharacterUI');
-const Size = require('./Size');
 
 class CharactersUI
 {
@@ -14,52 +12,30 @@ class CharactersUI
     }
 
     /**
-     * @param {Character} characters
-     * @param {PlayerUI} player
+     * @param {array<Character>} characters
      */
-    updateCharacters(characters, player)
+    updateCharacters(characters)
     {
         Assert.containsOnly(characters, Character);
-        Assert.instanceOf(player, PlayerUI);
 
         this._characters = characters.map((character) => {
-            return new CharacterUI(character, player);
+            return new CharacterUI(character);
         });
     }
 
     /**
-     * @param {int} visibleX
-     * @param {int} visibleY
-     * @returns {CharacterUI[]}
-     */
-    getVisibleCharacters(visibleX, visibleY)
-    {
-        let visibleCharacters = [];
-
-        for (let character of this._characters) {
-            let relativeX = character.getRelativeX(visibleX, visibleY);
-            let relativeY = character.getRelativeY(visibleX, visibleY);
-
-            if (relativeX >= 0 && relativeX < visibleX && relativeY >= 0 && relativeY < visibleY) {
-                visibleCharacters.push(character);
-            }
-        }
-
-        return visibleCharacters;
-    }
-
-    /**
-     * @param {int} x
-     * @param {int} y
+     * @param {AbsolutePosition} absolutePosition
      * @return {CharacterUI}
      */
-    character(x, y)
+    findCharacter(absolutePosition)
     {
         for (let character of this._characters) {
-            if (character.x === x && character.y === y) {
+            if (character.position.isEqual(absolutePosition)) {
                 return character;
             }
         }
+
+        return null;
     }
 
     /**

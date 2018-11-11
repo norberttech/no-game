@@ -1,8 +1,6 @@
 'use strict';
 
-const AreaCalculator = require('./../../Common/AreaCalculator');
 const Assert = require('assert-js');
-const PlayerUI = require('./PlayerUI');
 const Character = require('./../Character');
 const Size = require('./Size');
 const MessageUI = require('./MessageUI');
@@ -11,15 +9,12 @@ class CharacterUI
 {
     /**
      * @param {Character} character
-     * @param {PlayerUI} player
      */
-    constructor(character, player)
+    constructor(character)
     {
         Assert.instanceOf(character, Character);
-        Assert.instanceOf(player, PlayerUI);
 
         this._character = character;
-        this._player = player;
         this._incomeMessages = [];
     }
 
@@ -48,27 +43,11 @@ class CharacterUI
     }
 
     /**
-     * @param {int} visibleX
-     * @param {int} visibleY
-     * @returns {int}
+     * @returns {AbsolutePosition}
      */
-    getRelativeX(visibleX, visibleY)
+    get position()
     {
-        let centerSquarePosition = AreaCalculator.centerPosition(visibleX, visibleY);
-
-        return centerSquarePosition.x - (this._player.x - this.x);
-    }
-
-    /**
-     * @param {int} visibleX
-     * @param {int} visibleY
-     * @returns {int}
-     */
-    getRelativeY(visibleX, visibleY)
-    {
-        let centerSquarePosition = AreaCalculator.centerPosition(visibleX, visibleY);
-
-        return centerSquarePosition.y - (this._player.y - this.y);
+        return this._character.position;
     }
 
     /**
@@ -77,22 +56,6 @@ class CharacterUI
     get name()
     {
         return this._character.name;
-    }
-
-    /**
-     * @returns {int}
-     */
-    get x()
-    {
-        return this._character.position.x;
-    }
-
-    /**
-     * @returns {int}
-     */
-    get y()
-    {
-        return this._character.position.y;
     }
 
     /**

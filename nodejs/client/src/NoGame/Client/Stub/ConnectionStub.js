@@ -4,9 +4,11 @@ const Connection = require('./../Network/Connection');
 const ServerMessages = require('./../../Common/ServerMessages');
 const AreaCalculator = require('./../../Common/AreaCalculator');
 const UUID = require('uuid');
+const MapStub = require('./MapStub');
 
-const PLAYER_POS_X = 108;
-const PLAYER_POS_Y = 106;
+const PLAYER_POS_X = 42;
+const PLAYER_POS_Y = 13;
+const MONSTER_ID = UUID.v4();
 
 class ConnectionStub extends Connection
 {
@@ -15,6 +17,8 @@ class ConnectionStub extends Connection
         super();
         this._onMessage = null;
         this._protocol = null;
+        this._mapStub = new MapStub();
+        this._mapStub.initialize();
     }
 
     setProtocol(protocol)
@@ -26,8 +30,9 @@ class ConnectionStub extends Connection
      * @param {string} serverAddress
      * @param {function} onOpen
      * @param {function} onMessage
+     * @param {function} onError
      */
-    open(serverAddress, onOpen, onMessage)
+    open(serverAddress, onOpen, onMessage, onError)
     {
         onOpen(this);
         this._onMessage = onMessage;
@@ -46,7 +51,7 @@ class ConnectionStub extends Connection
      */
     send(message, callback = () => {})
     {
-        let centerPosition = AreaCalculator.centerPosition(15, 11);
+        let centerPosition = AreaCalculator.centerPosition(17, 13);
 
         switch (message.constructor.name) {
             case 'LoginMessage':
@@ -112,8 +117,8 @@ class ConnectionStub extends Connection
             data: {
                 name: 'offlinea',
                 visibleTiles: {
-                    x: 15,
-                    y: 11
+                    x: 17,
+                    y: 13
                 }
             }
         };
@@ -143,8 +148,8 @@ class ConnectionStub extends Connection
                     x: x,
                     y: y,
                     canWalkOn: true,
-                    ground: 1,
-                    stack: [],
+                    ground: this._mapStub.getGround(x, y),
+                    stack: this._mapStub.getStack(x, y),
                     monster: [],
                     players: [],
                     moveSpeedModifier: 0
@@ -160,7 +165,19 @@ class ConnectionStub extends Connection
         let message = {
             name: ServerMessages.CHARACTERS,
             data: {
-                characters: []
+                characters: [
+                    {
+                        id: MONSTER_ID,
+                        type: 2,
+                        name: "Monster",
+                        health: 100,
+                        maxHealth: 100,
+                        position: {
+                            x: PLAYER_POS_X - 4,
+                            y: PLAYER_POS_Y
+                        }
+                    }
+                ]
             }
         };
 

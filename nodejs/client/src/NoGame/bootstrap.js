@@ -63,7 +63,7 @@ function initialize()
         mouse
     );
     let pathFinder = new PathFinder();
-    let client = new Client(
+    let nogameClient = new Client(
         window.Settings.host,
         new Kernel(gfx, pathFinder),
         keyboard,
@@ -75,7 +75,7 @@ function initialize()
     ui.bindArrows();
     ui.bindMouse();
 
-    client.connect().then((connectedClient) => {
+    nogameClient.connect().then((connectedClient) => {
         ui.showLoginScreen();
 
         ui.onSay((message) => {
@@ -119,4 +119,8 @@ function initialize()
     }).catch((client) => {
         ui.addErrorMessage("Can't connect to the server.");
     });
+
+    if (window.location.hasParameter('test')) {
+        window.nogameClient = nogameClient;
+    }
 }
