@@ -125,7 +125,7 @@ class Client
 
     _onMouseClick()
     {
-        let mouseAbsolutePosition = this._kernel.gfx.getMouseAbsolutePosition();
+        let mouseAbsolutePosition = this._kernel.gfx.mouseAbsolutePosition;
 
         for (let character of this._kernel.characters) {
             if (character.position.isEqual(mouseAbsolutePosition) && character.isMonster) {
@@ -135,7 +135,7 @@ class Client
         }
 
         this._kernel.clearWalkPath();
-        this._kernel.setWalkPath(this._kernel.gfx.getMouseRelativePosition());
+        this._kernel.setWalkPath(this._kernel.gfx.mouseRelativePosition);
     }
 
     /**

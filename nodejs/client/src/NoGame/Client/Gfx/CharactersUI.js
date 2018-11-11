@@ -4,7 +4,6 @@ const Assert = require('assert-js');
 const PlayerUI = require('./PlayerUI');
 const Character = require('./../Character');
 const CharacterUI = require('./CharacterUI');
-const Size = require('./Size');
 
 class CharactersUI
 {
@@ -28,19 +27,19 @@ class CharactersUI
     }
 
     /**
-     * @param {int} visibleX
-     * @param {int} visibleY
+     * @param {int} relativeTileX
+     * @param {int} relativeTileY
      * @returns {CharacterUI[]}
      */
-    getVisibleCharacters(visibleX, visibleY)
+    getVisibleCharacters(relativeTileX, relativeTileY)
     {
         let visibleCharacters = [];
 
         for (let character of this._characters) {
-            let relativeX = character.getRelativeX(visibleX, visibleY);
-            let relativeY = character.getRelativeY(visibleX, visibleY);
+            let relativeX = character.getRelativeX(relativeTileX, relativeTileY);
+            let relativeY = character.getRelativeY(relativeTileX, relativeTileY);
 
-            if (relativeX >= 0 && relativeX < visibleX && relativeY >= 0 && relativeY < visibleY) {
+            if (relativeX >= 0 && relativeX < relativeTileX && relativeY >= 0 && relativeY < relativeTileY) {
                 visibleCharacters.push(character);
             }
         }
@@ -49,14 +48,14 @@ class CharactersUI
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {int} absoluteTileX
+     * @param {int} absoluteTileY
      * @return {CharacterUI}
      */
-    character(x, y)
+    character(absoluteTileX, absoluteTileY)
     {
         for (let character of this._characters) {
-            if (character.x === x && character.y === y) {
+            if (character.x === absoluteTileX && character.y === absoluteTileY) {
                 return character;
             }
         }

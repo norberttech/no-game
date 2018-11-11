@@ -1,6 +1,7 @@
 'use strict';
 
 const Assert = require('assert-js');
+const Area = require('./../Map/Area');
 const AreaCalculator = require('./../../Common/AreaCalculator');
 const Canvas = require('./Canvas');
 const Size = require('./Size');
@@ -17,6 +18,9 @@ const TilePosition = require('./Engine/TilePosition');
 const FrameAnimation = require('./Animation/FrameAnimation');
 const MoveAnimation = require('./Animation/MoveAnimation');
 const DrawingTimer = require('./Engine/DrawingTimer');
+const VisibleTiles = require('./Engine/VisibleTiles');
+
+const VISIBLE_TILES_MARGIN_SIZE = 1;
 
 class Engine
 {
@@ -37,11 +41,10 @@ class Engine
         this._animationLoop = animationLoop;
         this._spriteMap = spriteMap;
         this._mouse = mouse;
-        this._tiles = null;
+        this._area = null;
         this._player = null;
         this._characters = new CharactersUI();
         this._visibleTiles = null;
-        this._hiddenTiles = 1;
         this._draw = false;
         this._drawingTimer = new DrawingTimer(30);
         this._tileAnimations = new TileAnimations();
@@ -56,22 +59,22 @@ class Engine
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {int} sizeX
+     * @param {int} sizeY
      */
-    setVisibleTiles(x, y)
+    setVisibleTiles(sizeX, sizeY)
     {
-        Assert.integer(x);
-        Assert.integer(y);
+        Assert.integer(sizeX);
+        Assert.integer(sizeY);
 
-        this._canvas.setVisibleTiles(x, y, this._hiddenTiles);
-        this._visibleTiles = {x: x, y: y};
+        this._visibleTiles = new VisibleTiles(sizeX, sizeY, VISIBLE_TILES_MARGIN_SIZE);
+        this._canvas.setVisibleTiles(this._visibleTiles);
     }
 
     /**
-     * @returns {{x: int, y: int}}
+     * @returns {VisibleTiles}
      */
-    getVisibleTiles()
+    get visibleTiles()
     {
         return this._visibleTiles;
     }
@@ -117,13 +120,13 @@ class Engine
     }
 
     /**
-     * @param {Map} tiles
+     * @param {Map} area
      */
-    setTiles(tiles)
+    setArea(area)
     {
-        Assert.instanceOf(tiles, Map);
+        Assert.instanceOf(area, Area);
 
-        this._tiles = tiles;
+        this._area = area;
     }
 
     startDrawing()
@@ -148,10 +151,10 @@ class Engine
             this._drawingTimer.draw(() => {
                 if (this._spriteMap.isLoaded() && null !== this._visibleTiles) {
 
-                    let centerSquarePosition = AreaCalculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
+                    let centerSquarePosition = AreaCalculator.centerPosition(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
                     let animationOffset = this._player.calculateMoveAnimationOffset(this._canvas.calculateTileSize());
 
-                    if (null !== this._player && null !== this._tiles) {
+                    if (null !== this._player && null !== this._area) {
                         this._canvas.clear();
                         this._drawGround(animationOffset);
                         this._drawTileStack(animationOffset, centerSquarePosition);
@@ -172,29 +175,27 @@ class Engine
     /**
      * @returns {Position}
      */
-    getMouseRelativePosition()
+    get mouseRelativePosition()
     {
-        let x = this._mouse.x;
-        let y = this._mouse.y;
         let tileSize = this._canvas.calculateTileSize();
 
         return new Position(
-            Math.floor(x / tileSize.getWidth()) + this._hiddenTiles,
-            Math.floor(y / tileSize.getHeight()) + this._hiddenTiles
+            Math.floor(this._mouse.pixelPositionX / tileSize.getWidth()) + this._visibleTiles.marginSize,
+            Math.floor(this._mouse.pixelPositionY / tileSize.getHeight()) + this._visibleTiles.marginSize
         );
     }
 
     /**
      * @returns {Position}
      */
-    getMouseAbsolutePosition()
+    get mouseAbsolutePosition()
     {
-        let relPosition = this.getMouseRelativePosition();
-        let centerSquarePosition = AreaCalculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
+        let relativePosition = this.mouseRelativePosition;
+        let centerSquarePosition = AreaCalculator.centerPosition(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
 
         return new Position(
-            this._player.x - (centerSquarePosition.x - relPosition.x),
-            this._player.y - (centerSquarePosition.y - relPosition.y)
+            this._player.absoluteX - (centerSquarePosition.x - relativePosition.x),
+            this._player.absoluteY - (centerSquarePosition.y - relativePosition.y)
         );
     }
 
@@ -210,29 +211,17 @@ class Engine
     }
 
     /**
-     * @returns {{x: int, y: int}}
-     */
-    get _areaTiles()
-    {
-        return {
-            x: this._player.x - ((this._visibleTiles.x - 1) / 2),
-            y: this._player.y - ((this._visibleTiles.y - 1) / 2)
-        };
-    }
-
-    /**
      * @param {Size} animationOffset
      * @private
      */
     _drawGround(animationOffset)
     {
-        let areaTiles = this._areaTiles;
-
-        for (let relativeTileX = 0; relativeTileX < this._visibleTiles.x; relativeTileX++) {
-            for (let relativeTileY = 0; relativeTileY < this._visibleTiles.y; relativeTileY++) {
-                let absoluteX = areaTiles.x + relativeTileX;
-                let absoluteY = areaTiles.y + relativeTileY;
-                let tile = this._tiles.get(`${absoluteX}:${absoluteY}`);
+        for (let relativeTileX = 0; relativeTileX < this._visibleTiles.sizeX; relativeTileX++) {
+            for (let relativeTileY = 0; relativeTileY < this._visibleTiles.sizeY; relativeTileY++) {
+                let tile = this._area.tile(
+                    this._player.toAbsoluteX(relativeTileX, this._visibleTiles),
+                    this._player.toAbsoluteY(relativeTileY, this._visibleTiles)
+                );
 
                 if (tile === undefined) {
                     this._canvas.drawBlankTile(relativeTileX, relativeTileY, animationOffset);
@@ -251,12 +240,10 @@ class Engine
 
     _drawTileStack(animationOffset, centerSquarePosition)
     {
-        let areaTiles = this._areaTiles;
-
-        for (let relativeTileX = 0; relativeTileX < this._visibleTiles.x; relativeTileX++) {
-            for (let relativeTileY = 0; relativeTileY < this._visibleTiles.y; relativeTileY++) {
-                let absoluteTileX = areaTiles.x + relativeTileX;
-                let absoluteTileY = areaTiles.y + relativeTileY;
+        for (let relativeTileX = 0; relativeTileX < this._visibleTiles.sizeX; relativeTileX++) {
+            for (let relativeTileY = 0; relativeTileY < this._visibleTiles.sizeY; relativeTileY++) {
+                let absoluteTileX = this._player.toAbsoluteX(relativeTileX, this._visibleTiles);
+                let absoluteTileY = this._player.toAbsoluteY(relativeTileY, this._visibleTiles);
 
                 this._drawCharacter(
                     relativeTileX,
@@ -266,14 +253,16 @@ class Engine
                     animationOffset
                 );
 
-                this._drawPlayer(
-                    relativeTileX,
-                    relativeTileY,
-                    absoluteTileX,
-                    absoluteTileY,
-                    centerSquarePosition,
-                    animationOffset
-                );
+                if (relativeTileX === centerSquarePosition.x && relativeTileY === centerSquarePosition.y) {
+                    this._drawPlayer(
+                        relativeTileX,
+                        relativeTileY,
+                        absoluteTileX,
+                        absoluteTileY,
+                        centerSquarePosition,
+                        animationOffset
+                    );
+                }
 
                 this._drawTile(absoluteTileX, absoluteTileY, relativeTileX, relativeTileY, animationOffset);
             }
@@ -291,15 +280,12 @@ class Engine
      */
     _drawPlayer(relativeTileX, relativeTileY, absoluteX, absoluteY, centerSquarePosition, animationOffset)
     {
-        if (relativeTileX === centerSquarePosition.x && relativeTileY === centerSquarePosition.y) {
-            this._canvas.drawSprite(
-                centerSquarePosition.x,
-                centerSquarePosition.y,
-                this._spriteMap.getSprite(this._player.outfitSpriteId),
-                this._characterOffset
-            );
-        }
-
+        this._canvas.drawSprite(
+            centerSquarePosition.x,
+            centerSquarePosition.y,
+            this._spriteMap.getSprite(this._player.outfitSpriteId),
+            this._characterOffset
+        );
     }
 
     /**
@@ -337,7 +323,7 @@ class Engine
      */
     _drawTile(absoluteTileX, absoluteTileY, relativeTileX, relativeTileY, animationOffset)
     {
-        let tile = this._tiles.get(`${absoluteTileX}:${absoluteTileY}`);
+        let tile = this._area.tile(absoluteTileX, absoluteTileY);
 
         if (tile !== undefined && tile.stack.length) {
             for (let spriteId of tile.stack) {
@@ -356,12 +342,12 @@ class Engine
      */
     _drawNames(animationOffset, centerSquarePosition)
     {
-        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
+        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
         let font = new Font('Verdana', 'normal', 15);
 
         for (let character of visibleCharacters) {
-            let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
-            let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
+            let relativeX = character.getRelativeX(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
+            let relativeY = character.getRelativeY(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
             let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
 
             this._canvas.drawCharacterName(
@@ -434,12 +420,10 @@ class Engine
      */
     _drawTileAnimations(animationOffset)
     {
-        let areaTiles = this._areaTiles;
-
-        for (let relativeTileX = 0; relativeTileX < this._visibleTiles.x; relativeTileX++) {
-            for (let relativeTileY = 0; relativeTileY < this._visibleTiles.y; relativeTileY++) {
-                let absoluteX = areaTiles.x + relativeTileX;
-                let absoluteY = areaTiles.y + relativeTileY;
+        for (let relativeTileX = 0; relativeTileX < this._visibleTiles.sizeX; relativeTileX++) {
+            for (let relativeTileY = 0; relativeTileY < this._visibleTiles.sizeY; relativeTileY++) {
+                let absoluteX = this._player.toAbsoluteX(relativeTileX, this._visibleTiles);
+                let absoluteY = this._player.toAbsoluteY(relativeTileY, this._visibleTiles);
 
                 if (this._tileAnimations.has(absoluteX, absoluteY)) {
                     let animationStack = this._tileAnimations.get(absoluteX, absoluteY);
@@ -474,12 +458,12 @@ class Engine
      */
     _drawMessages(animationOffset)
     {
-        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
+        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
         let font = new Font('Verdana', 'normal', 15, Colors.YELLOW);
 
         for (let character of visibleCharacters) {
-            let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
-            let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
+            let relativeX = character.getRelativeX(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
+            let relativeY = character.getRelativeY(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
             let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
 
             let messageIndex = 0;
@@ -489,7 +473,7 @@ class Engine
             }
         }
 
-        let centerSquarePosition = AreaCalculator.centerPosition(this._visibleTiles.x, this._visibleTiles.y);
+        let centerSquarePosition = AreaCalculator.centerPosition(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
         let playerMessageIndex = 0;
         for (let message of this._player.messages) {
             this._canvas.drawCharacterMessage(
@@ -510,13 +494,13 @@ class Engine
      */
     _drawMousePointer(animationOffset)
     {
-        let position = this.getMouseRelativePosition();
+        let position = this.mouseRelativePosition;
 
-        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.x, this._visibleTiles.y);
+        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
 
         for (let character of visibleCharacters) {
-            let relativeX = character.getRelativeX(this._visibleTiles.x, this._visibleTiles.y);
-            let relativeY = character.getRelativeY(this._visibleTiles.x, this._visibleTiles.y);
+            let relativeX = character.getRelativeX(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
+            let relativeY = character.getRelativeY(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
             let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
 
             if (this._player.isAttacking(character.id)) {

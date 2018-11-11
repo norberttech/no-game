@@ -6,6 +6,7 @@ const Sprite = require('./Sprite');
 const Colors = require('./Colors');
 const Font = require('./Font');
 const TilePosition = require('./Engine/TilePosition');
+const VisibleTiles = require('./Engine/VisibleTiles');
 
 class Canvas
 {
@@ -19,24 +20,19 @@ class Canvas
         this._canvas = canvas;
         this._context = canvas.getContext('2d');
         this._visibleTiles = null;
-        this._hiddenTiles = null;
     }
 
     /**
-     * @param {int} tilesX
-     * @param {int} tilesY
-     * @param {int} hiddenTiles
+     * @param {VisibleTiles} visibleTiles
      */
-    setVisibleTiles(tilesX, tilesY, hiddenTiles)
+    setVisibleTiles(visibleTiles)
     {
-        Assert.integer(tilesX);
-        Assert.integer(tilesY);
-        Assert.integer(hiddenTiles);
+        Assert.instanceOf(visibleTiles, VisibleTiles);
 
-        this._visibleTiles = {x: tilesX, y: tilesY};
-        this._hiddenTiles = hiddenTiles;
-        this._canvas.setAttribute('data-visible-tiles-x', this._visibleTiles.x - this._hiddenTiles * 2);
-        this._canvas.setAttribute('data-visible-tiles-y', this._visibleTiles.y - this._hiddenTiles * 2);
+        this._visibleTiles = visibleTiles;
+
+        this._canvas.setAttribute('data-visible-tiles-x', this._visibleTiles.sizeX - this._visibleTiles.marginSize * 2);
+        this._canvas.setAttribute('data-visible-tiles-y', this._visibleTiles.sizeY - this._visibleTiles.marginSize * 2);
     }
 
     clear()
@@ -69,8 +65,8 @@ class Canvas
             sprite.offsetY(),
             sprite.width(),
             sprite.height(),
-            tileSize.getWidth() * (relativeTileX - this._hiddenTiles) + offset.getWidth(),
-            tileSize.getHeight() * (relativeTileY - this._hiddenTiles) + offset.getHeight(),
+            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth(),
+            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight(),
             tileSize.getWidth(),
             tileSize.getHeight()
         );
@@ -97,8 +93,8 @@ class Canvas
         this._context.lineWidth = 2;
         this._context.strokeStyle = color;
         this._context.rect(
-            tileSize.getWidth() * (relativeTileX - this._hiddenTiles) + offset.getWidth(),
-            tileSize.getHeight() * (relativeTileY - this._hiddenTiles) + offset.getHeight(),
+            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth(),
+            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight(),
             tileSize.getWidth(),
             tileSize.getHeight()
         );
@@ -125,8 +121,8 @@ class Canvas
         this._context.fillStyle = Colors.BLACK;
 
         this._context.fillRect(
-            tileSize.getWidth() * (relativeTileX - this._hiddenTiles) + offset.getHeight(),
-            tileSize.getHeight() * (relativeTileY - this._hiddenTiles) + offset.getHeight(),
+            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getHeight(),
+            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight(),
             tileSize.getWidth(),
             tileSize.getWidth()
         );
@@ -158,8 +154,8 @@ class Canvas
         this._context.beginPath();
         this._context.fillStyle = Colors.BLACK;
         this._context.fillRect(
-            tileSize.getWidth() * (relativeTileX - this._hiddenTiles) + offset.getWidth() ,
-            tileSize.getHeight() * (relativeTileY - this._hiddenTiles) + offset.getHeight() - 15,
+            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth() ,
+            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight() - 15,
             tileSize.getWidth(),
             10
         );
@@ -168,8 +164,8 @@ class Canvas
         this._context.beginPath();
         this._context.fillStyle = color;
         this._context.fillRect(
-            tileSize.getWidth() * (relativeTileX - this._hiddenTiles) + offset.getWidth() ,
-            tileSize.getHeight() * (relativeTileY - this._hiddenTiles) + offset.getHeight() - 15,
+            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth() ,
+            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight() - 15,
             tileSize.getWidth() * percentage,
             10
         );
@@ -179,8 +175,8 @@ class Canvas
         this._context.lineWidth = 1;
         this._context.strokeStyle = Colors.BLACK;
         this._context.rect(
-            tileSize.getWidth() * (relativeTileX - this._hiddenTiles) + offset.getWidth(),
-            tileSize.getHeight() * (relativeTileY - this._hiddenTiles) + offset.getHeight() - 15,
+            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth(),
+            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight() - 15,
             tileSize.getWidth() * percentage + 1,
             10
         );
@@ -204,8 +200,8 @@ class Canvas
         this.text(
             text,
             font,
-            tileSize.getWidth() * (relativeTileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(text, font, tileSize),
-            tileSize.getHeight() * (relativeTileY - this._hiddenTiles) + offset.getHeight() - 60 + topOffset
+            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth() + this._calculateTextTileOffset(text, font, tileSize),
+            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight() - 60 + topOffset
         );
     }
 
@@ -228,8 +224,8 @@ class Canvas
         Assert.instanceOf(offset, Size);
         Assert.instanceOf(font, Font);
 
-        if (relativeTileY < (this._visibleTiles.y - this._hiddenTiles)
-            && relativeTileX < (this._visibleTiles.x - this._hiddenTiles)
+        if (relativeTileY < (this._visibleTiles.sizeY - this._visibleTiles.marginSize)
+            && relativeTileX < (this._visibleTiles.sizeX - this._visibleTiles.marginSize)
             && relativeTileX > 0) {
 
             let tileSize = this.calculateTileSize();
@@ -237,8 +233,8 @@ class Canvas
             this.text(
                 name,
                 font,
-                tileSize.getWidth() * (relativeTileX - this._hiddenTiles) + offset.getWidth() + this._calculateTextTileOffset(name, font, tileSize),
-                tileSize.getHeight() * (relativeTileY - this._hiddenTiles) + offset.getHeight() - 38
+                tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth() + this._calculateTextTileOffset(name, font, tileSize),
+                tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight() - 38
             );
         }
     }
@@ -265,8 +261,8 @@ class Canvas
         this._context.fillStyle = color;
 
         this._context.fillRect(
-            tileSize.getWidth() * (relativeTileX - this._hiddenTiles) + offset.getWidth(),
-            tileSize.getHeight() * (relativeTileY - this._hiddenTiles) + offset.getHeight(),
+            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth(),
+            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight(),
             tileSize.getWidth(),
             tileSize.getHeight()
         );
@@ -312,8 +308,8 @@ class Canvas
         this.text(
             text,
             font,
-            tileSize.getWidth() * (relativeTileX - this._hiddenTiles) + offset.getWidth() + textOffset.getWidth() + positionOffset.getWidth(),
-            tileSize.getHeight() * (relativeTileY - this._hiddenTiles) + offset.getHeight() + textOffset.height + positionOffset.getHeight()
+            tileSize.getWidth() * (relativeTileX - this._visibleTiles.marginSize) + offset.getWidth() + textOffset.getWidth() + positionOffset.getWidth(),
+            tileSize.getHeight() * (relativeTileY - this._visibleTiles.marginSize) + offset.getHeight() + textOffset.height + positionOffset.getHeight()
         );
     }
 
@@ -351,8 +347,8 @@ class Canvas
     calculateTileSize()
     {
         return new Size(
-            Math.round(this._canvas.getAttribute('width') / (this._visibleTiles.x - (this._hiddenTiles * 2))),
-            Math.round(this._canvas.getAttribute('height') / (this._visibleTiles.y - (this._hiddenTiles * 2)))
+            Math.round(this._canvas.getAttribute('width') / (this._visibleTiles.sizeX - (this._visibleTiles.marginSize * 2))),
+            Math.round(this._canvas.getAttribute('height') / (this._visibleTiles.sizeY - (this._visibleTiles.marginSize * 2)))
         );
     }
 

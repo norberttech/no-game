@@ -5,6 +5,7 @@ const Player = require('./../Player');
 const Size = require('./Size');
 const MessageUI = require('./MessageUI');
 const Directions = require('./../Directions');
+const VisibleTiles = require('./Engine/VisibleTiles');
 
 class PlayerUI
 {
@@ -53,6 +54,26 @@ class PlayerUI
     }
 
     /**
+     * @param {int} relativeX
+     * @param {VisibleTiles} visibleTiles
+     * @return {int}
+     */
+    toAbsoluteX(relativeX, visibleTiles)
+    {
+        return (this.absoluteX - ((visibleTiles.sizeX - visibleTiles.marginSize) / 2)) + relativeX;
+    }
+
+    /**
+     * @param {int} relativeY
+     * @param {VisibleTiles} visibleTiles
+     * @return {int}
+     */
+    toAbsoluteY(relativeY, visibleTiles)
+    {
+        return (this.absoluteY - ((visibleTiles.sizeY - visibleTiles.marginSize) / 2)) + relativeY;
+    }
+
+    /**
      * @returns {int}
      */
     get experience()
@@ -71,7 +92,7 @@ class PlayerUI
     /**
      * @returns {int}
      */
-    get x()
+    get absoluteX()
     {
         return this._player.position.x;
     }
@@ -79,7 +100,7 @@ class PlayerUI
     /**
      * @returns {int}
      */
-    get y()
+    get absoluteY()
     {
         return this._player.position.y;
     }

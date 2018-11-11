@@ -148,9 +148,9 @@ class Kernel
      */
     setWalkPath(position)
     {
-        let visibleTiles = this._gfxEngine.getVisibleTiles();
-        let grid = new PathFinderGrid(visibleTiles.x, visibleTiles.y);
-        let centerPosition = AreaCalculator.centerPosition(visibleTiles.x, visibleTiles.y);
+        let visibleTiles = this._gfxEngine.visibleTiles;
+        let grid = new PathFinderGrid(visibleTiles.sizeX, visibleTiles.sizeY);
+        let centerPosition = AreaCalculator.centerPosition(visibleTiles.sizeX, visibleTiles.sizeY);
 
         for (let tile of this._area.tiles().values()) {
             grid.addTile(
@@ -279,7 +279,7 @@ class Kernel
         Assert.instanceOf(area, Area);
 
         this._area = area;
-        this._gfxEngine.setTiles(this._area.tiles());
+        this._gfxEngine.setArea(this._area);
     }
 
     /**

@@ -3,7 +3,6 @@
 const Assert = require('assert-js');
 const Logger = require('./../Common/Logger');
 const ExperienceCalculator = require('./../Common/ExperienceCalculator');
-const Loader = require('./Loader');
 const Player = require('./Player');
 const Area = require('./Map/Area');
 const Randomizer = require('./Randomizer');

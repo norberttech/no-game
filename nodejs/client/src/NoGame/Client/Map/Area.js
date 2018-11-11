@@ -1,7 +1,6 @@
 'use strict';
 
 const Tile = require('./Tile');
-const Positon = require('./../Position');
 const Assert = require('assert-js');
 
 class Area
@@ -45,13 +44,13 @@ class Area
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {int} absoluteTileX
+     * @param {int} absoluteTileY
      * @returns {boolean}
      */
-    canWalkOn(x, y)
+    canWalkOn(absoluteTileX, absoluteTileY)
     {
-        let tile = this._tiles.get(`${x}:${y}`);
+        let tile = this._tiles.get(`${absoluteTileX}:${absoluteTileY}`);
 
         if (tile === undefined) {
             return false;
@@ -61,16 +60,16 @@ class Area
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {int} absoluteTileX
+     * @param {int} absoluteTileY
      * @returns {Tile}
      */
-    tile(x, y)
+    tile(absoluteTileX, absoluteTileY)
     {
-        Assert.integer(x);
-        Assert.integer(y);
+        Assert.integer(absoluteTileX);
+        Assert.integer(absoluteTileY);
 
-        return this._tiles.get(`${x}:${y}`);
+        return this._tiles.get(`${absoluteTileX}:${absoluteTileY}`);
     }
 }
 
