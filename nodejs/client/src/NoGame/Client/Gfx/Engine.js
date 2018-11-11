@@ -101,7 +101,7 @@ class Engine
     {
         Assert.containsOnly(characters, Character);
 
-        this._characters.updateCharacters(characters, this._playerUI);
+        this._characters.updateCharacters(characters);
     }
 
     /**

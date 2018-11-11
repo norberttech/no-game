@@ -1,7 +1,6 @@
 'use strict';
 
 const Assert = require('assert-js');
-const PlayerUI = require('./PlayerUI');
 const Character = require('./../Character');
 const CharacterUI = require('./CharacterUI');
 
@@ -13,16 +12,14 @@ class CharactersUI
     }
 
     /**
-     * @param {Character} characters
-     * @param {PlayerUI} player
+     * @param {array<Character>} characters
      */
-    updateCharacters(characters, player)
+    updateCharacters(characters)
     {
         Assert.containsOnly(characters, Character);
-        Assert.instanceOf(player, PlayerUI);
 
         this._characters = characters.map((character) => {
-            return new CharacterUI(character, player);
+            return new CharacterUI(character);
         });
     }
 

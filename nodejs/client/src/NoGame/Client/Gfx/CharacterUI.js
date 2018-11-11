@@ -1,8 +1,6 @@
 'use strict';
 
-const AreaCalculator = require('./../../Common/AreaCalculator');
 const Assert = require('assert-js');
-const PlayerUI = require('./PlayerUI');
 const Character = require('./../Character');
 const Size = require('./Size');
 const MessageUI = require('./MessageUI');
@@ -11,15 +9,12 @@ class CharacterUI
 {
     /**
      * @param {Character} character
-     * @param {PlayerUI} player
      */
-    constructor(character, player)
+    constructor(character)
     {
         Assert.instanceOf(character, Character);
-        Assert.instanceOf(player, PlayerUI);
 
         this._character = character;
-        this._player = player;
         this._incomeMessages = [];
     }
 
