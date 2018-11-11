@@ -218,8 +218,7 @@ class Engine
     {
         this.visibleTiles.each((relativeTilePosition) => {
             let tile = this._area.tile(
-                relativeTilePosition.toAbsolute(this._player).x,
-                relativeTilePosition.toAbsolute(this._player).y
+                relativeTilePosition.toAbsolute(this._player)
             );
 
             if (tile === undefined) {
@@ -296,8 +295,7 @@ class Engine
      */
     _drawTile(relativeTilePosition, animationOffset)
     {
-        let absolutePosition = relativeTilePosition.toAbsolute(this._player);
-        let tile = this._area.tile(absolutePosition.x, absolutePosition.y);
+        let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
 
         if (tile !== undefined && tile.stack.length) {
             for (let spriteId of tile.stack) {
@@ -393,8 +391,8 @@ class Engine
         this.visibleTiles.each((relativeTilePosition) => {
             let absolutePosition = relativeTilePosition.toAbsolute(this._player);
 
-            if (this._tileAnimations.has(absolutePosition.x, absolutePosition.y)) {
-                let animationStack = this._tileAnimations.get(absolutePosition.x, absolutePosition.y);
+            if (this._tileAnimations.has(absolutePosition)) {
+                let animationStack = this._tileAnimations.get(absolutePosition);
 
                 for (let animation of animationStack.all) {
 

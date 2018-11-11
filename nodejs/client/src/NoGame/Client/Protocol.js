@@ -107,7 +107,7 @@ class Protocol
     {
         Assert.instanceOf(position, AbsolutePosition);
 
-        if (this._kernel.canMoveTo(position.x, position.y)) {
+        if (this._kernel.canMoveTo(position)) {
 
             if (this._kernel.player.isMoving) {
                 return;
@@ -117,13 +117,13 @@ class Protocol
 
             let moveTime = MoveSpeed.calculateMoveTime(
                 1,
-                this._kernel.area.tile(position.x, position.y).moveSpeedModifier
+                this._kernel.area.tile(position).moveSpeedModifier
             );
 
             // add extra 50ms to handle latency - need to find better way for that
             moveTime += LATENCY_DELAY;
 
-            this._kernel.move(position.x, position.y, moveTime);
+            this._kernel.move(position, moveTime);
         } else {
             this._kernel.clearWalkPath();
         }
@@ -191,7 +191,7 @@ class Protocol
                 );
                 break;
             case ServerMessages.PLAYER_MOVE:
-                if (!this._kernel.player.isMovingTo(message.data.x, message.data.y)) {
+                if (!this._kernel.player.isMovingTo(new AbsolutePosition(message.data.x, message.data.y))) {
                     this._kernel.clearWalkPath();
                     this._kernel.player.cancelMove();
                 }

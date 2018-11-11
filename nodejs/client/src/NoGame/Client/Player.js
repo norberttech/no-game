@@ -150,13 +150,13 @@ class Player
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {AbsolutePosition} position
+     *
      * @returns {boolean}
      */
-    isMovingTo(x, y)
+    isMovingTo(position)
     {
-        return this._position.isEqual(new AbsolutePosition(x, y));
+        return this._position.isEqual(position);
     }
 
     /**
@@ -176,22 +176,18 @@ class Player
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {AbsolutePosition} position
      * @param {int} moveTime
      */
-    startMovingTo(x, y, moveTime)
+    startMovingTo(position, moveTime)
     {
-        Assert.integer(x);
-        Assert.integer(y);
+        Assert.instanceOf(position, AbsolutePosition);
         Assert.integer(moveTime);
 
-        let newPosition = new AbsolutePosition(x, y);
-
-        this._direction = this._position.direction(newPosition);
+        this._direction = this._position.direction(position);
         this._moveTime = moveTime;
         this._moveFrom = this._position;
-        this._position = newPosition;
+        this._position = position;
         this._moveEnds = new Date().getTime() + moveTime;
     }
 

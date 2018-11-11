@@ -191,7 +191,6 @@ class Client
         this._protocol.move(position);
     }
 
-
     /**
      * @returns {AbsolutePosition}
      * @private

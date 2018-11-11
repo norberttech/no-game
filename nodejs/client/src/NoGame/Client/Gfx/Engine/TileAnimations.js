@@ -1,6 +1,7 @@
 'use strict';
 
 const Assert = require('assert-js');
+const AbsolutePosition = require('./../../Tile/AbsolutePosition');
 const Animation = require('./../Animation/Animation');
 const Stack = require('./../Animation/Stack');
 
@@ -12,75 +13,61 @@ class TileAnimations
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {AbsolutePosition} position
      * @param {Animation} animation
      */
-    add(x, y, animation)
+    add(position, animation)
     {
-        Assert.integer(x);
-        Assert.integer(y);
+        Assert.instanceOf(position, AbsolutePosition);
         Assert.instanceOf(animation, Animation);
 
-        if (!this.has(x,y)) {
-            this._tileAnimations.set(`${x}:${y}`, new Stack([animation]));
+        if (!this.has(position)) {
+            this._tileAnimations.set(position.toString(), new Stack([animation]));
         } else {
-            this._tileAnimations.get(`${x}:${y}`).putOn(animation);
+            this._tileAnimations.get(position.toString()).putOn(animation);
         }
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {AbsolutePosition} position
      * @returns {Stack}
      */
-    get(x, y)
+    get(position)
     {
-        Assert.integer(x);
-        Assert.integer(y);
-
-        if (!this.has(x, y)) {
-            throw `There is no animation defined for ${x}:${y}`;
+        if (!this.has(position)) {
+            throw `There is no animation defined for ${position.toString()}`;
         }
 
-        return this._tileAnimations.get(`${x}:${y}`);
+        return this._tileAnimations.get(position.toString());
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {AbsolutePosition} position
      * @returns {boolean}
      */
-    has(x, y)
+    has(position)
     {
-        Assert.integer(x);
-        Assert.integer(y);
+        Assert.instanceOf(position, AbsolutePosition);
 
-        if (this._tileAnimations.has(`${x}:${y}`)) {
-            if (!this._tileAnimations.get(`${x}:${y}`).size) {
-                return false;
-            }
-
-            return true;
+        if (this._tileAnimations.has(position.toString())) {
+            return this._tileAnimations.get(position.toString()).size;
         }
 
         return false;
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {AbsolutePosition} position
      */
-    remove(x, y)
+    remove(position)
     {
-        Assert.integer(x);
-        Assert.integer(y);
+        Assert.instanceOf(position, AbsolutePosition);
 
-        if (!this.has(x, y)) {
-            throw `There is no animation defined for ${x}:${y}`;
+        if (!this.has(position)) {
+            throw `There is no animation defined for ${position.toString()}`;
         }
 
-        this._tileAnimations.delete(`${x}:${y}`);
+        this._tileAnimations.delete(position.toString());
     }
 
     clear()

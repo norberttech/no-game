@@ -1,6 +1,7 @@
 'use strict';
 
 const Tile = require('./Tile');
+const AbsolutePosition = require('./../Tile/AbsolutePosition');
 const Assert = require('assert-js');
 
 class Area
@@ -12,13 +13,13 @@ class Area
     }
 
     /**
-     * @param tile
+     * @param {Tile} tile
      */
     setTile(tile)
     {
         Assert.instanceOf(tile, Tile);
 
-        this._tiles.set(tile.toString(), tile);
+        this._tiles.set(tile.position.toString(), tile);
     }
 
     /**
@@ -31,7 +32,7 @@ class Area
         this._tiles.clear();
 
         for (let tile of tiles) {
-            this._tiles.set(tile.toString(), tile);
+            this._tiles.set(tile.position.toString(), tile);
         }
     }
 
@@ -44,13 +45,13 @@ class Area
     }
 
     /**
-     * @param {int} absoluteTileX
-     * @param {int} absoluteTileY
+     * @param {AbsolutePosition} position
+     *
      * @returns {boolean}
      */
-    canWalkOn(absoluteTileX, absoluteTileY)
+    canWalkOn(position)
     {
-        let tile = this._tiles.get(`${absoluteTileX}:${absoluteTileY}`);
+        let tile = this._tiles.get(position.toString());
 
         if (tile === undefined) {
             return false;
@@ -60,16 +61,14 @@ class Area
     }
 
     /**
-     * @param {int} absoluteTileX
-     * @param {int} absoluteTileY
+     * @param {AbsolutePosition} position
      * @returns {Tile}
      */
-    tile(absoluteTileX, absoluteTileY)
+    tile(position)
     {
-        Assert.integer(absoluteTileX);
-        Assert.integer(absoluteTileY);
+        Assert.instanceOf(position, AbsolutePosition);
 
-        return this._tiles.get(`${absoluteTileX}:${absoluteTileY}`);
+        return this._tiles.get(position.toString());
     }
 }
 

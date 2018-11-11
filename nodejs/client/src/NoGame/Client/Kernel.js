@@ -126,17 +126,15 @@ class Kernel
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {AbsolutePosition} position
      * @param {int} moveTime
      */
-    move(x, y, moveTime)
+    move(position, moveTime)
     {
-        Assert.integer(x);
-        Assert.integer(y);
+        Assert.instanceOf(position, AbsolutePosition);
         Assert.integer(moveTime);
 
-        this.player.startMovingTo(x, y, moveTime);
+        this.player.startMovingTo(position, moveTime);
     }
 
     clearWalkPath()
@@ -263,13 +261,12 @@ class Kernel
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {AbsolutePosition} position
      * @return {boolean}
      */
-    canMoveTo(x, y)
+    canMoveTo(position)
     {
-        return this._area.canWalkOn(x, y);
+        return this._area.canWalkOn(position);
     }
 
     /**
@@ -291,16 +288,14 @@ class Kernel
         Assert.integer(newValue);
 
         this._gfxEngine.tileAnimations.add(
-            this.player.position.x,
-            this.player.position.y,
+            this.player.position,
             AnimationFactory.bloodSplashAnimation()
         );
 
         let hpDifference = this.player.health - newValue;
 
         this._gfxEngine.tileAnimations.add(
-            this._player.position.x,
-            this._player.position.y,
+            this.player.position,
             AnimationFactory.healthFadeOut(hpDifference)
         );
 
@@ -319,16 +314,14 @@ class Kernel
         let character = this.getCharacter(id);
 
         this._gfxEngine.tileAnimations.add(
-            character.position.x,
-            character.position.y,
+            character.position,
             AnimationFactory.bloodSplashAnimation()
         );
 
         let hpDifference = character.health - newValue;
 
         this._gfxEngine.tileAnimations.add(
-            character.position.x,
-            character.position.y,
+            character.position,
             AnimationFactory.healthFadeOut(hpDifference)
         );
 
@@ -339,8 +332,7 @@ class Kernel
     playerParry()
     {
         this._gfxEngine.tileAnimations.add(
-            this.player.position.x,
-            this.player.position.y,
+            this.player.position,
             AnimationFactory.parryAnimation()
         );
     }
@@ -355,8 +347,7 @@ class Kernel
         let character = this.getCharacter(id);
 
         this._gfxEngine.tileAnimations.add(
-            character.position.x,
-            character.position.y,
+            character.position,
             AnimationFactory.parryAnimation()
         );
     }

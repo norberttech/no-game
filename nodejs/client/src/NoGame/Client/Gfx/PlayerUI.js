@@ -34,20 +34,27 @@ class PlayerUI
         let offsetX = 0;
         let offsetY = 0;
 
+        let _getProgress = (distance) => {
+            let duration = this._player.getMoveTime();
+            let progress = Math.min((duration - (this._player.getMoveEnds() - new Date().getTime())) / duration, 1);
+
+            return Math.round(distance * progress);
+        };
+
         if (moveFrom.x + 1 === currentPos.x) {
-            offsetX -= this._getProgress(tileSize.getWidth()) - tileSize.getWidth();
+            offsetX -= _getProgress(tileSize.getWidth()) - tileSize.getWidth();
         }
 
         if (moveFrom.x - 1 === currentPos.x) {
-            offsetX += this._getProgress(tileSize.getWidth()) - tileSize.getWidth();
+            offsetX += _getProgress(tileSize.getWidth()) - tileSize.getWidth();
         }
 
         if (moveFrom.y + 1 === currentPos.y) {
-            offsetY -= this._getProgress(tileSize.getHeight()) - tileSize.getHeight();
+            offsetY -= _getProgress(tileSize.getHeight()) - tileSize.getHeight();
         }
 
         if (moveFrom.y - 1 === currentPos.y) {
-            offsetY += this._getProgress(tileSize.getHeight()) - tileSize.getHeight();
+            offsetY += _getProgress(tileSize.getHeight()) - tileSize.getHeight();
         }
 
         return new Size(offsetX, offsetY);
@@ -67,22 +74,6 @@ class PlayerUI
     get level()
     {
         return this._player.level;
-    }
-
-    /**
-     * @returns {int}
-     */
-    get absoluteX()
-    {
-        return this._player.position.x;
-    }
-
-    /**
-     * @returns {int}
-     */
-    get absoluteY()
-    {
-        return this._player.position.y;
     }
 
     /**
@@ -162,19 +153,6 @@ class PlayerUI
     isAttackedBy(characterId)
     {
         return this._player.isAttackedBy(characterId);
-    }
-
-    /**
-     * @param {int} distance
-     * @returns {int}
-     * @private
-     */
-    _getProgress(distance)
-    {
-        let duration = this._player.getMoveTime();
-        let progress = Math.min((duration - (this._player.getMoveEnds() - new Date().getTime())) / duration, 1);
-
-        return Math.round(distance * progress);
     }
 
     get outfitSpriteId()
