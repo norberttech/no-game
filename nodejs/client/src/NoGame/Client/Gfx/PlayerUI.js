@@ -54,26 +54,6 @@ class PlayerUI
     }
 
     /**
-     * @param {int} relativeX
-     * @param {VisibleTiles} visibleTiles
-     * @return {int}
-     */
-    toAbsoluteX(relativeX, visibleTiles)
-    {
-        return (this.absoluteX - ((visibleTiles.sizeX - visibleTiles.marginSize) / 2)) + relativeX;
-    }
-
-    /**
-     * @param {int} relativeY
-     * @param {VisibleTiles} visibleTiles
-     * @return {int}
-     */
-    toAbsoluteY(relativeY, visibleTiles)
-    {
-        return (this.absoluteY - ((visibleTiles.sizeY - visibleTiles.marginSize) / 2)) + relativeY;
-    }
-
-    /**
      * @returns {int}
      */
     get experience()

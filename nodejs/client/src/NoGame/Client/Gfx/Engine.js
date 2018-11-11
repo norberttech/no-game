@@ -178,13 +178,17 @@ class Engine
      */
     get mouseRelativePosition()
     {
-        let tileSize = this._canvas.calculateTileSize();
+        try {
+            let tileSize = this._canvas.calculateTileSize();
 
-        return new RelativePosition(
-            Math.floor(this._mouse.pixelPositionX / tileSize.getWidth()) + this._visibleTiles.marginSize,
-            Math.floor(this._mouse.pixelPositionY / tileSize.getHeight()) + this._visibleTiles.marginSize,
-            this._visibleTiles
-        );
+            return new RelativePosition(
+                Math.floor(this._mouse.pixelPositionX / tileSize.getWidth()) + this._visibleTiles.marginSize,
+                Math.floor(this._mouse.pixelPositionY / tileSize.getHeight()) + this._visibleTiles.marginSize,
+                this._visibleTiles
+            );
+        } catch (e) {
+            return RelativePosition.createCenter(this.visibleTiles);
+        }
     }
 
     /**
@@ -192,12 +196,7 @@ class Engine
      */
     get mouseAbsolutePosition()
     {
-        let relativePosition = this.mouseRelativePosition;
-
-        return new AbsolutePosition(
-            this._playerUI.absoluteX - (this._visibleTiles.centerPosition.x - relativePosition.x),
-            this._playerUI.absoluteY - (this._visibleTiles.centerPosition.y - relativePosition.y)
-        );
+        return this.mouseRelativePosition.toAbsolute(this._player);
     }
 
     /**
@@ -398,36 +397,33 @@ class Engine
      */
     _drawTileAnimations(animationOffset)
     {
-        for (let relativeTileX = 0; relativeTileX < this._visibleTiles.sizeX; relativeTileX++) {
-            for (let relativeTileY = 0; relativeTileY < this._visibleTiles.sizeY; relativeTileY++) {
-                let absoluteX = this._playerUI.toAbsoluteX(relativeTileX, this._visibleTiles);
-                let absoluteY = this._playerUI.toAbsoluteY(relativeTileY, this._visibleTiles);
+        this.visibleTiles.each((relativeTilePosition) => {
+            let absolutePosition = relativeTilePosition.toAbsolute(this._player);
 
-                if (this._tileAnimations.has(absoluteX, absoluteY)) {
-                    let animationStack = this._tileAnimations.get(absoluteX, absoluteY);
+            if (this._tileAnimations.has(absolutePosition.x, absolutePosition.y)) {
+                let animationStack = this._tileAnimations.get(absolutePosition.x, absolutePosition.y);
 
-                    for (let animation of animationStack.all) {
+                for (let animation of animationStack.all) {
 
-                        if (animation instanceof FrameAnimation) {
-                            let sprite = this._spriteMap.getSprite(animation.frame);
-                            this._canvas.drawSprite(relativeTileX, relativeTileY, sprite, animationOffset);
-                        }
+                    if (animation instanceof FrameAnimation) {
+                        let sprite = this._spriteMap.getSprite(animation.frame);
+                        this._canvas.drawSprite(relativeTilePosition.x, relativeTilePosition.y, sprite, animationOffset);
+                    }
 
-                        if (animation instanceof MoveAnimation) {
-                            this._canvas.textTile(
-                                animation.text,
-                                animation.font,
-                                relativeTileX,
-                                relativeTileY,
-                                animationOffset,
-                                new Size(-10, -animation.distance),
-                                TilePosition.TOP_RIGHT
-                            );
-                        }
+                    if (animation instanceof MoveAnimation) {
+                        this._canvas.textTile(
+                            animation.text,
+                            animation.font,
+                            relativeTilePosition.x,
+                            relativeTilePosition.y,
+                            animationOffset,
+                            new Size(-10, -animation.distance),
+                            TilePosition.TOP_RIGHT
+                        );
                     }
                 }
             }
-        }
+        });
     }
 
     /**
