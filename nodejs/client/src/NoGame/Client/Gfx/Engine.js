@@ -174,15 +174,16 @@ class Engine
     }
 
     /**
-     * @returns {Position}
+     * @returns {RelativePosition}
      */
     get mouseRelativePosition()
     {
         let tileSize = this._canvas.calculateTileSize();
 
-        return new Position(
+        return new RelativePosition(
             Math.floor(this._mouse.pixelPositionX / tileSize.getWidth()) + this._visibleTiles.marginSize,
-            Math.floor(this._mouse.pixelPositionY / tileSize.getHeight()) + this._visibleTiles.marginSize
+            Math.floor(this._mouse.pixelPositionY / tileSize.getHeight()) + this._visibleTiles.marginSize,
+            this._visibleTiles
         );
     }
 

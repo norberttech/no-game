@@ -5,6 +5,7 @@ const Engine = require('./Gfx/Engine');
 const Area = require('./Map/Area');
 const Player = require('./Player');
 const Position = require('./Position');
+const RelativePosition = require('./RelativePosition');
 const Path = require('./Path');
 const Character = require('./Character');
 const PathFinder = require('./../Common/PathFinder');
@@ -144,9 +145,9 @@ class Kernel
     }
 
     /**
-     * @param {Position} position
+     * @param {RelativePosition} relativePosition
      */
-    setWalkPath(position)
+    setWalkPath(relativePosition)
     {
         let visibleTiles = this._gfxEngine.visibleTiles;
         let grid = new PathFinderGrid(visibleTiles.sizeX, visibleTiles.sizeY);
@@ -162,7 +163,7 @@ class Kernel
 
         try {
             this._walkPath = new Path(
-                this._pathFinder.findPath(centerPosition.x, centerPosition.y, position.x, position.y, grid),
+                this._pathFinder.findPath(centerPosition.x, centerPosition.y, relativePosition.x, relativePosition.y, grid),
                 this._player.position,
                 new Position(centerPosition.x, centerPosition.y)
             );
