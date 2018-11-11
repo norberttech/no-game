@@ -228,16 +228,16 @@ class Engine
     {
         let areaTiles = this._areaTiles;
 
-        for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
-            for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
-                let absoluteX = areaTiles.x + tileX;
-                let absoluteY = areaTiles.y + tileY;
+        for (let relativeTileX = 0; relativeTileX < this._visibleTiles.x; relativeTileX++) {
+            for (let relativeTileY = 0; relativeTileY < this._visibleTiles.y; relativeTileY++) {
+                let absoluteX = areaTiles.x + relativeTileX;
+                let absoluteY = areaTiles.y + relativeTileY;
                 let tile = this._tiles.get(`${absoluteX}:${absoluteY}`);
 
                 if (tile === undefined) {
-                    this._canvas.drawBlankTile(tileX, tileY, animationOffset);
+                    this._canvas.drawBlankTile(relativeTileX, relativeTileY, animationOffset);
                 } else {
-                    this._canvas.drawSprite(tileX, tileY, this._spriteMap.getSprite(tile.ground), animationOffset);
+                    this._canvas.drawSprite(relativeTileX, relativeTileY, this._spriteMap.getSprite(tile.ground), animationOffset);
                 }
             }
         }
@@ -253,71 +253,66 @@ class Engine
     {
         let areaTiles = this._areaTiles;
 
-        for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
-            for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
-                let absoluteX = areaTiles.x + tileX;
-                let absoluteY = areaTiles.y + tileY;
+        for (let relativeTileX = 0; relativeTileX < this._visibleTiles.x; relativeTileX++) {
+            for (let relativeTileY = 0; relativeTileY < this._visibleTiles.y; relativeTileY++) {
+                let absoluteTileX = areaTiles.x + relativeTileX;
+                let absoluteTileY = areaTiles.y + relativeTileY;
 
                 this._drawCharacter(
-                    tileX,
-                    tileY,
-                    absoluteX,
-                    absoluteY,
+                    relativeTileX,
+                    relativeTileY,
+                    absoluteTileX,
+                    absoluteTileY,
                     animationOffset
                 );
 
                 this._drawPlayer(
-                    tileX,
-                    tileY,
-                    absoluteX,
-                    absoluteY,
+                    relativeTileX,
+                    relativeTileY,
+                    absoluteTileX,
+                    absoluteTileY,
                     centerSquarePosition,
                     animationOffset
                 );
 
-                this._drawTile(absoluteX, absoluteY, tileX, tileY, animationOffset);
+                this._drawTile(absoluteTileX, absoluteTileY, relativeTileX, relativeTileY, animationOffset);
             }
         }
     }
 
     /**
-     * @param {int} tileX
-     * @param {int} tileY
+     * @param {int} relativeTileX
+     * @param {int} relativeTileY
      * @param {int} absoluteX
      * @param {int} absoluteY
      * @param {{x: int, y: int}} centerSquarePosition
      * @param {Size} animationOffset
      * @private
      */
-    _drawPlayer(tileX, tileY, absoluteX, absoluteY, centerSquarePosition, animationOffset)
+    _drawPlayer(relativeTileX, relativeTileY, absoluteX, absoluteY, centerSquarePosition, animationOffset)
     {
-        if (tileX === centerSquarePosition.x && tileY === centerSquarePosition.y) {
+        if (relativeTileX === centerSquarePosition.x && relativeTileY === centerSquarePosition.y) {
             this._canvas.drawSprite(
                 centerSquarePosition.x,
                 centerSquarePosition.y,
                 this._spriteMap.getSprite(this._player.outfitSpriteId),
                 this._characterOffset
             );
-
-            this._drawTile(absoluteX - 1, absoluteY, tileX - 1, tileY, animationOffset);
-            this._drawTile(absoluteX - 2, absoluteY, tileX - 2, tileY, animationOffset);
-            this._drawTile(absoluteX - 1, absoluteY + 1, tileX - 1, tileY + 1, animationOffset);
-            this._drawTile(absoluteX + 1, absoluteY - 1, tileX + 1, tileY - 1, animationOffset);
         }
 
     }
 
     /**
-     * @param {int} tileX
-     * @param {int} tileY
-     * @param {int} absoluteX
-     * @param {int} absoluteY
+     * @param {int} relativeTileX
+     * @param {int} relativeTileY
+     * @param {int} absoluteTileX
+     * @param {int} absoluteTileY
      * @param {Size} animationOffset
      * @private
      */
-    _drawCharacter(tileX, tileY, absoluteX, absoluteY, animationOffset)
+    _drawCharacter(relativeTileX, relativeTileY, absoluteTileX, absoluteTileY, animationOffset)
     {
-        let character = this._characters.character(absoluteX, absoluteY);
+        let character = this._characters.character(absoluteTileX, absoluteTileY);
 
         if (character !== undefined) {
             let color = character.isPlayer ? Colors.BLUE : Colors.GRAY;
@@ -325,30 +320,30 @@ class Engine
 
             this._canvas.drawCharacter(
                 color,
-                tileX,
-                tileY,
+                relativeTileX,
+                relativeTileY,
                 offset.add(this._characterOffset)
             );
         }
     }
 
     /**
-     * @param {int} absoluteX
-     * @param {int} absoluteY
-     * @param {int} tileX
-     * @param {int} tileY
+     * @param {int} absoluteTileX
+     * @param {int} absoluteTileY
+     * @param {int} relativeTileX
+     * @param {int} relativeTileY
      * @param {Size} animationOffset
      * @private
      */
-    _drawTile(absoluteX, absoluteY, tileX, tileY, animationOffset)
+    _drawTile(absoluteTileX, absoluteTileY, relativeTileX, relativeTileY, animationOffset)
     {
-        let tile = this._tiles.get(`${absoluteX}:${absoluteY}`);
+        let tile = this._tiles.get(`${absoluteTileX}:${absoluteTileY}`);
 
         if (tile !== undefined && tile.stack.length) {
             for (let spriteId of tile.stack) {
                 if (this._spriteMap.hasSprite(spriteId)) {
                     let sprite = this._spriteMap.getSprite(spriteId);
-                    this._canvas.drawSprite(tileX, tileY, sprite, animationOffset);
+                    this._canvas.drawSprite(relativeTileX, relativeTileY, sprite, animationOffset);
                 }
             }
         }
@@ -441,10 +436,10 @@ class Engine
     {
         let areaTiles = this._areaTiles;
 
-        for (let tileX = 0; tileX < this._visibleTiles.x; tileX++) {
-            for (let tileY = 0; tileY < this._visibleTiles.y; tileY++) {
-                let absoluteX = areaTiles.x + tileX;
-                let absoluteY = areaTiles.y + tileY;
+        for (let relativeTileX = 0; relativeTileX < this._visibleTiles.x; relativeTileX++) {
+            for (let relativeTileY = 0; relativeTileY < this._visibleTiles.y; relativeTileY++) {
+                let absoluteX = areaTiles.x + relativeTileX;
+                let absoluteY = areaTiles.y + relativeTileY;
 
                 if (this._tileAnimations.has(absoluteX, absoluteY)) {
                     let animationStack = this._tileAnimations.get(absoluteX, absoluteY);
@@ -453,15 +448,15 @@ class Engine
 
                         if (animation instanceof FrameAnimation) {
                             let sprite = this._spriteMap.getSprite(animation.frame);
-                            this._canvas.drawSprite(tileX, tileY, sprite, animationOffset);
+                            this._canvas.drawSprite(relativeTileX, relativeTileY, sprite, animationOffset);
                         }
 
                         if (animation instanceof MoveAnimation) {
                             this._canvas.textTile(
                                 animation.text,
                                 animation.font,
-                                tileX,
-                                tileY,
+                                relativeTileX,
+                                relativeTileY,
                                 animationOffset,
                                 new Size(-10, -animation.distance),
                                 TilePosition.TOP_RIGHT

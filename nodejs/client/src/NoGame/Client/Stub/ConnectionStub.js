@@ -26,8 +26,9 @@ class ConnectionStub extends Connection
      * @param {string} serverAddress
      * @param {function} onOpen
      * @param {function} onMessage
+     * @param {function} onError
      */
-    open(serverAddress, onOpen, onMessage)
+    open(serverAddress, onOpen, onMessage, onError)
     {
         onOpen(this);
         this._onMessage = onMessage;
@@ -46,7 +47,7 @@ class ConnectionStub extends Connection
      */
     send(message, callback = () => {})
     {
-        let centerPosition = AreaCalculator.centerPosition(15, 11);
+        let centerPosition = AreaCalculator.centerPosition(17, 13);
 
         switch (message.constructor.name) {
             case 'LoginMessage':
@@ -112,8 +113,8 @@ class ConnectionStub extends Connection
             data: {
                 name: 'offlinea',
                 visibleTiles: {
-                    x: 15,
-                    y: 11
+                    x: 17,
+                    y: 13
                 }
             }
         };
