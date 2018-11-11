@@ -27,38 +27,18 @@ class CharactersUI
     }
 
     /**
-     * @param {int} relativeTileX
-     * @param {int} relativeTileY
-     * @returns {CharacterUI[]}
-     */
-    getVisibleCharacters(relativeTileX, relativeTileY)
-    {
-        let visibleCharacters = [];
-
-        for (let character of this._characters) {
-            let relativeX = character.getRelativeX(relativeTileX, relativeTileY);
-            let relativeY = character.getRelativeY(relativeTileX, relativeTileY);
-
-            if (relativeX >= 0 && relativeX < relativeTileX && relativeY >= 0 && relativeY < relativeTileY) {
-                visibleCharacters.push(character);
-            }
-        }
-
-        return visibleCharacters;
-    }
-
-    /**
-     * @param {int} absoluteTileX
-     * @param {int} absoluteTileY
+     * @param {AbsolutePosition} absolutePosition
      * @return {CharacterUI}
      */
-    character(absoluteTileX, absoluteTileY)
+    findCharacter(absolutePosition)
     {
         for (let character of this._characters) {
-            if (character.x === absoluteTileX && character.y === absoluteTileY) {
+            if (character.position.isEqual(absolutePosition)) {
                 return character;
             }
         }
+
+        return null;
     }
 
     /**

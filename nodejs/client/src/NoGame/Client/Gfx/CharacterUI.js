@@ -48,27 +48,11 @@ class CharacterUI
     }
 
     /**
-     * @param {int} relativeTileX
-     * @param {int} relativeTileY
-     * @returns {int}
+     * @returns {AbsolutePosition}
      */
-    getRelativeX(relativeTileX, relativeTileY)
+    get position()
     {
-        let centerSquarePosition = AreaCalculator.centerPosition(relativeTileX, relativeTileY);
-
-        return centerSquarePosition.x - (this._player.absoluteX - this.x);
-    }
-
-    /**
-     * @param {int} visibleX
-     * @param {int} visibleY
-     * @returns {int}
-     */
-    getRelativeY(visibleX, visibleY)
-    {
-        let centerSquarePosition = AreaCalculator.centerPosition(visibleX, visibleY);
-
-        return centerSquarePosition.y - (this._player.absoluteY - this.y);
+        return this._character.position;
     }
 
     /**
@@ -77,22 +61,6 @@ class CharacterUI
     get name()
     {
         return this._character.name;
-    }
-
-    /**
-     * @returns {int}
-     */
-    get x()
-    {
-        return this._character.position.x;
-    }
-
-    /**
-     * @returns {int}
-     */
-    get y()
-    {
-        return this._character.position.y;
     }
 
     /**

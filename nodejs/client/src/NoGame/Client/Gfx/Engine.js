@@ -237,6 +237,7 @@ class Engine
     _drawTileStack(animationOffset)
     {
         this.visibleTiles.each((relativeTilePosition) => {
+
             this._drawCharacter(
                 relativeTilePosition,
                 animationOffset
@@ -275,13 +276,10 @@ class Engine
      */
     _drawCharacter(relativeTilePosition, animationOffset)
     {
-        let absoluteTileX = relativeTilePosition.toAbsolute(this._player).x;
-        let absoluteTileY = relativeTilePosition.toAbsolute(this._player).y;
+        let character = this._characters.findCharacter(relativeTilePosition.toAbsolute(this._player));
 
-        let character = this._characters.character(absoluteTileX, absoluteTileY);
-
-        if (character !== undefined) {
-            let color = character.isPlayer ? Colors.BLUE : Colors.GRAY;
+        if (character !== null) {
+            let color = character.isPlayer ? Colors.BLUE : Colors.RED;
             let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
 
             this._canvas.drawCharacter(
@@ -319,29 +317,30 @@ class Engine
      */
     _drawNames(animationOffset)
     {
-        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
         let font = new Font('Verdana', 'normal', 15);
 
-        for (let character of visibleCharacters) {
-            let relativeX = character.getRelativeX(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
-            let relativeY = character.getRelativeY(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
-            let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
+        this._visibleTiles.each((relativeTilePosition) => {
+            let character = this._characters.findCharacter(relativeTilePosition.toAbsolute(this._player));
 
-            this._canvas.drawCharacterName(
-                character.name,
-                relativeX,
-                relativeY,
-                offset.add(this._characterOffset),
-                font
-            );
-            this._canvas.drawHealthBar(
-                character.health,
-                character.maxHealth,
-                relativeX,
-                relativeY,
-                offset.add(this._characterOffset)
-            );
-        }
+            if (character !== null) {
+                let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
+
+                this._canvas.drawCharacterName(
+                    character.name,
+                    relativeTilePosition.x,
+                    relativeTilePosition.y,
+                    offset.add(this._characterOffset),
+                    font
+                );
+                this._canvas.drawHealthBar(
+                    character.health,
+                    character.maxHealth,
+                    relativeTilePosition.x,
+                    relativeTilePosition.y,
+                    offset.add(this._characterOffset)
+                );
+            }
+        });
 
         this._canvas.drawCharacterName(
             this._playerUI.name,
@@ -432,20 +431,28 @@ class Engine
      */
     _drawMessages(animationOffset)
     {
-        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
         let font = new Font('Verdana', 'normal', 15, Colors.YELLOW);
 
-        for (let character of visibleCharacters) {
-            let relativeX = character.getRelativeX(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
-            let relativeY = character.getRelativeY(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
-            let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
+        this._visibleTiles.each((relativeTilePosition) => {
+            let character = this._characters.findCharacter(relativeTilePosition.toAbsolute(this._player));
 
-            let messageIndex = 0;
-            for (let message of character.messages) {
-                this._canvas.drawCharacterMessage(message.getText(), messageIndex, relativeX, relativeY, offset, font);
-                messageIndex++;
+            if (character !== null) {
+                let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
+
+                let messageIndex = 0;
+                for (let message of character.messages) {
+                    this._canvas.drawCharacterMessage(
+                        message.getText(),
+                        messageIndex,
+                        relativeTilePosition.x,
+                        relativeTilePosition.y,
+                        offset,
+                        font
+                    );
+                    messageIndex++;
+                }
             }
-        }
+        });
 
         let playerMessageIndex = 0;
         for (let message of this._playerUI.messages) {
@@ -467,24 +474,24 @@ class Engine
      */
     _drawMousePointer(animationOffset)
     {
-        let position = this.mouseRelativePosition;
+        this._visibleTiles.each((relativeTilePosition) => {
+            let character = this._characters.findCharacter(relativeTilePosition.toAbsolute(this._player));
 
-        let visibleCharacters = this._characters.getVisibleCharacters(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
+            if (character !== null) {
+                let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
 
-        for (let character of visibleCharacters) {
-            let relativeX = character.getRelativeX(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
-            let relativeY = character.getRelativeY(this._visibleTiles.sizeX, this._visibleTiles.sizeY);
-            let offset = animationOffset.add(character.calculateMoveAnimationOffset(this._canvas.calculateTileSize()));
-
-            if (this._playerUI.isAttacking(character.id)) {
-                this._canvas.drawPointer(
-                    Colors.RED,
-                    relativeX,
-                    relativeY,
-                    offset
-                );
+                if (this._playerUI.isAttacking(character.id)) {
+                    this._canvas.drawPointer(
+                        Colors.RED,
+                        relativeTilePosition.x,
+                        relativeTilePosition.y,
+                        offset
+                    );
+                }
             }
-        }
+        });
+
+        let position = this.mouseRelativePosition;
 
         this._canvas.drawPointer(
             Colors.BLUE,
