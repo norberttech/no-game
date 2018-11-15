@@ -10,23 +10,32 @@ class Tile
      * @param {int} y
      * @param {boolean} canWalkOn
      * @param {int} ground
-     * @param {array} stack
+     * @param {int} layer1
+     * @param {int} layer2
+     * @param {int} layer3
+     * @param {int} layer4
      * @param {int} moveSpeedModifier
      */
-    constructor(x, y, canWalkOn, ground, stack, moveSpeedModifier)
+    constructor(x, y, canWalkOn, ground, layer1, layer2, layer3, layer4, moveSpeedModifier)
     {
         Assert.integer(x);
         Assert.integer(y);
         Assert.boolean(canWalkOn);
         Assert.integer(ground);
-        Assert.array(stack);
+        Assert.integer(layer1);
+        Assert.integer(layer2);
+        Assert.integer(layer3);
+        Assert.integer(layer4);
         Assert.integer(moveSpeedModifier);
 
         this._x = x;
         this._y = y;
         this._canWalkOn = canWalkOn;
         this._ground = ground;
-        this._stack = stack;
+        this._layer1 = layer1;
+        this._layer2 = layer2;
+        this._layer3 = layer3;
+        this._layer4 = layer4;
         this._moveSpeedModifier = moveSpeedModifier;
     }
 
@@ -63,6 +72,38 @@ class Tile
     }
 
     /**
+     * @returns {int}
+     */
+    get layer1()
+    {
+        return this._layer1;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get layer2()
+    {
+        return this._layer2;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get layer3()
+    {
+        return this._layer3;
+    }
+
+    /**
+     * @returns {int}
+     */
+    get layer4()
+    {
+        return this._layer4;
+    }
+
+    /**
      * @returns {string}
      */
     toString()
@@ -76,14 +117,6 @@ class Tile
     get canWalkOn()
     {
         return this._canWalkOn;
-    }
-
-    /**
-     * @returns {array}
-     */
-    get stack()
-    {
-        return this._stack;
     }
 
     /**

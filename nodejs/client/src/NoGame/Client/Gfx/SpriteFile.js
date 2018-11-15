@@ -58,7 +58,7 @@ class SpriteFile
     }
 
     /**
-     * @param {number} id
+     * @param {int} id
      */
     hasId(id)
     {

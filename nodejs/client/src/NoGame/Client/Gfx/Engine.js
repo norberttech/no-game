@@ -10,6 +10,7 @@ const CharactersUI = require('./CharactersUI');
 const SpriteMap = require('./SpriteMap');
 const Mouse = require('./../Input/Mouse');
 const Character = require('./../Character');
+const Directions = require('./../Directions');
 const AbsolutePosition = require('./../Tile/AbsolutePosition');
 const Colors = require('./Colors');
 const TileAnimations = require('./Engine/TileAnimations');
@@ -158,7 +159,7 @@ class Engine
                     if (null !== this._playerUI && null !== this._area) {
                         this._canvas.clear();
                         this._drawGround(animationOffset);
-                        this._drawTileStack(animationOffset);
+                        this._drawLayers(animationOffset);
                         this._drawNames(animationOffset);
                         this._drawFPS();
                         this._drawStatistics();
@@ -233,10 +234,19 @@ class Engine
      * @param {Size} animationOffset
      * @private
      */
-    _drawTileStack(animationOffset)
+    _drawLayers(animationOffset)
     {
         this.visibleTiles.each((relativeTilePosition) => {
+            let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
+            this._drawSprite(tile.layer1, relativeTilePosition, animationOffset);
+        });
 
+        this.visibleTiles.each((relativeTilePosition) => {
+            let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
+            this._drawSprite(tile.layer2, relativeTilePosition, animationOffset);
+        });
+
+        this.visibleTiles.each((relativeTilePosition) => {
             this._drawCharacter(
                 relativeTilePosition,
                 animationOffset
@@ -247,9 +257,26 @@ class Engine
                     relativeTilePosition,
                     animationOffset
                 );
+
+                // prevent overdrawing player with layer 3 at position x:0,y+1 element when moving right
+                if (this._player.isMoving && this._player.direction === Directions.RIGHT) {
+                    let tile = this._area.tile(relativeTilePosition.jumpBy(-1, 0).toAbsolute(this._player));
+                    this._drawSprite(tile.layer3, relativeTilePosition.jumpBy(-1, 0), animationOffset);
+                }
             }
 
-            this._drawTile(relativeTilePosition, animationOffset);
+            let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
+            this._drawSprite(tile.layer3, relativeTilePosition, animationOffset);
+        });
+
+        this.visibleTiles.each((relativeTilePosition) => {
+            let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
+            this._drawSprite(tile.layer4, relativeTilePosition, animationOffset);
+        });
+
+
+
+//            this._drawSprite(relativeTilePosition, animationOffset);
 
             // TODO: make this optional, rendered only on demand and only in test mode.
 //            this._canvas.textTile(
@@ -268,7 +295,7 @@ class Engine
 //                new Size(0, 40),
 //                TilePosition.TOP_LEFT
 //            );
-        });
+//        });
     }
 
     /**
@@ -307,21 +334,16 @@ class Engine
     }
 
     /**
+     * @param {int} spriteId
      * @param {RelativePosition} relativeTilePosition
      * @param {Size} animationOffset
      * @private
      */
-    _drawTile(relativeTilePosition, animationOffset)
+    _drawSprite(spriteId, relativeTilePosition, animationOffset)
     {
-        let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
-
-        if (tile !== undefined && tile.stack.length) {
-            for (let spriteId of tile.stack) {
-                if (this._spriteMap.hasSprite(spriteId)) {
-                    let sprite = this._spriteMap.getSprite(spriteId);
-                    this._canvas.drawSprite(relativeTilePosition, sprite, animationOffset);
-                }
-            }
+        if (this._spriteMap.hasSprite(spriteId)) {
+            let sprite = this._spriteMap.getSprite(spriteId);
+            this._canvas.drawSprite(relativeTilePosition, sprite, animationOffset);
         }
     }
 

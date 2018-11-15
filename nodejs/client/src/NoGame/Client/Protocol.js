@@ -286,7 +286,10 @@ class Protocol
                         tileData.y,
                         tileData.canWalkOn,
                         tileData.ground,
-                        tileData.stack,
+                        tileData.layer1,
+                        tileData.layer2,
+                        tileData.layer3,
+                        tileData.layer4,
                         tileData.moveSpeedModifier
                     );
                 });
@@ -299,7 +302,10 @@ class Protocol
                     message.data.y,
                     message.data.canWalkOn,
                     message.data.ground,
-                    message.data.stack,
+                    message.data.layer1,
+                    message.data.layer2,
+                    message.data.layer3,
+                    message.data.layer4,
                     message.data.moveSpeedModifier
                 );
 

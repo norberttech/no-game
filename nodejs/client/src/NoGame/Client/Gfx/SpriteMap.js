@@ -30,7 +30,7 @@ class SpriteMap
     }
 
     /**
-     * @param {string} id
+     * @param {int} id
      * @returns {Sprite}
      */
     hasSprite(id)
@@ -49,7 +49,7 @@ class SpriteMap
     }
 
     /**
-     * @param {string} id
+     * @param {int} id
      * @returns {Sprite}
      */
     getSprite(id)
