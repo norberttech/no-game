@@ -4,6 +4,7 @@ const Assert = require('assert-js');
 const Area = require('./Map/Area');
 const Logger = require('./../Common/Logger');
 const Tile = require('./Map/Area/Tile');
+const TileLayers = require('./Map/Area/TileLayers');
 const Item = require('./Map/Area/Item');
 const Position = require('./Map/Area/Position');
 const MonsterFactory = require('./MonsterFactory');
@@ -49,7 +50,7 @@ class Loader
             return props;
         });
 
-        for (let layer of mapData.layers) {
+        let loadLayer = (layerIndex, layer) => {
             let x = 0;
             let y = 0;
 
@@ -66,15 +67,21 @@ class Loader
                 let position = new Position(x, y);
                 let item = new Item(sprite, blocking);
 
-                if (area.hasTile(position)) {
-                    area.tile(position).putOnStack(item)
+                if (layerIndex === 0) {
+                    area.addTile(new Tile(position,item, new TileLayers()));
                 } else {
-                    area.addTile(new Tile(position,item));
+                    area.tile(position).addItem(layerIndex, item);
                 }
 
                 x++;
             }
-        }
+        };
+
+        loadLayer(0, mapData.layers[0]);
+        loadLayer(1, mapData.layers[1]);
+        loadLayer(2, mapData.layers[2]);
+        loadLayer(3, mapData.layers[3]);
+        loadLayer(4, mapData.layers[4]);
 
         area.addSpawn(new Spawn("rat", 1, 10000, new Position(30, 12), 1, clock));
 

@@ -3,25 +3,26 @@
 const Assert = require('assert-js');
 const Item = require('./Item');
 const Position = require('./Position');
+const TileLayers = require('./TileLayers');
 
 class Tile
 {
     /**
      * @param {Position} position
      * @param {Item} ground
-     * @param {Item[]|array} stack
-     * @param {int} [moveSpeedModifier]
+     * @param {TileLayers} tileLayers
+     * @param {int} moveSpeedModifier
      */
-    constructor(position, ground, stack = [], moveSpeedModifier = 0)
+    constructor(position, ground, tileLayers, moveSpeedModifier = 0)
     {
         Assert.instanceOf(position, Position);
         Assert.instanceOf(ground, Item);
-        Assert.containsOnly(stack, Item);
+        Assert.instanceOf(tileLayers, TileLayers);
         Assert.integer(moveSpeedModifier);
 
         this._position = position;
         this._ground = ground;
-        this._stack = stack;
+        this._tileLayers = tileLayers;
         this._moveSpeedModifier = moveSpeedModifier;
         this._characters = new Map();
         this._monster = null;
@@ -44,10 +45,8 @@ class Tile
             return false;
         }
 
-        for (let item of this._stack) {
-            if (item.isBlocking) {
-                return false;
-            }
+        if (this._tileLayers.isBlocking) {
+            return false;
         }
 
         return true;
@@ -86,6 +85,14 @@ class Tile
     }
 
     /**
+     * @returns {TileLayers}
+     */
+    get layers()
+    {
+        return this._tileLayers;
+    }
+
+    /**
      * @returns {Position}
      */
     get position()
@@ -102,21 +109,12 @@ class Tile
     }
 
     /**
-     * @returns {Array}
+     * @param {int} layerIndex
+     * @param {Item} item
      */
-    get stack()
+    addItem(layerIndex, item)
     {
-        return this._stack;
-    }
-
-    /**
-     * @param item
-     */
-    putOnStack(item)
-    {
-        Assert.instanceOf(item, Item);
-
-        this._stack.push(item);
+        this._tileLayers.addItem(layerIndex, item);
     }
 
     /**

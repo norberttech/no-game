@@ -238,12 +238,20 @@ class Engine
     {
         this.visibleTiles.each((relativeTilePosition) => {
             let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
-            this._drawSprite(tile.layer1, relativeTilePosition, animationOffset);
+
+            if (tile) {
+                this._drawSprite(tile.layer1, relativeTilePosition, animationOffset);
+            } else {
+                console.log(relativeTilePosition);
+            }
         });
 
         this.visibleTiles.each((relativeTilePosition) => {
             let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
-            this._drawSprite(tile.layer2, relativeTilePosition, animationOffset);
+
+            if (tile) {
+                this._drawSprite(tile.layer2, relativeTilePosition, animationOffset);
+            }
         });
 
         this.visibleTiles.each((relativeTilePosition) => {
@@ -257,21 +265,21 @@ class Engine
                     relativeTilePosition,
                     animationOffset
                 );
-
-                // prevent overdrawing player with layer 3 at position x:0,y+1 element when moving right
-                if (this._player.isMoving && this._player.direction === Directions.RIGHT) {
-                    let tile = this._area.tile(relativeTilePosition.jumpBy(-1, 0).toAbsolute(this._player));
-                    this._drawSprite(tile.layer3, relativeTilePosition.jumpBy(-1, 0), animationOffset);
-                }
             }
 
             let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
-            this._drawSprite(tile.layer3, relativeTilePosition, animationOffset);
+
+            if (tile) {
+                this._drawSprite(tile.layer3, relativeTilePosition, animationOffset);
+            }
         });
 
         this.visibleTiles.each((relativeTilePosition) => {
             let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
-            this._drawSprite(tile.layer4, relativeTilePosition, animationOffset);
+
+            if (tile) {
+                this._drawSprite(tile.layer4, relativeTilePosition, animationOffset);
+            }
         });
 
 
@@ -310,6 +318,12 @@ class Engine
             this._spriteMap.getSprite(this._playerUI.outfitSpriteId),
             this._characterOffset
         );
+
+        // prevent overdrawing player with layer 3 at position x:0,y+1 element when moving right
+        if (this._player.isMoving && this._player.direction === Directions.RIGHT) {
+            let tile = this._area.tile(relativeTilePosition.jumpBy(-1, 0).toAbsolute(this._player));
+            this._drawSprite(tile.layer3, relativeTilePosition.jumpBy(-1, 0), animationOffset);
+        }
     }
 
     /**

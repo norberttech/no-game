@@ -3,9 +3,9 @@ describe("Player", () => {
     const Player = require('./../../../src/NoGame/Engine/Player');
     const Monster = require('./../../../src/NoGame/Engine/Monster');
     const Tile = require('./../../../src/NoGame/Engine/Map/Area/Tile');
+    const TileLayers = require('./../../../src/NoGame/Engine/Map/Area/TileLayers');
     const Item = require('./../../../src/NoGame/Engine/Map/Area/Item');
     const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
-    const Utils = require('./../../../../common/src/NoGame/Common/Utils');
     const TestKit = require('../TestKit/TestKit');
 
     let clock = null;
@@ -18,7 +18,7 @@ describe("Player", () => {
         let player = new Player("1111", "yaboomaster", 100, 100, new Position(1, 1), new Position(1, 1));
 
         try {
-            player.move(new Tile(new Position(1,3), new Item(0, false)), clock);
+            player.move(new Tile(new Position(1,3), new Item(0, false), new TileLayers()), clock);
         } catch (e) {
             Assert.equal(e.toString(), "Can't move that far");
         }
@@ -28,8 +28,8 @@ describe("Player", () => {
         let player = new Player("1111", "yaboomaster", 100, 100, new Position(1, 1), new Position(1, 1));
 
 
-        player.move(new Tile(new Position(1,2), new Item(0, false)), clock);
-        player.move(new Tile(new Position(2,2), new Item(0, false)), clock); // should not move here because is moving already
+        player.move(new Tile(new Position(1,2), new Item(0, false), new TileLayers()), clock);
+        player.move(new Tile(new Position(2,2), new Item(0, false), new TileLayers()), clock); // should not move here because is moving already
         Assert.true(player.isMoving(clock));
         Assert.true(player.position.isEqualTo(new Position(1,2)));
 
