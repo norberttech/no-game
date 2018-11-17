@@ -38,17 +38,27 @@ class Loader
 
         mapData.tilesets.map((tileSet) => {
             let props = [];
-            for (let tileId in tileSet.tileproperties) {
+            for (let tilesIndex in tileSet.tiles) {
 
-                if (!tileSet.tileproperties.hasOwnProperty(tileId)) {
+                if (!tileSet.tiles.hasOwnProperty(tilesIndex)) {
                     return ;
                 }
 
-                tileProperties[parseInt(tileSet.firstgid) + parseInt(tileId)] = tileSet.tileproperties[tileId];
+                let tileId = parseInt(tileSet.firstgid) + parseInt(tileSet.tiles[tilesIndex].id);
+
+                for (let tileProperty of tileSet.tiles[tilesIndex].properties) {
+
+                    if (!tileProperties[tileId]) {
+                        tileProperties[tileId] = {};
+                    }
+
+                    tileProperties[tileId][tileProperty.name] = tileProperty.value;
+                }
             }
 
             return props;
         });
+
 
         let loadLayer = (layerIndex, layer) => {
             let x = 0;
@@ -77,11 +87,11 @@ class Loader
             }
         };
 
-        loadLayer(0, mapData.layers[0]);
-        loadLayer(1, mapData.layers[1]);
-        loadLayer(2, mapData.layers[2]);
-        loadLayer(3, mapData.layers[3]);
-        loadLayer(4, mapData.layers[4]);
+        loadLayer(0, mapData.layers[0].layers[0]);
+        loadLayer(1, mapData.layers[0].layers[1]);
+        loadLayer(2, mapData.layers[0].layers[2]);
+        loadLayer(3, mapData.layers[0].layers[3]);
+        loadLayer(4, mapData.layers[0].layers[4]);
 
         area.addSpawn(new Spawn("rat", 1, 10000, new Position(30, 12), 1, clock));
 

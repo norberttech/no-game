@@ -241,8 +241,6 @@ class Engine
 
             if (tile) {
                 this._drawSprite(tile.layer1, relativeTilePosition, animationOffset);
-            } else {
-                console.log(relativeTilePosition);
             }
         });
 
