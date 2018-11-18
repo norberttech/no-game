@@ -239,6 +239,8 @@ class Engine
         this.visibleTiles.each((relativeTilePosition) => {
             let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
 
+            // TODO: those if statements needs to be removed,
+            // they are here because servers is probably sending -1 x and -1 y tiles than it suppose.
             if (tile) {
                 this._drawSprite(tile.layer1, relativeTilePosition, animationOffset);
             }

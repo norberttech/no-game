@@ -185,7 +185,6 @@ class Protocol
                 break;
             case ServerMessages.AREA:
                 this._kernel.setArea(new Area(message.data.name));
-                console.log(message.data);
                 this._kernel.setVisibleTiles(
                     message.data.visibleTiles.x,
                     message.data.visibleTiles.y
