@@ -26,8 +26,6 @@ class MapStub
         let x = 0;
         let y = 0;
 
-        console.log(this._groundSprites.length);
-
         this._groundSprites.forEach((tile) => {
 
             if (x >= this._width) {
@@ -40,8 +38,6 @@ class MapStub
             this._layer2.set(`${x}:${y}`, 0);
             this._layer3.set(`${x}:${y}`, 0);
             this._layer4.set(`${x}:${y}`, 0);
-
-
             x++;
         });
 
