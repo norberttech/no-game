@@ -16,7 +16,7 @@
   },
   "license": "GPL 3",
   "dependencies": {
-    "assert-js": "0.20.0",
+    "assert-js": "0.21.0",
     "json-loader": "^0.5.4",
     "markdown-loader": "^0.1.7",
     "pathfinding": "^0.4.18",

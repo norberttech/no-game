@@ -4,6 +4,7 @@ const Assert = require('assert-js');
 const Area = require('./../../../src/NoGame/Engine/Map/Area');
 const Position = require('./../../../src/NoGame/Engine/Map/Area/Position');
 const Tile = require('./../../../src/NoGame/Engine/Map/Area/Tile');
+const TileLayers = require('./../../../src/NoGame/Engine/Map/Area/TileLayers');
 const Item = require('./../../../src/NoGame/Engine/Map/Area/Item');
 
 class AreaFactory
@@ -22,7 +23,13 @@ class AreaFactory
 
         for (let x = 0; x <= sizeX; x++) {
             for (let y = 0; y <= sizeY; y++) {
-                area.addTile(new Tile(new Position(x, y), new Item(0, false)));
+                area.addTile(
+                    new Tile(
+                        new Position(x, y),
+                        new Item(0, false),
+                        new TileLayers()
+                    )
+                );
             }
         }
 
@@ -39,7 +46,7 @@ class AreaFactory
         Assert.integer(x);
         Assert.integer(y);
 
-        return new Tile(new Position(x, y), new Item(0, true));
+        return new Tile(new Position(x, y), new Item(0, true), new TileLayers());
     }
 }
 

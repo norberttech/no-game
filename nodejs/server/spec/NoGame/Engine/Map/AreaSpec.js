@@ -3,6 +3,7 @@ describe("Area", () => {
     const Area = require('./../../../../src/NoGame/Engine/Map/Area');
     const Item = require('./../../../../src/NoGame/Engine/Map/Area/Item');
     const Tile = require('./../../../../src/NoGame/Engine/Map/Area/Tile');
+    const TileLayers = require('./../../../../src/NoGame/Engine/Map/Area/TileLayers');
     const Position = require('./../../../../src/NoGame/Engine/Map/Area/Position');
     const Player = require('./../../../../src/NoGame/Engine/Player');
     const TestKit = require('../../TestKit/TestKit');
@@ -17,8 +18,8 @@ describe("Area", () => {
 
     it ("can't have two tiles with the same position", () => {
         let grass = new Item(100);
-        let stack = [new Item(2), new Item(3), new Item(4)];
-        let grassTile = new Tile(new Position(0, 0), grass, stack);
+        let tileLayers = new TileLayers(new Item(2), new Item(3), new Item(4));
+        let grassTile = new Tile(new Position(0, 0), grass, tileLayers);
         let area = new Area("test area", 10, 10);
 
         area.addTile(grassTile);
@@ -32,8 +33,8 @@ describe("Area", () => {
 
     it ("can't take tile that position is out of area boundaries", () => {
         let grass = new Item(100);
-        let stack = [new Item(2), new Item(3), new Item(4)];
-        let grassTile = new Tile(new Position(25, 25), grass, stack);
+        let tileLayers = new TileLayers(new Item(2), new Item(3), new Item(4));
+        let grassTile = new Tile(new Position(25, 25), grass, tileLayers);
         let area = new Area("test area", 10, 10);
 
         try {
@@ -47,7 +48,7 @@ describe("Area", () => {
         let area = new Area("test area", 10, 10);
         let player = new Player("1111", "yaboomaster", 100, 100, new Position(0, 0), new Position(0, 0));
 
-        area.addTile(new Tile(new Position(0, 0), new Item(1)));
+        area.addTile(new Tile(new Position(0, 0), new Item(1), new TileLayers()));
 
         area.loginPlayer(player);
 
@@ -60,13 +61,13 @@ describe("Area", () => {
 
     it ("returns players except player with specific ID", () => {
         let grass = new Item(100);
-        let stack = [new Item(2, true)];
-        let grassTile = new Tile(new Position(1, 1), grass, stack);
+        let tileLayers = new TileLayers(new Item(2, true));
+        let grassTile = new Tile(new Position(1, 1), grass, tileLayers);
         let area = new Area("test area", 1, 1);
         let player1 = new Player("111", "yaboo1", 100, 100, new Position(1, 1), new Position(1, 1));
         let player2 = new Player("222", "yaboo2", 100, 100, new Position(1, 1), new Position(1, 1));
 
-        area.addTile(new Tile(new Position(0, 0), new Item(1)));
+        area.addTile(new Tile(new Position(0, 0), new Item(1), new TileLayers()));
         area.addTile(grassTile);
         area.loginPlayer(player1);
         area.loginPlayer(player2);
@@ -79,7 +80,7 @@ describe("Area", () => {
         let player = new Player("1111", "yaboo1", 100, 100, new Position(50, 50), new Position(50, 50));
         for (let x = 0; x < 100; x++) {
             for (let y = 0; y < 100; y++) {
-                area.addTile(new Tile(new Position(x, y), new Item(100)));
+                area.addTile(new Tile(new Position(x, y), new Item(100), new TileLayers()));
             }
         }
 

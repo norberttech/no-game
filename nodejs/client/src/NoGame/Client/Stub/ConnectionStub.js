@@ -149,7 +149,10 @@ class ConnectionStub extends Connection
                     y: y,
                     canWalkOn: true,
                     ground: this._mapStub.getGround(x, y),
-                    stack: this._mapStub.getStack(x, y),
+                    layer1: this._mapStub.getLayer1(x, y),
+                    layer2: this._mapStub.getLayer2(x, y),
+                    layer3: this._mapStub.getLayer3(x, y),
+                    layer4: this._mapStub.getLayer4(x, y),
                     monster: [],
                     players: [],
                     moveSpeedModifier: 0

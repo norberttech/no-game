@@ -3,7 +3,6 @@
 const Assert = require('assert-js');
 const Player = require('./../Player');
 const AbsolutePosition = require('./AbsolutePosition');
-const VisibleTiles = require('./../VisibleTiles');
 const AreaCalculator = require('./../../Common/AreaCalculator');
 
 class RelativePosition
