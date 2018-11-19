@@ -239,19 +239,13 @@ class Engine
         this.visibleTiles.each((relativeTilePosition) => {
             let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
 
-            // TODO: those if statements needs to be removed,
-            // they are here because servers is probably sending -1 x and -1 y tiles than it suppose.
-            if (tile) {
-                this._drawSprite(tile.layer1, relativeTilePosition, animationOffset);
-            }
+            this._drawSprite(tile.layer1, relativeTilePosition, animationOffset);
         });
 
         this.visibleTiles.each((relativeTilePosition) => {
             let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
 
-            if (tile) {
-                this._drawSprite(tile.layer2, relativeTilePosition, animationOffset);
-            }
+            this._drawSprite(tile.layer2, relativeTilePosition, animationOffset);
         });
 
         this.visibleTiles.each((relativeTilePosition) => {
@@ -269,17 +263,13 @@ class Engine
 
             let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
 
-            if (tile) {
-                this._drawSprite(tile.layer3, relativeTilePosition, animationOffset);
-            }
+            this._drawSprite(tile.layer3, relativeTilePosition, animationOffset);
         });
 
         this.visibleTiles.each((relativeTilePosition) => {
             let tile = this._area.tile(relativeTilePosition.toAbsolute(this._player));
 
-            if (tile) {
-                this._drawSprite(tile.layer4, relativeTilePosition, animationOffset);
-            }
+            this._drawSprite(tile.layer4, relativeTilePosition, animationOffset);
         });
 
 

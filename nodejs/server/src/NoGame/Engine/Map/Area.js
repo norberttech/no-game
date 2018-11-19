@@ -16,7 +16,7 @@ const Grid = require('./../../Common/PathFinderGrid');
  *
  * @type {{x: number, y: number}}
  */
-const VISIBLE_TILES = {x: 17, y: 13};
+const VISIBLE_TILES = {x: 17, y: 15};
 
 class Area
 {
