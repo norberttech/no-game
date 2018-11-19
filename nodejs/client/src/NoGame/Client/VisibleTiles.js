@@ -16,8 +16,8 @@ class VisibleTiles
         Assert.greaterThan(0, sizeY);
         Assert.greaterThan(0, marginSize);
 
-        this._sizeX = sizeX;
-        this._sizeY = sizeY;
+        this._sizeX = sizeX - marginSize * 2;
+        this._sizeY = sizeY - marginSize * 2;
         this._marginSize = marginSize;
     }
 

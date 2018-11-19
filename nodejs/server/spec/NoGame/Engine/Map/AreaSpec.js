@@ -88,11 +88,11 @@ describe("Area", () => {
 
         let tiles = area.visibleTilesFor(player.id);
 
-        Assert.equal(tiles.length, 221);
+        Assert.equal(tiles.length, 255);
         Assert.equal(tiles[0].position.x, 42);
-        Assert.equal(tiles[0].position.y, 44);
+        Assert.equal(tiles[0].position.y, 43);
 
-        Assert.equal(tiles[164].position.x, 54);
-        Assert.equal(tiles[164].position.y ,52);
+        Assert.equal(tiles[164].position.x, 52);
+        Assert.equal(tiles[164].position.y ,57);
     });
 });
