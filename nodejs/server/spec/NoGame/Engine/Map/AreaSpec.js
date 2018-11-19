@@ -16,7 +16,7 @@ describe("Area", () => {
         clock = new TestKit.ManualClock(new Date().getTime());
     });
 
-    /*it ("can't have two tiles with the same position", () => {
+    it ("can't have two tiles with the same position", () => {
         let grass = new Item(100);
         let tileLayers = new TileLayers(new Item(2), new Item(3), new Item(4));
         let grassTile = new Tile(new Position(0, 0), grass, tileLayers);
@@ -73,7 +73,7 @@ describe("Area", () => {
         area.loginPlayer(player2);
 
         Assert.equal(area.visiblePlayersFor(player1.id)[0].id, player2.id);
-    });*/
+    });
 
     it ("returns tiles visible by player", () => {
         let area = new Area("test area", 100, 100);
